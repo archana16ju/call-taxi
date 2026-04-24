@@ -25,6 +25,7 @@ import { getBookingReport } from './endpoints/getBookingReport'
 import { getCustomerReport } from './endpoints/getCustomerReport'
 import { CustomerReport } from './globals/CustomerReport'
 import { PaymentSettings } from './globals/PaymentSettings'
+import { VehicleReport } from './globals/VehicleReport'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -70,7 +71,7 @@ export default buildConfig({
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
-  globals: [BookingReport, CustomerReport, PaymentSettings],
+  globals: [BookingReport, CustomerReport, PaymentSettings,VehicleReport],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

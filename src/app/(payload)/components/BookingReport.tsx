@@ -215,39 +215,59 @@ const BookingReport = () => {
   }
 
   return (
-    <Box sx={{ p: 3, backgroundColor: '#121212', minHeight: '100vh', color: 'white' }}>
+    <Box
+      sx={{
+        p: 3,
+        backgroundColor: 'var(--theme-bg-page)',
+        minHeight: '100vh',
+        color: 'var(--theme-text)',
+      }}
+    >
       <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
         Booking Report
       </Typography>
 
       {/* Filter Bar */}
-      <Card sx={{ p: 2, mb: 3, backgroundColor: '#1e1e1e', color: 'white' }}>
+      <Card
+        sx={{
+          p: 2,
+          mb: 3,
+          backgroundColor: 'var(--theme-bg-card)',
+          color: 'var(--theme-text)',
+          border: '1px solid var(--theme-border-color)',
+        }}
+      >
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
           <TextField
             label="Pickup Date"
             type="date"
             size="small"
-            InputLabelProps={{ shrink: true, style: { color: '#aaa' } }}
-            InputProps={{ style: { color: 'white', borderColor: '#444' } }}
+            InputLabelProps={{ shrink: true, style: { color: 'var(--theme-text-secondary, #aaa)' } }}
+            InputProps={{
+              style: { color: 'var(--theme-text)', borderColor: 'var(--theme-border-color)' },
+            }}
             value={date}
             onChange={(e) => setDate(e.target.value)}
             sx={{
               '& .MuiOutlinedInput-root': {
-                '& fieldset': { borderColor: '#444' },
-                '&:hover fieldset': { borderColor: '#666' },
+                '& fieldset': { borderColor: 'var(--theme-border-color)' },
+                '&:hover fieldset': { borderColor: 'var(--theme-elevation-500)' },
               },
-              backgroundColor: '#2c2c2c',
+              backgroundColor: 'var(--theme-bg-input, var(--theme-elevation-50))',
               borderRadius: 1,
             }}
           />
 
           <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel sx={{ color: '#aaa' }}>Status</InputLabel>
+            <InputLabel sx={{ color: 'var(--theme-text-secondary, #aaa)' }}>Status</InputLabel>
             <Select
               value={status}
               label="Status"
               onChange={(e) => setStatus(e.target.value)}
-              sx={{ color: 'white', '.MuiOutlinedInput-notchedOutline': { borderColor: '#444' } }}
+              sx={{
+                color: 'var(--theme-text)',
+                '.MuiOutlinedInput-notchedOutline': { borderColor: 'var(--theme-border-color)' },
+              }}
             >
               <MenuItem value="all">All Status</MenuItem>
               <MenuItem value="pending">Pending</MenuItem>
@@ -258,12 +278,15 @@ const BookingReport = () => {
           </FormControl>
 
           <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel sx={{ color: '#aaa' }}>Trip Type</InputLabel>
+            <InputLabel sx={{ color: 'var(--theme-text-secondary, #aaa)' }}>Trip Type</InputLabel>
             <Select
               value={tripType}
               label="Trip Type"
               onChange={(e) => setTripType(e.target.value)}
-              sx={{ color: 'white', '.MuiOutlinedInput-notchedOutline': { borderColor: '#444' } }}
+              sx={{
+                color: 'var(--theme-text)',
+                '.MuiOutlinedInput-notchedOutline': { borderColor: 'var(--theme-border-color)' },
+              }}
             >
               <MenuItem value="all">All Types</MenuItem>
               <MenuItem value="oneway">One Way</MenuItem>
@@ -279,15 +302,18 @@ const BookingReport = () => {
             startIcon={<DownloadIcon />}
             onClick={handleExport}
             sx={{
-              color: '#aaa',
-              borderColor: '#444',
-              '&:hover': { borderColor: 'white', color: 'white' },
+              color: 'var(--theme-text-secondary, #aaa)',
+              borderColor: 'var(--theme-border-color)',
+              '&:hover': {
+                borderColor: 'var(--theme-text)',
+                color: 'var(--theme-text)',
+              },
             }}
           >
             Export
           </Button>
 
-          <IconButton onClick={handleRefresh} sx={{ color: 'white' }}>
+          <IconButton onClick={handleRefresh} sx={{ color: 'var(--theme-text)' }}>
             <RefreshIcon />
           </IconButton>
         </Stack>
@@ -296,8 +322,19 @@ const BookingReport = () => {
       {/* Summary Stats */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <Card sx={{ p: 2, backgroundColor: '#1e1e1e', color: 'white', textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ color: '#aaa', mb: 1 }}>
+          <Card
+            sx={{
+              p: 2,
+              backgroundColor: 'var(--theme-bg-card)',
+              color: 'var(--theme-text)',
+              textAlign: 'center',
+              border: '1px solid var(--theme-border-color)',
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ color: 'var(--theme-text-secondary, #aaa)', mb: 1 }}
+            >
               TOTAL BOOKINGS
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
@@ -306,8 +343,19 @@ const BookingReport = () => {
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <Card sx={{ p: 2, backgroundColor: '#1e1e1e', color: 'white', textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ color: '#aaa', mb: 1 }}>
+          <Card
+            sx={{
+              p: 2,
+              backgroundColor: 'var(--theme-bg-card)',
+              color: 'var(--theme-text)',
+              textAlign: 'center',
+              border: '1px solid var(--theme-border-color)',
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ color: 'var(--theme-text-secondary, #aaa)', mb: 1 }}
+            >
               TOTAL AMOUNT
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#4caf50' }}>
@@ -319,8 +367,19 @@ const BookingReport = () => {
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <Card sx={{ p: 2, backgroundColor: '#1e1e1e', color: 'white', textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ color: '#aaa', mb: 1 }}>
+          <Card
+            sx={{
+              p: 2,
+              backgroundColor: 'var(--theme-bg-card)',
+              color: 'var(--theme-text)',
+              textAlign: 'center',
+              border: '1px solid var(--theme-border-color)',
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ color: 'var(--theme-text-secondary, #aaa)', mb: 1 }}
+            >
               AVG FARE
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
@@ -336,51 +395,126 @@ const BookingReport = () => {
       </Grid>
 
       {/* Data Table */}
-      <TableContainer component={Paper} sx={{ backgroundColor: '#1e1e1e' }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          backgroundColor: 'var(--theme-bg-card)',
+          border: '1px solid var(--theme-border-color)',
+        }}
+      >
         <Table sx={{ minWidth: 650 }} aria-label="booking table">
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#252525' }}>
+            <TableRow sx={{ backgroundColor: 'var(--theme-bg-card)' }}>
               <TableCell
                 sx={{
-                  color: '#aaa',
+                  color: 'var(--theme-text-secondary, #aaa)',
                   fontWeight: 'bold',
-                  borderRight: '1px solid #333',
-                  borderLeft: '1px solid #333',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderLeft: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
                 }}
               >
                 S.NO
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 CUSTOMER NAME
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 PHONE
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 TRIP TYPE
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 VEHICLE
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 PICKUP DATE
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 FROM
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 TO
               </TableCell>
               <TableCell
-                sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
                 align="right"
               >
                 AMOUNT
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 DRIVER
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
                 STATUS
               </TableCell>
             </TableRow>
@@ -392,10 +526,11 @@ const BookingReport = () => {
                   colSpan={11}
                   align="center"
                   sx={{
-                    color: 'white',
+                    color: 'var(--theme-text)',
                     py: 3,
-                    borderRight: '1px solid #333',
-                    borderLeft: '1px solid #333',
+                    borderRight: '1px solid var(--theme-border-color)',
+                    borderLeft: '1px solid var(--theme-border-color)',
+                    borderBottom: '1px solid var(--theme-border-color)',
                   }}
                 >
                   Loading...
@@ -407,10 +542,11 @@ const BookingReport = () => {
                   colSpan={11}
                   align="center"
                   sx={{
-                    color: 'white',
+                    color: 'var(--theme-text)',
                     py: 3,
-                    borderRight: '1px solid #333',
-                    borderLeft: '1px solid #333',
+                    borderRight: '1px solid var(--theme-border-color)',
+                    borderLeft: '1px solid var(--theme-border-color)',
+                    borderBottom: '1px solid var(--theme-border-color)',
                   }}
                 >
                   No bookings found
@@ -421,12 +557,12 @@ const BookingReport = () => {
                 <TableRow
                   key={row.id}
                   sx={{
-                    borderColor: '#333',
-                    backgroundColor: index % 2 === 0 ? '#121212' : 'inherit',
+                    backgroundColor:
+                      index % 2 === 0 ? 'var(--theme-bg-input, var(--theme-elevation-50))' : 'inherit',
                     '& td, & th': {
                       fontSize: '0.95rem',
                       fontWeight: 'bold',
-                      borderBottom: '1px solid #333',
+                      borderBottom: '1px solid var(--theme-border-color)',
                     },
                   }}
                 >
@@ -434,10 +570,9 @@ const BookingReport = () => {
                     component="th"
                     scope="row"
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
-                      borderLeft: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
+                      borderLeft: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -445,9 +580,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -455,7 +589,10 @@ const BookingReport = () => {
                       <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                         {row.customerName}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: 'grey.500', fontSize: '0.75rem' }}>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: 'var(--theme-text-secondary, #aaa)', fontSize: '0.75rem' }}
+                      >
                         {new Date(row.pickupDateTime).toLocaleString('en-GB', {
                           day: '2-digit',
                           month: '2-digit',
@@ -469,9 +606,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -479,9 +615,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -489,9 +624,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -499,9 +633,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -516,9 +649,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -526,9 +658,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -537,10 +668,9 @@ const BookingReport = () => {
                   <TableCell
                     align="right"
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
+                      color: 'var(--theme-text)',
                       fontWeight: 'bold',
-                      borderRight: '1px solid #333',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -548,9 +678,8 @@ const BookingReport = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -567,16 +696,15 @@ const BookingReport = () => {
                       sx={{
                         fontWeight: 'bold',
                         cursor: 'pointer',
-                        borderColor: '#666',
-                        color: row.driver ? 'white' : '#aaa',
+                        borderColor: 'var(--theme-border-color)',
+                        color: row.driver ? 'white' : 'var(--theme-text-secondary, #aaa)',
                       }}
                     />
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: 'white',
-                      borderColor: '#333',
-                      borderRight: '1px solid #333',
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -611,8 +739,9 @@ const BookingReport = () => {
         onClose={handleStatusClose}
         PaperProps={{
           style: {
-            backgroundColor: '#2c2c2c',
-            color: 'white',
+            backgroundColor: 'var(--theme-bg-card)',
+            color: 'var(--theme-text)',
+            border: '1px solid var(--theme-border-color)',
           },
         }}
       >
@@ -629,8 +758,9 @@ const BookingReport = () => {
         onClose={handleDriverClose}
         PaperProps={{
           style: {
-            backgroundColor: '#2c2c2c',
-            color: 'white',
+            backgroundColor: 'var(--theme-bg-card)',
+            color: 'var(--theme-text)',
+            border: '1px solid var(--theme-border-color)',
             maxHeight: 300,
           },
         }}

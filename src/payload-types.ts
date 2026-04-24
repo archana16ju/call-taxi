@@ -115,11 +115,13 @@ export interface Config {
     'booking-report': BookingReport;
     'customer-report': CustomerReport;
     'payment-settings': PaymentSetting;
+    'vehicle-report': VehicleReport;
   };
   globalsSelect: {
     'booking-report': BookingReportSelect<false> | BookingReportSelect<true>;
     'customer-report': CustomerReportSelect<false> | CustomerReportSelect<true>;
     'payment-settings': PaymentSettingsSelect<false> | PaymentSettingsSelect<true>;
+    'vehicle-report': VehicleReportSelect<false> | VehicleReportSelect<true>;
   };
   locale: null;
   user: User & {
@@ -952,6 +954,15 @@ export interface PaymentSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-report".
+ */
+export interface VehicleReport {
+  id: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "booking-report_select".
  */
 export interface BookingReportSelect<T extends boolean = true> {
@@ -974,6 +985,15 @@ export interface CustomerReportSelect<T extends boolean = true> {
  */
 export interface PaymentSettingsSelect<T extends boolean = true> {
   minimumPayment?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-report_select".
+ */
+export interface VehicleReportSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

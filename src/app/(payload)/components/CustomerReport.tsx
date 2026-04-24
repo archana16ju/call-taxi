@@ -94,7 +94,14 @@ const CustomerReport: React.FC = () => {
   }, [])
 
   return (
-    <Box sx={{ p: 4, bgcolor: '#101010', minHeight: '100vh', color: '#fff' }}>
+    <Box
+      sx={{
+        p: 4,
+        bgcolor: 'var(--theme-bg-page)',
+        minHeight: '100vh',
+        color: 'var(--theme-text)',
+      }}
+    >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="bold">
           Customer Report
@@ -103,7 +110,11 @@ const CustomerReport: React.FC = () => {
           variant="outlined"
           startIcon={<RefreshIcon />}
           onClick={fetchData}
-          sx={{ color: '#fff', borderColor: '#333', '&:hover': { borderColor: '#555' } }}
+          sx={{
+            color: 'var(--theme-text)',
+            borderColor: 'var(--theme-border-color)',
+            '&:hover': { borderColor: 'var(--theme-elevation-500)' },
+          }}
         >
           Refresh
         </Button>
@@ -111,75 +122,81 @@ const CustomerReport: React.FC = () => {
 
       {loading ? (
         <Box display="flex" justifyContent="center" mt={4}>
-          <CircularProgress sx={{ color: '#fff' }} />
+          <CircularProgress sx={{ color: 'var(--theme-text)' }} />
         </Box>
       ) : (
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
           {/* Left Side: Customer List */}
           <TableContainer
             component={Paper}
-            sx={{ bgcolor: '#1a1a1a', borderRadius: 2, width: '50%', maxHeight: '80vh' }}
+            sx={{
+              bgcolor: 'var(--theme-bg-card)',
+              borderRadius: 2,
+              width: '50%',
+              maxHeight: '80vh',
+              border: '1px solid var(--theme-border-color)',
+            }}
           >
             <Table stickyHeader>
               <TableHead>
-                <TableRow sx={{ bgcolor: '#222', borderBottom: '1px solid #333' }}>
+                <TableRow sx={{ bgcolor: 'var(--theme-bg-card)', borderBottom: '1px solid var(--theme-border-color)' }}>
                   <TableCell
                     sx={{
-                      color: '#aaa',
+                      color: 'var(--theme-text-secondary, #aaa)',
                       fontWeight: 'bold',
                       textAlign: 'left',
-                      bgcolor: '#222',
-                      borderRight: '1px solid #333',
-                      borderLeft: '1px solid #333',
-                      borderBottom: '1px solid #333',
+                      bgcolor: 'var(--theme-bg-card)',
+                      borderRight: '1px solid var(--theme-border-color)',
+                      borderLeft: '1px solid var(--theme-border-color)',
+                      borderBottom: '1px solid var(--theme-border-color)',
                     }}
                   >
                     S.NO
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: '#aaa',
+                      color: 'var(--theme-text-secondary, #aaa)',
                       fontWeight: 'bold',
                       textAlign: 'left',
-                      bgcolor: '#222',
-                      borderRight: '1px solid #333',
-                      borderBottom: '1px solid #333',
+                      bgcolor: 'var(--theme-bg-card)',
+                      borderRight: '1px solid var(--theme-border-color)',
+                      borderBottom: '1px solid var(--theme-border-color)',
                     }}
                   >
                     CUSTOMER NAME
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: '#aaa',
+                      color: 'var(--theme-text-secondary, #aaa)',
                       fontWeight: 'bold',
                       textAlign: 'left',
-                      bgcolor: '#222',
-                      borderRight: '1px solid #333',
-                      borderBottom: '1px solid #333',
+                      bgcolor: 'var(--theme-bg-card)',
+                      borderRight: '1px solid var(--theme-border-color)',
+                      borderBottom: '1px solid var(--theme-border-color)',
                     }}
                   >
                     PHONE
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: '#aaa',
+                      color: 'var(--theme-text-secondary, #aaa)',
                       fontWeight: 'bold',
                       textAlign: 'left',
-                      bgcolor: '#222',
-                      borderRight: '1px solid #333',
-                      borderBottom: '1px solid #333',
+                      bgcolor: 'var(--theme-bg-card)',
+                      borderRight: '1px solid var(--theme-border-color)',
+                      borderBottom: '1px solid var(--theme-border-color)',
                     }}
                   >
                     TRIP COUNT
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: '#aaa',
+                      color: 'var(--theme-text-secondary, #aaa)',
                       fontWeight: 'bold',
                       textAlign: 'left',
-                      bgcolor: '#222',
-                      borderRight: '1px solid #333',
-                      borderBottom: '1px solid #333',
+                      bgcolor: 'var(--theme-bg-card)',
+                      borderRight: '1px solid var(--theme-border-color)',
+                      borderBottom: '1px solid var(--theme-border-color)',
                     }}
                   >
                     TOTAL AMOUNT
@@ -195,32 +212,32 @@ const CustomerReport: React.FC = () => {
                       sx={{
                         backgroundColor:
                           selectedCustomer?.phone === row.phone
-                            ? '#333'
+                            ? 'var(--theme-elevation-200)'
                             : index % 2 === 0
-                              ? '#121212'
+                              ? 'var(--theme-bg-input, var(--theme-elevation-50))'
                               : 'inherit',
-                        borderBottom: '1px solid #333',
+                        borderBottom: '1px solid var(--theme-border-color)',
                         cursor: 'pointer',
                         '&:hover': {
-                          backgroundColor: '#2a2a2a',
+                          backgroundColor: 'var(--theme-elevation-100)',
                         },
                       }}
                     >
                       <TableCell
                         sx={{
-                          color: '#fff',
+                          color: 'var(--theme-text)',
                           textAlign: 'left',
-                          borderRight: '1px solid #333',
-                          borderLeft: '1px solid #333',
+                          borderRight: '1px solid var(--theme-border-color)',
+                          borderLeft: '1px solid var(--theme-border-color)',
                         }}
                       >
                         {index + 1}
                       </TableCell>
                       <TableCell
                         sx={{
-                          color: '#fff',
+                          color: 'var(--theme-text)',
                           textAlign: 'left',
-                          borderRight: '1px solid #333',
+                          borderRight: '1px solid var(--theme-border-color)',
                         }}
                       >
                         <Typography variant="body2" fontWeight="bold">
@@ -229,9 +246,9 @@ const CustomerReport: React.FC = () => {
                       </TableCell>
                       <TableCell
                         sx={{
-                          color: '#fff',
+                          color: 'var(--theme-text)',
                           textAlign: 'left',
-                          borderRight: '1px solid #333',
+                          borderRight: '1px solid var(--theme-border-color)',
                         }}
                       >
                         <Typography variant="body2" fontWeight="bold">
@@ -240,18 +257,18 @@ const CustomerReport: React.FC = () => {
                       </TableCell>
                       <TableCell
                         sx={{
-                          color: '#fff',
+                          color: 'var(--theme-text)',
                           textAlign: 'left',
-                          borderRight: '1px solid #333',
+                          borderRight: '1px solid var(--theme-border-color)',
                         }}
                       >
                         {row.count}
                       </TableCell>
                       <TableCell
                         sx={{
-                          color: '#fff',
+                          color: 'var(--theme-text)',
                           textAlign: 'left',
-                          borderRight: '1px solid #333',
+                          borderRight: '1px solid var(--theme-border-color)',
                         }}
                       >
                         ₹{row.totalAmount.toLocaleString('en-IN')}
@@ -260,7 +277,7 @@ const CustomerReport: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} sx={{ textAlign: 'center', color: '#666', py: 4 }}>
+                    <TableCell colSpan={5} sx={{ textAlign: 'center', color: 'var(--theme-text-secondary, #666)', py: 4 }}>
                       No data found
                     </TableCell>
                   </TableRow>
@@ -277,28 +294,33 @@ const CustomerReport: React.FC = () => {
               </Typography>
               {bookingsLoading ? (
                 <Box display="flex" justifyContent="center" mt={4}>
-                  <CircularProgress sx={{ color: '#fff' }} />
+                  <CircularProgress sx={{ color: 'var(--theme-text)' }} />
                 </Box>
               ) : (
                 <TableContainer
                   component={Paper}
-                  sx={{ bgcolor: '#1a1a1a', borderRadius: 2, maxHeight: '80vh' }}
+                  sx={{
+                    bgcolor: 'var(--theme-bg-card)',
+                    borderRadius: 2,
+                    maxHeight: '80vh',
+                    border: '1px solid var(--theme-border-color)',
+                  }}
                 >
                   <Table stickyHeader>
                     <TableHead>
-                      <TableRow sx={{ bgcolor: '#222', borderBottom: '1px solid #333' }}>
+                      <TableRow sx={{ bgcolor: 'var(--theme-bg-card)', borderBottom: '1px solid var(--theme-border-color)' }}>
                         {['S.NO', 'DATE', 'TRIP TYPE', 'PICKUP', 'DROPOFF', 'AMOUNT', 'STATUS'].map(
                           (head) => (
                             <TableCell
                               key={head}
                               sx={{
-                                color: '#aaa',
+                                color: 'var(--theme-text-secondary, #aaa)',
                                 fontWeight: 'bold',
                                 textAlign: 'left',
-                                bgcolor: '#222',
-                                borderRight: '1px solid #333',
-                                borderBottom: '1px solid #333',
-                                borderLeft: head === 'S.NO' ? '1px solid #333' : 'none',
+                                bgcolor: 'var(--theme-bg-card)',
+                                borderRight: '1px solid var(--theme-border-color)',
+                                borderBottom: '1px solid var(--theme-border-color)',
+                                borderLeft: head === 'S.NO' ? '1px solid var(--theme-border-color)' : 'none',
                               }}
                             >
                               {head}
@@ -313,20 +335,20 @@ const CustomerReport: React.FC = () => {
                           <TableRow
                             key={booking.id}
                             sx={{
-                              backgroundColor: index % 2 === 0 ? '#121212' : 'inherit',
-                              borderBottom: '1px solid #333',
+                              backgroundColor: index % 2 === 0 ? 'var(--theme-bg-input, var(--theme-elevation-50))' : 'inherit',
+                              borderBottom: '1px solid var(--theme-border-color)',
                             }}
                           >
                             <TableCell
                               sx={{
-                                color: '#fff',
-                                borderRight: '1px solid #333',
-                                borderLeft: '1px solid #333',
+                                color: 'var(--theme-text)',
+                                borderRight: '1px solid var(--theme-border-color)',
+                                borderLeft: '1px solid var(--theme-border-color)',
                               }}
                             >
                               {index + 1}
                             </TableCell>
-                            <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
+                            <TableCell sx={{ color: 'var(--theme-text)', borderRight: '1px solid var(--theme-border-color)' }}>
                               {new Date(booking.pickupDateTime).toLocaleString('en-GB', {
                                 day: '2-digit',
                                 month: '2-digit',
@@ -336,28 +358,28 @@ const CustomerReport: React.FC = () => {
                                 hour12: true,
                               })}
                             </TableCell>
-                            <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
+                            <TableCell sx={{ color: 'var(--theme-text)', borderRight: '1px solid var(--theme-border-color)' }}>
                               {booking.tripType}
                             </TableCell>
-                            <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
+                            <TableCell sx={{ color: 'var(--theme-text)', borderRight: '1px solid var(--theme-border-color)' }}>
                               {booking.pickupLocationName}
                             </TableCell>
-                            <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
+                            <TableCell sx={{ color: 'var(--theme-text)', borderRight: '1px solid var(--theme-border-color)' }}>
                               {booking.dropoffLocationName || '-'}
                             </TableCell>
-                            <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
+                            <TableCell sx={{ color: 'var(--theme-text)', borderRight: '1px solid var(--theme-border-color)' }}>
                               {booking.estimatedFare
                                 ? `₹${booking.estimatedFare.toLocaleString('en-IN')}`
                                 : '-'}
                             </TableCell>
-                            <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
+                            <TableCell sx={{ color: 'var(--theme-text)', borderRight: '1px solid var(--theme-border-color)' }}>
                               {booking.status}
                             </TableCell>
                           </TableRow>
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={7} sx={{ textAlign: 'center', color: '#666', py: 4 }}>
+                          <TableCell colSpan={7} sx={{ textAlign: 'center', color: 'var(--theme-text-secondary, #666)', py: 4 }}>
                             No bookings found
                           </TableCell>
                         </TableRow>
