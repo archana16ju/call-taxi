@@ -151,6 +151,73 @@ export const Bookings: CollectionConfig = {
             } as any,
           })
         }
+
+        // --- AUTOMATIC ALERTS ---
+        
+        // 1. New Booking Alert
+        if (operation === 'create') {
+          await req.payload.create({
+            collection: 'alerts',
+            data: {
+              title: 'New Booking Request',
+              message: `New booking #${doc.bookingCode} from ${doc.customerName}`,
+              type: 'info',
+              isRead: false,
+            },
+          })
+        }
+
+        // 2. Booking Confirmed Alert
+        if (operation === 'update' && doc.status === 'confirmed' && previousDoc?.status !== 'confirmed') {
+          await req.payload.create({
+            collection: 'alerts',
+            data: {
+              title: 'Booking Confirmed',
+              message: `Booking #${doc.bookingCode} has been confirmed.`,
+              type: 'info',
+              isRead: false,
+            },
+          })
+        }
+
+        // 3. Payment Failed Alert
+        if (doc.paymentStatus === 'failed' && previousDoc?.paymentStatus !== 'failed') {
+          await req.payload.create({
+            collection: 'alerts',
+            data: {
+              title: 'Payment Failed',
+              message: `Payment failed for booking #${doc.bookingCode}`,
+              type: 'payment_fail',
+              isRead: false,
+            },
+          })
+        }
+
+        // 4. Payment Success Alert
+        if (doc.paymentStatus === 'paid' && previousDoc?.paymentStatus !== 'paid') {
+          await req.payload.create({
+            collection: 'alerts',
+            data: {
+              title: 'Payment Success',
+              message: `Payment received for booking #${doc.bookingCode}`,
+              type: 'info',
+              isRead: false,
+            },
+          })
+        }
+
+        // 5. SOS / Emergency Alert
+        if (doc.sosTriggered === true && previousDoc?.sosTriggered !== true) {
+          await req.payload.create({
+            collection: 'alerts',
+            data: {
+              title: '🆘 EMERGENCY / SOS',
+              message: `SOS triggered for booking #${doc.bookingCode} by ${doc.customerName}`,
+              type: 'emergency',
+              isRead: false,
+            },
+          })
+        }
       },
     ],
   },
@@ -245,6 +312,15 @@ export const Bookings: CollectionConfig = {
       name: 'paymentAmount',
       type: 'number',
       required: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'sosTriggered',
+      type: 'checkbox',
+      label: '🚨 Trigger SOS / Emergency',
+      defaultValue: false,
       admin: {
         position: 'sidebar',
       },

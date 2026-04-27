@@ -79,6 +79,8 @@ export interface Config {
     'vehicle-icons': VehicleIcon;
     'slider-images': SliderImage;
     contacts: Contact;
+    alerts: Alert;
+    reviews: Review;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -102,6 +104,8 @@ export interface Config {
     'vehicle-icons': VehicleIconsSelect<false> | VehicleIconsSelect<true>;
     'slider-images': SliderImagesSelect<false> | SliderImagesSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
+    alerts: AlertsSelect<false> | AlertsSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -116,12 +120,16 @@ export interface Config {
     'customer-report': CustomerReport;
     'payment-settings': PaymentSetting;
     'vehicle-report': VehicleReport;
+    'cancellation-control': CancellationControl;
+    'general-settings': GeneralSetting;
   };
   globalsSelect: {
     'booking-report': BookingReportSelect<false> | BookingReportSelect<true>;
     'customer-report': CustomerReportSelect<false> | CustomerReportSelect<true>;
     'payment-settings': PaymentSettingsSelect<false> | PaymentSettingsSelect<true>;
     'vehicle-report': VehicleReportSelect<false> | VehicleReportSelect<true>;
+    'cancellation-control': CancellationControlSelect<false> | CancellationControlSelect<true>;
+    'general-settings': GeneralSettingsSelect<false> | GeneralSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -197,6 +205,14 @@ export interface Driver {
    */
   photo?: (string | null) | Media;
   status: 'available' | 'not_available' | 'driving';
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  location?: [number, number] | null;
+  lastUpdated?: string | null;
+  assignedVehicle?: (string | null) | Vehicle;
+  user?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -218,38 +234,6 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tariffs".
- */
-export interface Tariff {
-  id: string;
-  vehicle: string | Vehicle;
-  oneway: {
-    perKmRate: number;
-    bata: number;
-    minDistance: number;
-    extras?: string | null;
-  };
-  roundtrip: {
-    perKmRate: number;
-    bata: number;
-    minDistance: number;
-    extras?: string | null;
-  };
-  packages: {
-    hours: number;
-    perHourRate: number;
-    extraKmRate: number;
-    extraHourRate: number;
-    nightBata?: number | null;
-    km: number;
-    bata: number;
-    extras?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -331,6 +315,38 @@ export interface VehicleIcon {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tariffs".
+ */
+export interface Tariff {
+  id: string;
+  vehicle: string | Vehicle;
+  oneway: {
+    perKmRate: number;
+    bata: number;
+    minDistance: number;
+    extras?: string | null;
+  };
+  roundtrip: {
+    perKmRate: number;
+    bata: number;
+    minDistance: number;
+    extras?: string | null;
+  };
+  packages: {
+    hours: number;
+    perHourRate: number;
+    extraKmRate: number;
+    extraHourRate: number;
+    nightBata?: number | null;
+    km: number;
+    bata: number;
+    extras?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "bookings".
  */
 export interface Booking {
@@ -373,6 +389,7 @@ export interface Booking {
   status?: ('pending' | 'confirmed' | 'cancelled' | 'completed') | null;
   paymentStatus?: ('unpaid' | 'partial' | 'paid' | 'failed') | null;
   paymentAmount?: number | null;
+  sosTriggered?: boolean | null;
   paymentType?: ('minimum' | 'full') | null;
   razorpayOrderId?: string | null;
   razorpayPaymentId?: string | null;
@@ -458,6 +475,8 @@ export interface SliderImage {
   };
 }
 /**
+ * Manage customer, partner, and driver inquiries.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contacts".
  */
@@ -467,6 +486,36 @@ export interface Contact {
   phone: string;
   message?: string | null;
   inquiryType: 'customer' | 'partner' | 'driver';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alerts".
+ */
+export interface Alert {
+  id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'warning' | 'emergency' | 'payment_fail';
+  triggeredBy?: (string | null) | User;
+  isRead?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: string;
+  booking: string | Booking;
+  user: string | User;
+  /**
+   * Star rating from 1 to 5
+   */
+  rating: number;
+  comment: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -541,6 +590,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contacts';
         value: string | Contact;
+      } | null)
+    | ({
+        relationTo: 'alerts';
+        value: string | Alert;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: string | Review;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -640,6 +697,10 @@ export interface DriversSelect<T extends boolean = true> {
   license?: T;
   photo?: T;
   status?: T;
+  location?: T;
+  lastUpdated?: T;
+  assignedVehicle?: T;
+  user?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -729,6 +790,7 @@ export interface BookingsSelect<T extends boolean = true> {
   status?: T;
   paymentStatus?: T;
   paymentAmount?: T;
+  sosTriggered?: T;
   paymentType?: T;
   razorpayOrderId?: T;
   razorpayPaymentId?: T;
@@ -883,6 +945,31 @@ export interface ContactsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alerts_select".
+ */
+export interface AlertsSelect<T extends boolean = true> {
+  title?: T;
+  message?: T;
+  type?: T;
+  triggeredBy?: T;
+  isRead?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  booking?: T;
+  user?: T;
+  rating?: T;
+  comment?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -963,6 +1050,35 @@ export interface VehicleReport {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cancellation-control".
+ */
+export interface CancellationControl {
+  id: string;
+  penaltyAmount: number;
+  rules: string;
+  allowGracePeriod?: boolean | null;
+  trackingEnabled?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "general-settings".
+ */
+export interface GeneralSetting {
+  id: string;
+  systemName: string;
+  /**
+   * Enter number with country code (e.g. 91xxxxxxxxxx)
+   */
+  whatsappNumber: string;
+  supportEmail?: string | null;
+  currencySymbol?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "booking-report_select".
  */
 export interface BookingReportSelect<T extends boolean = true> {
@@ -994,6 +1110,32 @@ export interface PaymentSettingsSelect<T extends boolean = true> {
  * via the `definition` "vehicle-report_select".
  */
 export interface VehicleReportSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cancellation-control_select".
+ */
+export interface CancellationControlSelect<T extends boolean = true> {
+  penaltyAmount?: T;
+  rules?: T;
+  allowGracePeriod?: T;
+  trackingEnabled?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "general-settings_select".
+ */
+export interface GeneralSettingsSelect<T extends boolean = true> {
+  systemName?: T;
+  whatsappNumber?: T;
+  supportEmail?: T;
+  currencySymbol?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

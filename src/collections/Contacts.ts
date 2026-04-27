@@ -6,6 +6,7 @@ export const Contacts: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'phone', 'inquiryType', 'createdAt'],
     group: 'Collection',
+    description: 'Manage customer, partner, and driver inquiries.',
   },
   access: {
     create: () => true, // Allow anyone to submit the contact form

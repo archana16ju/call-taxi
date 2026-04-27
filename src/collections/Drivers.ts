@@ -68,7 +68,51 @@ export const Drivers: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'location',
+      type: 'point',
+      label: 'Live Location',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'lastUpdated',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'assignedVehicle',
+      type: 'relationship',
+      relationTo: 'vehicles',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'user',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+      },
+      required: false,
+    },
   ],
+  hooks: {
+    beforeChange: [
+      ({ data, originalDoc }) => {
+        // If location is being updated, set the lastUpdated timestamp
+        if (data.location) {
+          data.lastUpdated = new Date().toISOString()
+        }
+        return data
+      },
+    ],
+  },
   access: {
     create: () => true,
     read: () => true,

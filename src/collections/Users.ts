@@ -5,6 +5,13 @@ export const Users: CollectionConfig = {
   admin: {
     group: 'Collection',
     useAsTitle: 'email',
+    components: {
+      views: {
+        list: {
+          Component: './app/(payload)/components/UserManagement.tsx#default',
+        },
+      },
+    },
   },
   auth: true,
   fields: [

@@ -26,6 +26,10 @@ import { getCustomerReport } from './endpoints/getCustomerReport'
 import { CustomerReport } from './globals/CustomerReport'
 import { PaymentSettings } from './globals/PaymentSettings'
 import { VehicleReport } from './globals/VehicleReport'
+import { Alerts } from './collections/Alerts'
+import { Reviews } from './collections/Reviews'
+import { CancellationControl } from './globals/CancellationControl'
+import { GeneralSettings } from './globals/GeneralSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -53,6 +57,16 @@ export default buildConfig({
         Logo: './app/(payload)/components/Logo.tsx#Logo',
         Icon: './app/(payload)/components/Logo.tsx#Logo',
       },
+      views: {
+        dashboard: {
+          Component: './app/(payload)/components/MainDashboard.tsx#default',
+        },
+        'live-tracking': {
+          Component: './app/(payload)/components/FullMap.tsx#default',
+          path: '/live-tracking',
+        },
+      },
+      Nav: './app/(payload)/components/CustomNav.tsx#CustomNav',
     },
   },
   collections: [
@@ -68,10 +82,12 @@ export default buildConfig({
     VehicleIcons,
     SliderImages,
     Contacts,
+    Alerts,
+    Reviews,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
-  globals: [BookingReport, CustomerReport, PaymentSettings,VehicleReport],
+  globals: [BookingReport, CustomerReport, PaymentSettings, VehicleReport, CancellationControl, GeneralSettings],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
