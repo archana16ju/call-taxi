@@ -10,6 +10,11 @@ export const Users: CollectionConfig = {
         list: {
           Component: './app/(payload)/components/UserManagement.tsx#default',
         },
+        edit: {
+          default: {
+            Component: './app/(payload)/components/UserCreate.tsx#default',
+          },
+        },
       },
     },
   },
@@ -38,37 +43,22 @@ export const Users: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+  name: 'fullName',
+  type: 'text',
+},
+{
+  name: 'phone',
+  type: 'text',
+},
+{
+  name: 'username',
+  type: 'text',
+},
+{
+  name: 'active',
+  type: 'checkbox',
+  defaultValue: true,
+},
   ],
-  access: {
-    // Creation: Only superadmins can create new users
-    create: ({ req: { user } }) => user?.role === 'superadmin',
-
-    // Read: Superadmins/admins/accounts full read; drivers only own data
-    read: ({ req: { user } }) => {
-      if (user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'accounts') {
-        return true // Full read access
-      }
-      if (user?.role === 'driver') {
-        return { id: { equals: user.id } } // Only own profile
-      }
-      return false
-    },
-
-    // Update: Superadmins full; admins none; accounts limited (e.g., to payments, but customize further); drivers own only
-    update: ({ req: { user }, id: _id }) => {
-      if (user?.role === 'superadmin') return true
-      if (user?.role === 'admin') return false // Read-only
-      if (user?.role === 'accounts') {
-        // Limited: Customize to allow updates on payment fields if added; for now, own only
-        return { id: { equals: user.id } }
-      }
-      if (user?.role === 'driver') {
-        return { id: { equals: user.id } } // Own profile only
-      }
-      return false
-    },
-
-    // Delete: Only superadmins
-    delete: ({ req: { user } }) => user?.role === 'superadmin',
-  },
 }

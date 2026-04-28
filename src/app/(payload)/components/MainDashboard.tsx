@@ -38,11 +38,7 @@ import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet components to avoid SSR issues
-const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false })
-const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false })
-const Marker = dynamic(() => import('react-leaflet').then(m => m.Marker), { ssr: false })
-const Popup = dynamic(() => import('react-leaflet').then(m => m.Popup), { ssr: false })
-const Polyline = dynamic(() => import('react-leaflet').then(m => m.Polyline), { ssr: false })
+import MapComponent, { MapMarker, MapPolyline } from './MapComponent'
 
 let L: any;
 if (typeof window !== 'undefined') {
@@ -130,46 +126,57 @@ export default function MainDashboard() {
 
   const fetchLocations = React.useCallback(async () => {
     try {
-      const res = await fetch('/api/drivers?where[location][exists]=true&limit=100').then(res => res.json())
-      setDriverLocations(res.docs)
+      const driversRes = await fetch('/api/drivers?where[location][exists]=true&limit=100').then(res => {
+        if (!res.ok) throw new Error('Failed to fetch drivers')
+        return res.json()
+      })
+      setDriverLocations(driversRes.docs)
 
       // Fetch active bookings for routes
-      const bookingsRes = await fetch('/api/bookings?where[status][equals]=confirmed&limit=100').then(res => res.json())
+      const bookingsRes = await fetch('/api/bookings?where[status][equals]=confirmed&limit=100').then(res => {
+        if (!res.ok) throw new Error('Failed to fetch bookings')
+        return res.json()
+      })
       
-      res.docs.forEach(async (driver: any) => {
-        if (driver.status === 'driving' && driver.location) {
+      const routePromises = driversRes.docs.map(async (driver: any) => {
+        if (driver.status === 'driving' && driver.location && Array.isArray(driver.location)) {
           const booking = bookingsRes.docs.find((b: any) => {
             const bDriverId = typeof b.driver === 'object' ? b.driver?.id : b.driver;
             return bDriverId === driver.id;
           });
 
-          if (booking && booking.dropoffLocation) {
+          if (booking && booking.dropoffLocation && Array.isArray(booking.dropoffLocation)) {
             try {
               const osrm = `https://router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
-              const routeRes = await fetch(osrm).then(res => res.json())
-              if (routeRes.routes && routeRes.routes[0]) {
-                setActiveRoutes(prev => ({
-                  ...prev,
-                  [driver.id]: routeRes.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]])
-                }))
+              const routeRes = await fetch(osrm).then(res => {
+                if (!res.ok) return null
+                return res.json()
+              })
+              if (routeRes && routeRes.routes && routeRes.routes[0]) {
+                return { id: driver.id, coords: routeRes.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]) }
               }
             } catch (e) {
-              console.error(`Error fetching route for driver ${driver.id}`, e)
+              console.warn(`Error fetching route for driver ${driver.id}:`, e)
             }
           }
-        } else {
-          setActiveRoutes(prev => {
-            if (prev[driver.id]) {
-              const next = { ...prev }
-              delete next[driver.id]
-              return next
-            }
-            return prev
-          })
         }
+        return { id: driver.id, coords: null }
+      })
+
+      const results = await Promise.all(routePromises)
+      setActiveRoutes(prev => {
+        const next = { ...prev }
+        results.forEach(res => {
+          if (res.coords) {
+            next[res.id] = res.coords
+          } else {
+            delete next[res.id]
+          }
+        })
+        return next
       })
     } catch (e) {
-      console.error('Error fetching locations', e)
+      console.error('fetchLocations failed:', e)
     }
   }, [])
 
@@ -395,60 +402,41 @@ export default function MainDashboard() {
               position: 'relative',
               zIndex: 0
             }}>
-              {typeof window !== 'undefined' && (
-                <MapContainer 
-                  center={[13.0827, 80.2707]} 
-                  zoom={12} 
-                  style={{ height: '100%', width: '100%' }}
-                  zoomControl={false}
-                >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  
-                  {Object.entries(activeRoutes).map(([driverId, positions]: [string, any]) => (
-                    <Polyline 
-                      key={`route-${driverId}`}
-                      positions={positions} 
-                      pathOptions={{ 
-                        color: '#3b82f6', 
-                        weight: 3, 
-                        opacity: 0.6,
-                        lineCap: 'round',
-                        dashArray: '5, 10'
-                      }} 
-                    />
-                  ))}
-
-                  {driverLocations.map((loc, i) => {
-                    // Safety check to ensure location exists and has valid coordinates
-                    if (!loc.location || !Array.isArray(loc.location) || loc.location.length < 2) return null;
-                    
-                    return (
-                      <Marker 
-                        key={i} 
-                        position={[loc.location[1], loc.location[0]]} 
-                        icon={taxiIcon}
-                      >
-                        <Popup>
-                          <Box sx={{ p: 0.5 }}>
-                            <Typography variant="caption" sx={{ fontWeight: 700, display: 'block', color: '#000' }}>Driver: {loc.name}</Typography>
-                            {loc.assignedVehicle && (
-                              <Typography variant="caption" sx={{ display: 'block', color: '#3b82f6', fontWeight: 700 }}>
-                                Car: {typeof loc.assignedVehicle === 'object' ? loc.assignedVehicle.name : 'Assigned'}
-                              </Typography>
-                            )}
-                            <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>Status: {loc.status}</Typography>
-                            {loc.lastUpdated && (
-                              <Typography variant="caption" sx={{ display: 'block', color: '#94a3b8', fontSize: '0.6rem' }}>
-                                Last seen: {new Date(loc.lastUpdated).toLocaleTimeString()}
-                              </Typography>
-                            )}
-                          </Box>
-                        </Popup>
-                      </Marker>
-                    );
-                  })}
-                </MapContainer>
-              )}
+              <MapComponent 
+                center={[13.0827, 80.2707]}
+                zoom={12}
+                polylines={Object.entries(activeRoutes).map(([id, positions]) => ({
+                  id,
+                  positions: positions as [number, number][],
+                  color: '#3b82f6',
+                  weight: 3,
+                  opacity: 0.6,
+                  dashArray: '5, 10'
+                }))}
+                markers={driverLocations
+                  .filter(loc => loc.location && Array.isArray(loc.location) && loc.location.length >= 2)
+                  .map((loc) => ({
+                    id: loc.id,
+                    position: [loc.location[1], loc.location[0]],
+                    icon: taxiIcon,
+                    popup: (
+                      <Box sx={{ p: 0.5 }}>
+                        <Typography variant="caption" sx={{ fontWeight: 700, display: 'block', color: '#000' }}>Driver: {loc.name}</Typography>
+                        {loc.assignedVehicle && (
+                          <Typography variant="caption" sx={{ display: 'block', color: '#3b82f6', fontWeight: 700 }}>
+                            Car: {typeof loc.assignedVehicle === 'object' ? loc.assignedVehicle.name : 'Assigned'}
+                          </Typography>
+                        )}
+                        <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>Status: {loc.status}</Typography>
+                        {loc.lastUpdated && (
+                          <Typography variant="caption" sx={{ display: 'block', color: '#94a3b8', fontSize: '0.6rem' }}>
+                            Last seen: {new Date(loc.lastUpdated).toLocaleTimeString()}
+                          </Typography>
+                        )}
+                      </Box>
+                    )
+                  }))}
+              />
             </Box>
           </Paper>
         </Grid>
@@ -548,7 +536,7 @@ export default function MainDashboard() {
 
       <Box sx={{ mt: 4, textAlign: 'center', pb: 2 }}>
         <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>
-          © 2025 Taxi System. All rights reserved.
+          © 2025 Taxi Services. All rights reserved.
         </Typography>
       </Box>
     </Box>

@@ -166,6 +166,10 @@ export interface User {
   id: string;
   role: 'superadmin' | 'admin' | 'accounts' | 'driver';
   driverProfile?: (string | null) | Driver;
+  fullName?: string | null;
+  phone?: string | null;
+  username?: string | null;
+  active?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -648,6 +652,10 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
   driverProfile?: T;
+  fullName?: T;
+  phone?: T;
+  username?: T;
+  active?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

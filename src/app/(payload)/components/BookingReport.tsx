@@ -23,9 +23,15 @@ import {
   Card,
   Menu,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import DownloadIcon from '@mui/icons-material/Download'
+import MapIcon from '@mui/icons-material/Map'
+import MapComponent from './MapComponent'
 
 interface Booking {
   id: string
@@ -39,6 +45,8 @@ interface Booking {
   estimatedFare?: number
   status: string
   driver?: { id: string; name: string } | string
+  pickupLocation?: [number, number]
+  dropoffLocation?: [number, number]
 }
 
 interface Driver {
@@ -63,6 +71,12 @@ const BookingReport = () => {
   // Driver Update State
   const [driverAnchorEl, setDriverAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedDriverBookingId, setSelectedDriverBookingId] = useState<string | null>(null)
+ 
+   // Map Modal State
+   const [mapOpen, setMapOpen] = useState(false)
+   const [mapRoute, setMapRoute] = useState<[number, number][]>([])
+   const [mapMarkers, setMapMarkers] = useState<any[]>([])
+   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
 
   const handleStatusClick = (event: React.MouseEvent<HTMLElement>, id: string) => {
     setAnchorEl(event.currentTarget)
@@ -129,6 +143,42 @@ const BookingReport = () => {
     } catch (error) {
       console.error('Failed to update driver:', error)
       fetchData() // Revert/sync on error
+    }
+  }
+
+  const handleOpenMap = async (booking: Booking) => {
+    if (!booking.pickupLocation || !booking.dropoffLocation) {
+      alert('Location coordinates not available for this booking.')
+      return
+    }
+
+    setSelectedBooking(booking)
+    setMapOpen(true)
+    setMapRoute([])
+    
+    // Set markers
+    setMapMarkers([
+      {
+        id: 'pickup',
+        position: [booking.pickupLocation[1], booking.pickupLocation[0]],
+        popup: <Typography variant="caption">Pickup: {booking.pickupLocationName}</Typography>
+      },
+      {
+        id: 'dropoff',
+        position: [booking.dropoffLocation[1], booking.dropoffLocation[0]],
+        popup: <Typography variant="caption">Dropoff: {booking.dropoffLocationName}</Typography>
+      }
+    ])
+
+    // Fetch route
+    try {
+      const osrm = `https://router.project-osrm.org/route/v1/driving/${booking.pickupLocation[0]},${booking.pickupLocation[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
+      const res = await fetch(osrm).then(res => res.json())
+      if (res.routes && res.routes[0]) {
+        setMapRoute(res.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]))
+      }
+    } catch (e) {
+      console.error('Error fetching route:', e)
     }
   }
 
@@ -517,6 +567,16 @@ const BookingReport = () => {
               >
                 STATUS
               </TableCell>
+              <TableCell
+                sx={{
+                  color: 'var(--theme-text-secondary, #aaa)',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid var(--theme-border-color)',
+                  borderBottom: '1px solid var(--theme-border-color)',
+                }}
+              >
+                MAP
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -725,6 +785,21 @@ const BookingReport = () => {
                       sx={{ fontWeight: 'bold', cursor: 'pointer' }}
                     />
                   </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'var(--theme-text)',
+                      borderRight: '1px solid var(--theme-border-color)',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    <IconButton 
+                      size="small" 
+                      onClick={() => handleOpenMap(row)}
+                      sx={{ color: '#3b82f6' }}
+                    >
+                      <MapIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))
             )}
@@ -771,6 +846,45 @@ const BookingReport = () => {
           </MenuItem>
         ))}
       </Menu>
+
+      {/* Map Modal */}
+      <Dialog 
+        open={mapOpen} 
+        onClose={() => setMapOpen(false)} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: { 
+            backgroundColor: 'var(--theme-bg-card)', 
+            border: '1px solid var(--theme-border-color)',
+            backgroundImage: 'none'
+          }
+        }}
+      >
+        <DialogTitle sx={{ color: 'var(--theme-text)', fontWeight: 700 }}>
+          Trip Route Preview
+        </DialogTitle>
+        <DialogContent sx={{ height: 500, p: 0 }}>
+          {selectedBooking && (
+            <MapComponent 
+              center={[selectedBooking.pickupLocation![1], selectedBooking.pickupLocation![0]]}
+              zoom={13}
+              markers={mapMarkers}
+              polylines={mapRoute.length > 0 ? [{
+                id: 'route',
+                positions: mapRoute,
+                color: '#3b82f6',
+                weight: 4
+              }] : []}
+            />
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setMapOpen(false)} variant="contained" sx={{ textTransform: 'none' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

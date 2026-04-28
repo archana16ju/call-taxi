@@ -62,7 +62,7 @@ export default buildConfig({
           Component: './app/(payload)/components/MainDashboard.tsx#default',
         },
         'live-tracking': {
-          Component: './app/(payload)/components/FullMap.tsx#default',
+          Component: './app/(payload)/components/MapComponent.tsx#LiveTrackingDashboard',
           path: '/live-tracking',
         },
       },

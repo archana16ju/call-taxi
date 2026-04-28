@@ -52,9 +52,9 @@ const menuItems = [
   { label: 'Booking Reports', icon: <AssessmentIcon />, path: '/admin/globals/booking-report' },
   { label: 'Vehicle Reports', icon: <AssessmentIcon />, path: '/admin/globals/vehicle-report' },
   { type: 'header', label: 'MANAGEMENT' },
+  { label: 'Users & Roles', icon: <AdminPanelSettingsIcon />, path: '/admin/collections/users' },
   { label: 'Sliders', icon: <CollectionsIcon />, path: '/admin/collections/slider-images' },
   { label: 'Media Gallery', icon: <CollectionsIcon />, path: '/admin/collections/media' },
-  { label: 'Users & Roles', icon: <AdminPanelSettingsIcon />, path: '/admin/collections/users' },
 ]
 
 export const CustomNav: React.FC = () => {
@@ -86,7 +86,7 @@ export const CustomNav: React.FC = () => {
         </Box>
         <Box>
           <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1 }}>
-            Taxi System
+            Taxi Service
           </Typography>
           <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>
             Advanced Premium
@@ -158,10 +158,10 @@ export const CustomNav: React.FC = () => {
           border: '1px solid var(--theme-border-color)'
         }}>
           <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--theme-text)' }}>
-            ₹40K Plan
+            Subscription Plans
           </Typography>
           <Typography variant="caption" sx={{ display: 'block', mb: 2, color: 'var(--theme-text-secondary)' }}>
-            Advanced Premium System
+           Unlock Powerful Features
           </Typography>
           <Button 
             variant="contained" 
@@ -181,7 +181,7 @@ export const CustomNav: React.FC = () => {
 
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>
-          © 2026 Taxi System
+          © 2026 Taxi Services
         </Typography>
       </Box>
     </Box>
