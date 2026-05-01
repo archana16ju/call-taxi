@@ -9,7 +9,7 @@ export const CustomerReport: GlobalConfig = {
       views: {
         edit: {
           default: {
-            Component: './app/(payload)/components/CustomerReport.tsx#default',
+            Component: '@/app/(payload)/components/CustomerReport#default',
           },
         },
       },

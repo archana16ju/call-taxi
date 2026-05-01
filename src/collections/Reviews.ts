@@ -4,6 +4,13 @@ export const Reviews: CollectionConfig = {
   slug: 'reviews',
   admin: {
     useAsTitle: 'rating',
+     components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/review#default',
+        },
+      },
+    },
     group: 'Collection',
     defaultColumns: ['rating', 'booking', 'user', 'createdAt'],
   },

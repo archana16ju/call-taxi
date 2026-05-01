@@ -8,6 +8,7 @@ export const VehicleImages: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: () => true,
   },
   upload: {
     staticDir: 'vehicle-images',
@@ -49,6 +50,7 @@ export const VehicleIcons: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: () => true,
   },
   upload: {
     staticDir: 'vehicle-icons',
@@ -74,6 +76,13 @@ export const Vehicles: CollectionConfig = {
     group: 'Collection',
     useAsTitle: 'name',
     defaultColumns: ['name', 'number', 'driver', 'status', 'category'],
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/VehicleManagement#default',
+        },
+      },
+    },
   },
   hooks: {
     beforeChange: [
@@ -172,14 +181,14 @@ export const Vehicles: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'vehicle-images',
-      required: false, // Changed from true
+      relationTo: 'media',
+      required: false,
     },
     {
       name: 'icon',
       type: 'upload',
-      relationTo: 'vehicle-icons',
-      required: false, // Changed from true
+      relationTo: 'media',
+      required: false,
     },
     {
       name: 'category',

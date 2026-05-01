@@ -4,6 +4,15 @@ export const CancellationControl: GlobalConfig = {
   slug: 'cancellation-control',
   admin: {
     group: 'Management',
+    components: {
+      views: {
+        edit: {
+          default: {
+            Component: '@/app/(payload)/components/CancellationControlComponent#default',
+          },
+        },
+      },
+    },
   },
   access: {
     read: () => true,

@@ -34,6 +34,9 @@ import {
   BarChart,
   Bar,
 } from 'recharts'
+
+import LocalShippingIcon from '@mui/icons-material/LocalShipping'
+
 import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 
@@ -475,8 +478,8 @@ export default function MainDashboard() {
                { label: 'Payment Settings', sub: 'Advance & methods', icon: <PaymentsIcon />, color: '#8b5cf6', path: '/admin/globals/payment-settings' },
                { label: 'WhatsApp Support', sub: 'Chat with customers', icon: <WhatsAppIcon />, color: '#10b981', path: '/admin/globals/general-settings' },
                { label: 'Cancellation Control', sub: 'Rules & penalties', icon: <CancelIcon />, color: '#ef4444', path: '/admin/globals/cancellation-control' },
-                { label: 'Sliders', sub: 'Banners & branding', icon: <CollectionsIcon />, color: '#ec4899', path: '/admin/collections/slider-images' },
-               { label: 'Media Gallery', sub: 'Banners & branding', icon: <CollectionsIcon />, color: '#52caf3ff', path: '/admin/collections/media' },
+                { label: 'Vehicles', sub: 'Manage vehicle fleet', icon: <LocalShippingIcon  />, color: '#ec4899', path: '/admin/collections/vehicles' },
+               { label: 'Media Gallery', sub: 'Banners & branding', icon: <CollectionsIcon />, color: '#22c55e', path: '/admin/collections/media' },
                { label: 'Users & Roles', sub: 'Manage all users', icon: <AdminPanelSettingsIcon />, color: '#6366f1', path: '/admin/collections/users' },
              ].map((item, i) => (
                <Grid size={{ xs: 6, md: 2 }} key={i}>

@@ -1,40 +1,58 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
+import path from 'path'
+import { fileURLToPath } from 'url'
+import sharp from 'sharp'
+import { buildConfig } from 'payload'
+
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
-import sharp from 'sharp'
 
+// Collections
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Drivers } from './collections/Drivers'
 import { Tariffs } from './collections/Tariffs'
 import { Vehicles, VehicleImages, VehicleIcons } from './collections/Vehicles'
 import { Bookings } from './collections/Bookings'
-import { BookingReport } from './globals/BookingReport'
 import { Customers } from './collections/Customers'
 import { Coupons } from './collections/Coupons'
 import { SliderImages } from './collections/SliderImages'
 import { Contacts } from './collections/Contacts'
-import { getBookingReport } from './endpoints/getBookingReport'
-import { getCustomerReport } from './endpoints/getCustomerReport'
+import { Alerts } from './collections/Alerts'
+import { Reviews } from './collections/Reviews'
+import RevenueSettlement from './collections/revenue-settlements'
+import PaymentMethods from './collections/paymentMethods'
+import { Invoices } from './collections/Invoices'
+import { TripOtps } from './collections/TripOtps'
+import { TripSharing } from './collections/TripSharing'
+import { DriverOfflineLogs } from './collections/DriverOfflineLogs'
+
+// Globals
+import { BookingReport } from './globals/BookingReport'
 import { CustomerReport } from './globals/CustomerReport'
 import { PaymentSettings } from './globals/PaymentSettings'
 import { VehicleReport } from './globals/VehicleReport'
-import { Alerts } from './collections/Alerts'
-import { Reviews } from './collections/Reviews'
 import { CancellationControl } from './globals/CancellationControl'
 import { GeneralSettings } from './globals/GeneralSettings'
 
+// Endpoints
+import { getBookingReport } from './endpoints/getBookingReport'
+import { getCustomerReport } from './endpoints/getCustomerReport'
+
+// Paths
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// 🔥 IMPORTANT: point to /src so "@/..." works
+const srcDir = path.resolve(process.cwd(), 'src')
+
 export default buildConfig({
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+
   endpoints: [
     {
       path: '/get-booking-report',
@@ -47,72 +65,98 @@ export default buildConfig({
       handler: getCustomerReport,
     },
   ],
+
   admin: {
     user: Users.slug,
+
+    // ✅ FIXED importMap resolution
     importMap: {
-      baseDir: path.resolve(dirname),
+      baseDir: srcDir,
     },
+
     components: {
       graphics: {
-        Logo: './app/(payload)/components/Logo.tsx#Logo',
-        Icon: './app/(payload)/components/Logo.tsx#Logo',
+        Logo: '@/app/(payload)/components/Logo#Logo',
+        Icon: '@/app/(payload)/components/Logo#Logo',
       },
+
+      Nav: '@/app/(payload)/components/CustomNav#CustomNav',
+
       views: {
         dashboard: {
-          Component: './app/(payload)/components/MainDashboard.tsx#default',
+          Component: '@/app/(payload)/components/MainDashboard#default',
         },
         'live-tracking': {
-          Component: './app/(payload)/components/MapComponent.tsx#LiveTrackingDashboard',
-          path: '/live-tracking',
+          Component: '@/app/(payload)/components/MapComponent#LiveTrackingDashboard',
+        },
+        'driver-allocation': {
+          Component: '@/app/(payload)/components/DriverAllocationManagement#default',
         },
       },
-      Nav: './app/(payload)/components/CustomNav.tsx#CustomNav',
     },
   },
+
   collections: [
     Users,
     Media,
     Drivers,
     Tariffs,
     Vehicles,
+    VehicleImages,
+    VehicleIcons,
     Bookings,
     Customers,
     Coupons,
-    VehicleImages,
-    VehicleIcons,
     SliderImages,
     Contacts,
     Alerts,
     Reviews,
+    RevenueSettlement,
+    PaymentMethods,
+    Invoices,
+    TripOtps,
+    TripSharing,
+    DriverOfflineLogs,
   ],
+
+  globals: [
+    BookingReport,
+    CustomerReport,
+    PaymentSettings,
+    VehicleReport,
+    CancellationControl,
+    GeneralSettings,
+  ],
+
   editor: lexicalEditor(),
+
   secret: process.env.PAYLOAD_SECRET || '',
-  globals: [BookingReport, CustomerReport, PaymentSettings, VehicleReport, CancellationControl, GeneralSettings],
+
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
+
   sharp,
+
   plugins: [
     payloadCloudPlugin(),
-    vercelBlobStorage({
-      collections: {
-        media: {
-          prefix: 'Call Taxi/Kani Taxi',
-        },
-        'vehicle-images': {
-          prefix: 'Call Taxi/Kani Taxi/Vehicles',
-        },
-        'vehicle-icons': {
-          prefix: 'Call Taxi/Kani Taxi/Icons',
-        },
-        'slider-images': {
-          prefix: 'Call Taxi/Kani Taxi/slider',
-        },
-      },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    }),
+
+    ...(process.env.BLOB_READ_WRITE_TOKEN
+      ? [
+          vercelBlobStorage({
+            collections: {
+              media: { prefix: 'Call Taxi/Kani Taxi' },
+              'vehicle-images': { prefix: 'Call Taxi/Kani Taxi/Vehicles' },
+              'vehicle-icons': { prefix: 'Call Taxi/Kani Taxi/Icons' },
+              'slider-images': { prefix: 'Call Taxi/Kani Taxi/slider' },
+            },
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+          }),
+        ]
+      : []),
   ],
 })

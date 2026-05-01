@@ -6,6 +6,13 @@ export const Customers: CollectionConfig = {
     group: 'Collection',
     useAsTitle: 'name',
     defaultColumns: ['name', 'phone', 'email'],
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/CustomerManagement#default',
+        },
+      },
+    },
   },
   fields: [
     {
@@ -22,6 +29,15 @@ export const Customers: CollectionConfig = {
     {
       name: 'email',
       type: 'email',
+    },
+    {
+      name: 'accountType',
+      type: 'select',
+      options: [
+        { label: 'Individual', value: 'individual' },
+        { label: 'Corporate', value: 'corporate' }
+      ],
+      defaultValue: 'individual',
     },
     {
       name: 'bookings',

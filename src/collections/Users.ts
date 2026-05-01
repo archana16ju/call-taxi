@@ -2,63 +2,81 @@ import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
+
   admin: {
     group: 'Collection',
-    useAsTitle: 'email',
     components: {
       views: {
         list: {
-          Component: './app/(payload)/components/UserManagement.tsx#default',
+          Component: '../app/(payload)/components/UserManagement#default',
         },
         edit: {
           default: {
-            Component: './app/(payload)/components/UserCreate.tsx#default',
+            Component: '../app/(payload)/components/UserCreate#default',
           },
         },
       },
     },
   },
-  auth: true,
+
+  auth: {
+    loginWithUsername: true,
+  },
+
+  access: {
+    update: () => true,
+  },
+
   fields: [
+    {
+      name: 'username',
+      type: 'text',
+      required: true,
+      unique: true,
+    },
+
+    {
+      name: 'email',
+      type: 'email',
+    },
+
+    {
+      name: 'password',
+      type: 'text',
+    },
+
+    {
+      name: 'fullName', // ✅ ADD
+      type: 'text',
+    },
+
+    {
+      name: 'phoneNumber', // ✅ ADD
+      type: 'text',
+    },
+
+    {
+      name: 'active', // ✅ ADD
+      type: 'checkbox',
+      defaultValue: true,
+    },
+
     {
       name: 'role',
       type: 'select',
-      required: true,
       options: [
         { label: 'Superadmin', value: 'superadmin' },
         { label: 'Admin', value: 'admin' },
         { label: 'Accounts', value: 'accounts' },
         { label: 'Driver', value: 'driver' },
       ],
-      defaultValue: 'driver', // Default to least privileged
     },
+
     {
-      name: 'driverProfile',
+      name: 'driverProfile', // ✅ ADD
       type: 'relationship',
-      relationTo: 'drivers',
-      required: false, // Make true if mandatory for drivers
-      hasMany: false, // One-to-one link
-      admin: {
-        condition: (data) => data.role === 'driver',
-        position: 'sidebar',
-      },
+      relationTo: 'drivers', // make sure you have this collection
+      required: false,
     },
-    {
-  name: 'fullName',
-  type: 'text',
-},
-{
-  name: 'phone',
-  type: 'text',
-},
-{
-  name: 'username',
-  type: 'text',
-},
-{
-  name: 'active',
-  type: 'checkbox',
-  defaultValue: true,
-},
   ],
 }

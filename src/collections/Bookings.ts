@@ -1,7 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import { sendWhatsAppMessage } from '../utils/whatsapp'
 
 export const Bookings: CollectionConfig = {
   slug: 'bookings',
+
   defaultSort: '-createdAt',
   admin: {
     group: 'Collection',
@@ -18,6 +20,13 @@ export const Bookings: CollectionConfig = {
       'paymentStatus',
       'paymentAmount',
     ],
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/booking#default',
+        },
+      },
+    },
   },
   hooks: {
     beforeChange: [
@@ -92,7 +101,7 @@ export const Bookings: CollectionConfig = {
             collection: 'drivers',
             id: newDriverId,
             data: {
-              status: 'driving',
+              status: 'onduty',
             } as any,
           })
         }
@@ -130,8 +139,26 @@ export const Bookings: CollectionConfig = {
           })
         }
 
-        // Release driver if booking is completed
-        if (doc.status === 'completed' && newDriverId) {
+        // Update status if booking becomes confirmed
+        if (doc.status === 'confirmed' && previousDoc?.status !== 'confirmed') {
+          if (newDriverId) {
+            await req.payload.update({
+              collection: 'drivers',
+              id: newDriverId,
+              data: { status: 'onduty' } as any,
+            })
+          }
+          if (newVehicleId) {
+            await req.payload.update({
+              collection: 'vehicles',
+              id: newVehicleId,
+              data: { status: 'driving' } as any,
+            })
+          }
+        }
+
+        // Release driver if booking is completed or cancelled
+        if ((doc.status === 'completed' || doc.status === 'cancelled') && newDriverId) {
           await req.payload.update({
             collection: 'drivers',
             id: newDriverId,
@@ -141,8 +168,8 @@ export const Bookings: CollectionConfig = {
           })
         }
 
-        // Release vehicle if booking is completed
-        if (doc.status === 'completed' && newVehicleId) {
+        // Release vehicle if booking is completed or cancelled
+        if ((doc.status === 'completed' || doc.status === 'cancelled') && newVehicleId) {
           await req.payload.update({
             collection: 'vehicles',
             id: newVehicleId,
@@ -150,6 +177,24 @@ export const Bookings: CollectionConfig = {
               status: 'available',
             } as any,
           })
+        }
+
+        // --- AUTOMATIC INVOICE GENERATION ---
+        if (doc.status === 'completed' && previousDoc?.status !== 'completed') {
+           await req.payload.create({
+             collection: 'invoices',
+             data: {
+               booking: doc.id,
+               customer: doc.customer,
+               driver: doc.driver,
+               date: new Date(),
+               baseFare: doc.estimatedFare || 0,
+               pickupLocation: doc.pickupLocationName,
+               dropoffLocation: doc.dropoffLocationName,
+               distance: doc.distanceKm,
+               status: 'pending',
+             } as any
+           })
         }
 
         // --- AUTOMATIC ALERTS ---
@@ -206,6 +251,51 @@ export const Bookings: CollectionConfig = {
           })
         }
 
+        // --- AUTO RE-ALLOCATION LOGIC ---
+        // If a driver was assigned but is now unassigned (cancellation)
+
+        if (operation === 'update' && oldDriverId && !newDriverId && doc.status === 'confirmed') {
+          // Find next best driver
+          const availableDrivers = await req.payload.find({
+            collection: 'drivers',
+            where: {
+              status: { equals: 'available' },
+            },
+            limit: 10,
+          })
+
+          if (availableDrivers.docs.length > 0) {
+            // Simply pick the first available one for now (could be distance based)
+            const nextDriver = availableDrivers.docs[0]
+            
+            await req.payload.update({
+              collection: 'bookings',
+              id: doc.id,
+              data: {
+                driver: nextDriver.id,
+                reallocationHistory: [
+                  ...(doc.reallocationHistory || []),
+                  {
+                    previousDriver: oldDriverId,
+                    timestamp: new Date().toISOString(),
+                    reason: 'Driver cancelled / unassigned',
+                  },
+                ],
+              } as any,
+            })
+
+            await req.payload.create({
+              collection: 'alerts',
+              data: {
+                title: 'Auto Re-allocation',
+                message: `Booking #${doc.bookingCode} re-allocated to ${nextDriver.name} after cancellation.`,
+                type: 'info',
+                isRead: false,
+              },
+            })
+          }
+        }
+
         // 5. SOS / Emergency Alert
         if (doc.sosTriggered === true && previousDoc?.sosTriggered !== true) {
           await req.payload.create({
@@ -217,6 +307,80 @@ export const Bookings: CollectionConfig = {
               isRead: false,
             },
           })
+        }
+
+        // --- AUTOMATIC OTP GENERATION ON CONFIRMATION ---
+        if (doc.status === 'confirmed' && previousDoc?.status !== 'confirmed') {
+          const otp = Math.floor(100000 + Math.random() * 900000).toString()
+          const expiry = new Date()
+          expiry.setMinutes(expiry.getMinutes() + 10) // 10 minutes expiry
+
+          await (req.payload.create as any)({
+            collection: 'trip-otps',
+            data: {
+              booking: doc.id,
+              otp: otp,
+              expiresAt: expiry,
+              deliveryMethod: 'sms',
+              deliveryStatus: 'sent',
+            },
+          })
+
+          // Create an alert for the OTP
+          await req.payload.create({
+            collection: 'alerts',
+            data: {
+              title: 'OTP Generated',
+              message: `OTP for booking #${doc.bookingCode} is ${otp}. Sent to ${doc.customerPhone}`,
+              type: 'info',
+              isRead: false,
+            },
+          })
+        }
+
+        // --- AUTOMATIC SHARING LINK ON TRIP START ---
+        if (doc.tripStatus === 'started' && previousDoc?.tripStatus !== 'started') {
+          const shareToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+          const expiry = new Date()
+          expiry.setHours(expiry.getHours() + 24) // 24 hours sharing
+
+          await (req.payload.create as any)({
+            collection: 'trip-sharing',
+            data: {
+              booking: doc.id,
+              shareToken: shareToken,
+              expiresAt: expiry,
+              active: true,
+            },
+          })
+
+          // Update booking with sharing token
+          await (req.payload.update as any)({
+            collection: 'bookings',
+            id: doc.id,
+            data: {
+              sharingToken: shareToken,
+            },
+          })
+
+          await req.payload.create({
+            collection: 'alerts',
+            data: {
+              title: 'Trip Started & Shared',
+              message: `Trip for booking #${doc.bookingCode} has started. Live sharing active.`,
+              type: 'info',
+              isRead: false,
+            },
+          })
+
+          // --- SEND WHATSAPP NOTIFICATION ---
+          const publicLink = `${process.env.PAYLOAD_PUBLIC_SERVER_URL || ''}/live-tracking?token=${shareToken}`
+          await sendWhatsAppMessage(
+            req.payload,
+            doc.customerPhone,
+            doc.customerName,
+            publicLink
+          )
         }
       },
     ],
@@ -300,6 +464,36 @@ export const Bookings: CollectionConfig = {
       defaultValue: 'pending',
     },
     {
+      name: 'tripStatus',
+      type: 'select',
+      options: [
+        { label: 'Not Started', value: 'not_started' },
+        { label: 'In Progress / Started', value: 'started' },
+        { label: 'Completed', value: 'completed' },
+        { label: 'Cancelled', value: 'cancelled' },
+      ],
+      defaultValue: 'not_started',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'otpVerified',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'sharingToken',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
       name: 'paymentStatus',
       type: 'select',
       options: ['unpaid', 'partial', 'paid', 'failed'],
@@ -371,6 +565,19 @@ export const Bookings: CollectionConfig = {
       },
     },
     { name: 'notes', type: 'textarea' },
+    {
+      name: 'reallocationHistory',
+      type: 'array',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+      fields: [
+        { name: 'previousDriver', type: 'relationship', relationTo: 'drivers' },
+        { name: 'timestamp', type: 'date' },
+        { name: 'reason', type: 'text' },
+      ],
+    },
   ],
   access: { create: () => true, read: () => true, update: () => true, delete: () => true },
 }

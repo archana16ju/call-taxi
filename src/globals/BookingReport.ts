@@ -9,7 +9,7 @@ export const BookingReport: GlobalConfig = {
       views: {
         edit: {
           default: {
-            Component: './app/(payload)/components/BookingReport.tsx#default',
+            Component: '@/app/(payload)/components/BookingReport#default',
           },
         },
       },

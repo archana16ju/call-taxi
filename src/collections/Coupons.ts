@@ -6,6 +6,13 @@ export const Coupons: CollectionConfig = {
     group: 'Collection',
     useAsTitle: 'name',
     defaultColumns: ['name', 'percentage', 'active', 'expiryDate'],
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/CouponManagement#default',
+        },
+      },
+    },
   },
   fields: [
     {

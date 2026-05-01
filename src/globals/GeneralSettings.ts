@@ -4,6 +4,15 @@ export const GeneralSettings: GlobalConfig = {
   slug: 'general-settings',
   admin: {
     group: 'Management',
+    components: {
+      views: {
+        edit: {
+          default: {
+            Component: '@/app/(payload)/components/GeneralSettings#default',
+          },
+        },
+      },
+    },
   },
   access: {
     read: () => true,
@@ -36,6 +45,38 @@ export const GeneralSettings: GlobalConfig = {
       name: 'currencySymbol',
       type: 'text',
       defaultValue: '₹',
+    },
+    {
+      name: 'whatsappConfig',
+      type: 'group',
+      label: 'Automated Messaging (WhatsApp API)',
+      fields: [
+        {
+          name: 'apiEndpoint',
+          type: 'text',
+          label: 'API Endpoint URL',
+          admin: {
+            description: 'The endpoint for your custom WhatsApp API',
+          },
+        },
+        {
+          name: 'apiKey',
+          type: 'text',
+          label: 'API Key / Token',
+          admin: {
+            description: 'Authentication key for the API',
+          },
+        },
+        {
+          name: 'messageTemplate',
+          type: 'textarea',
+          label: 'Trip Started Message Template',
+          defaultValue: 'Hello {name}, your ride has started! Track your live location here: {link}',
+          admin: {
+            description: 'Use {name} and {link} as placeholders',
+          },
+        },
+      ],
     },
   ],
 }

@@ -5,6 +5,15 @@ export const PaymentSettings: GlobalConfig = {
   label: 'Payment Settings',
   admin: {
     group: 'Settings',
+     components: {
+      views: {
+        edit: {
+          default: {
+            Component: '@/app/(payload)/components/PaymentSettingsComponent#default',
+          },
+        },
+      },
+    },
   },
   fields: [
     {

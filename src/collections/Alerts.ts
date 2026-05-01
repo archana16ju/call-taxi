@@ -4,6 +4,13 @@ export const Alerts: CollectionConfig = {
   slug: 'alerts',
   admin: {
     useAsTitle: 'title',
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/AlertPage#default',
+        },
+      },
+    },
     group: 'Collection',
     defaultColumns: ['title', 'type', 'triggeredBy', 'createdAt'],
   },
@@ -31,6 +38,7 @@ export const Alerts: CollectionConfig = {
         { label: 'Warning', value: 'warning' },
         { label: 'Emergency (SOS)', value: 'emergency' },
         { label: 'Payment Failure', value: 'payment_fail' },
+        { label: 'Booking', value: 'booking' },
       ],
       defaultValue: 'info',
     },

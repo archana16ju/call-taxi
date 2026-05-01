@@ -5,51 +5,52 @@ export const Tariffs: CollectionConfig = {
 
   admin: {
     group: 'Collection',
-    useAsTitle: 'vehicle',
+    useAsTitle: 'name',
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/TariffManagement#default',
+        },
+      },
+    },
   },
 
   fields: [
     {
-      name: 'vehicle',
+      name: 'name',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'description',
+      type: 'text',
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Active', value: 'active' },
+        { label: 'Draft', value: 'draft' },
+        { label: 'Pending Review', value: 'pending_review' },
+      ],
+      defaultValue: 'active',
+      required: true,
+    },
+    {
+      name: 'vehicleType',
       type: 'relationship',
       relationTo: 'vehicles',
       required: true,
-      unique: true,
-      filterOptions: ({ relationTo }) => {
-        if (relationTo === 'vehicles') {
-          return {
-            category: { equals: 'tariff' },
-          }
-        }
-        return true
-      },
     },
     {
       type: 'group',
       name: 'oneway',
       label: 'One Way Trip',
       fields: [
-        {
-          name: 'perKmRate',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'bata',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'minDistance',
-          type: 'number',
-          label: 'Minimum Distance (km)',
-          defaultValue: 130,
-          required: true,
-        },
-        {
-          name: 'extras',
-          type: 'text',
-        },
+        { name: 'perKmRate', type: 'number', required: true },
+        { name: 'bata', type: 'number', required: true },
+        { name: 'minDistance', type: 'number', defaultValue: 130, required: true },
+        { name: 'extras', type: 'number', defaultValue: 0 },
       ],
     },
     {
@@ -57,27 +58,10 @@ export const Tariffs: CollectionConfig = {
       name: 'roundtrip',
       label: 'Round Trip',
       fields: [
-        {
-          name: 'perKmRate',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'bata',
-          type: 'number',
-          required: true,
-        },
-        {
-          name: 'minDistance',
-          type: 'number',
-          label: 'Minimum Distance (km)',
-          defaultValue: 250,
-          required: true,
-        },
-        {
-          name: 'extras',
-          type: 'text',
-        },
+        { name: 'perKmRate', type: 'number', required: true },
+        { name: 'bata', type: 'number', required: true },
+        { name: 'minDistance', type: 'number', defaultValue: 250, required: true },
+        { name: 'extras', type: 'number', defaultValue: 0 },
       ],
     },
     {
@@ -85,76 +69,22 @@ export const Tariffs: CollectionConfig = {
       name: 'packages',
       label: 'Packages',
       fields: [
-        {
-          name: 'hours',
-          type: 'number',
-          required: true,
-          label: 'Hours',
-        },
-        {
-          name: 'perHourRate',
-          type: 'number',
-          required: true,
-          label: 'Per Hour Rate',
-        },
-        {
-          name: 'extraKmRate',
-          type: 'number',
-          required: true,
-          label: 'Extra KM Rate',
-        },
-        {
-          name: 'extraHourRate',
-          type: 'number',
-          required: true,
-          label: 'Extra Hour Rate',
-        },
-        {
-          name: 'nightBata',
-          type: 'number',
-          label: 'Night Bata',
-        },
-        {
-          name: 'km',
-          type: 'number',
-          required: true,
-          label: 'KM',
-        },
-
-        {
-          name: 'bata',
-          type: 'number',
-          required: true,
-          label: 'Bata',
-        },
-        {
-          name: 'extras',
-          type: 'text',
-          label: 'Extras',
-        },
+        { name: 'hours', type: 'number', required: true },
+        { name: 'km', type: 'number', required: true },
+        { name: 'baseRate', type: 'number', required: true },
+        { name: 'baseBata', type: 'number', required: true },
+        { name: 'extraKmRate', type: 'number', required: true },
+        { name: 'extraHourRate', type: 'number', required: true },
+        { name: 'nightBata', type: 'number', defaultValue: 0 },
+        { name: 'otherExtras', type: 'number', defaultValue: 0 },
       ],
     },
   ],
 
   access: {
-    /**
-     * ✅ Make Tariffs PUBLIC
-     */
     read: () => true,
-
-    /**
-     * 🔒 Admin Only for Creating
-     */
     create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
-
-    /**
-     * 🔒 Admin Only for Updating
-     */
     update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
-
-    /**
-     * 🔒 Only Superadmin can delete
-     */
     delete: ({ req: { user } }) => user?.role === 'superadmin',
   },
 }

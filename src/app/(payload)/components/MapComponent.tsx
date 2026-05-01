@@ -248,6 +248,20 @@ export function LiveTrackingDashboard() {
         </Stack>
       </Paper>
 
+      {/* DISCONNECTION ALERT */}
+      {driverLocations.some(d => d.connectionStatus === 'offline') && (
+        <Box sx={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 2000, width: '80%', maxWidth: 600 }}>
+          {driverLocations.filter(d => d.connectionStatus === 'offline').slice(0, 1).map((d, i) => (
+            <Paper key={i} sx={{ p: 2, bgcolor: '#fee2e2', border: '1px solid #ef4444', borderRadius: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#ef4444', animation: 'pulse 1.5s infinite' }} />
+              <Typography variant="body2" fontWeight={700} color="#991b1b">
+                Driver {d.name} lost connection. Tracking paused. Data will sync when connection resumes.
+              </Typography>
+            </Paper>
+          ))}
+        </Box>
+      )}
+
       <Box sx={{ flexGrow: 1, display: 'flex', position: 'relative' }}>
         {/* Activity Panel */}
         <Paper sx={{ width: 340, height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.95)', borderRight: '1px solid rgba(255, 255, 255, 0.1)', zIndex: 1000, backgroundImage: 'none', display: 'flex', flexDirection: 'column' }}>
@@ -310,13 +324,19 @@ export function LiveTrackingDashboard() {
                   return bDriverId === loc.id;
                 });
                 const isDriving = loc.status === 'driving';
+                const isOffline = loc.connectionStatus === 'offline';
+                const statusColor = isOffline ? '#ef4444' : (isDriving ? '#3b82f6' : '#10b981');
+                
                 const iconHtml = `
                   <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-                    <div style="background: #1e293b; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; border: 1px solid ${isDriving ? '#3b82f6' : '#10b981'}; margin-bottom: 4px; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">${loc.name}</div>
-                    <div style="width: 44px; height: 44px; background: #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 3px solid ${isDriving ? '#3b82f6' : '#10b981'}; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
-                      <img src="${isDriving ? 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png' : 'https://cdn-icons-png.flaticon.com/512/1048/1048313.png'}" style="width: 28px; height: 28px;" />
+                    <div style="background: #1e293b; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; border: 1px solid ${statusColor}; margin-bottom: 4px; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">${loc.name}</div>
+                    <div style="width: 44px; height: 44px; background: #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 3px solid ${statusColor}; box-shadow: 0 10px 20px rgba(0,0,0,0.3); position: relative;">
+                      <img src="${isDriving ? 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png' : 'https://cdn-icons-png.flaticon.com/512/1048/1048313.png'}" style="width: 28px; height: 28px; ${isOffline ? 'filter: grayscale(100%); opacity: 0.5;' : ''}" />
+                      ${isOffline ? '<div style="position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; background: #ef4444; border: 2px solid #1e293b; border-radius: 50%;"></div>' : ''}
                     </div>
-                    <div style="margin-top: 4px; background: ${isDriving ? '#3b82f6' : '#10b981'}; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 8px; font-weight: 900; text-transform: uppercase;">${isDriving ? 'In Trip' : 'Free'}</div>
+                    <div style="margin-top: 4px; background: ${statusColor}; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 8px; font-weight: 900; text-transform: uppercase;">
+                      ${isOffline ? 'Offline' : (isDriving ? 'In Trip' : 'Free')}
+                    </div>
                   </div>
                 `;
                 const currentIcon = new L.DivIcon({ className: 'custom-taxi-icon', html: iconHtml, iconSize: [70, 90], iconAnchor: [35, 90], popupAnchor: [0, -90] });

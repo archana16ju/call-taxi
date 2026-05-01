@@ -81,6 +81,12 @@ export interface Config {
     contacts: Contact;
     alerts: Alert;
     reviews: Review;
+    'revenue-settlements': RevenueSettlement;
+    'payment-methods': PaymentMethod;
+    invoices: Invoice;
+    'trip-otps': TripOtp;
+    'trip-sharing': TripSharing;
+    'driver-offline-logs': DriverOfflineLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -106,6 +112,12 @@ export interface Config {
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     alerts: AlertsSelect<false> | AlertsSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    'revenue-settlements': RevenueSettlementsSelect<false> | RevenueSettlementsSelect<true>;
+    'payment-methods': PaymentMethodsSelect<false> | PaymentMethodsSelect<true>;
+    invoices: InvoicesSelect<false> | InvoicesSelect<true>;
+    'trip-otps': TripOtpsSelect<false> | TripOtpsSelect<true>;
+    'trip-sharing': TripSharingSelect<false> | TripSharingSelect<true>;
+    'driver-offline-logs': DriverOfflineLogsSelect<false> | DriverOfflineLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -142,20 +154,18 @@ export interface Config {
 }
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string;
-    password: string;
+    username: string;
   };
   login: {
-    email: string;
     password: string;
+    username: string;
   };
   registerFirstUser: {
-    email: string;
     password: string;
+    username: string;
   };
   unlock: {
-    email: string;
-    password: string;
+    username: string;
   };
 }
 /**
@@ -164,15 +174,16 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
-  role: 'superadmin' | 'admin' | 'accounts' | 'driver';
-  driverProfile?: (string | null) | Driver;
+  password?: string | null;
   fullName?: string | null;
-  phone?: string | null;
-  username?: string | null;
+  phoneNumber?: string | null;
   active?: boolean | null;
+  role?: ('superadmin' | 'admin' | 'accounts' | 'driver') | null;
+  driverProfile?: (string | null) | Driver;
   updatedAt: string;
   createdAt: string;
-  email: string;
+  email?: string | null;
+  username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -186,7 +197,6 @@ export interface User {
         expiresAt: string;
       }[]
     | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -208,7 +218,9 @@ export interface Driver {
    * Driver photo
    */
   photo?: (string | null) | Media;
-  status: 'available' | 'not_available' | 'driving';
+  status: 'available' | 'not_available' | 'onduty' | 'offline';
+  connectionStatus?: ('online' | 'offline' | 'syncing') | null;
+  lastSeen?: string | null;
   /**
    * @minItems 2
    * @maxItems 2
@@ -226,7 +238,15 @@ export interface Driver {
  */
 export interface Media {
   id: string;
+  title?: string | null;
   alt: string;
+  category?: ('drivers' | 'vehicles' | 'banners' | 'other') | null;
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -255,9 +275,148 @@ export interface Vehicle {
   driver?: (string | null) | Driver;
   status: 'available' | 'not_available' | 'driving';
   lastFc: string;
-  image?: (string | null) | VehicleImage;
-  icon?: (string | null) | VehicleIcon;
+  image?: (string | null) | Media;
+  icon?: (string | null) | Media;
   category: 'tariff' | 'attachment';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tariffs".
+ */
+export interface Tariff {
+  id: string;
+  name: string;
+  description?: string | null;
+  status: 'active' | 'draft' | 'pending_review';
+  vehicleType: string | Vehicle;
+  oneway: {
+    perKmRate: number;
+    bata: number;
+    minDistance: number;
+    extras?: number | null;
+  };
+  roundtrip: {
+    perKmRate: number;
+    bata: number;
+    minDistance: number;
+    extras?: number | null;
+  };
+  packages: {
+    hours: number;
+    km: number;
+    baseRate: number;
+    baseBata: number;
+    extraKmRate: number;
+    extraHourRate: number;
+    nightBata?: number | null;
+    otherExtras?: number | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customer?: (string | null) | Customer;
+  vehicle: string | Vehicle;
+  tripType: 'oneway' | 'roundtrip' | 'packages' | 'multilocation';
+  driver?: (string | null) | Driver;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  pickupLocation: [number, number];
+  pickupLocationName: string;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  dropoffLocation?: [number, number] | null;
+  dropoffLocationName?: string | null;
+  tourLocations?:
+    | {
+        name: string;
+        /**
+         * @minItems 2
+         * @maxItems 2
+         */
+        point: [number, number];
+        id?: string | null;
+      }[]
+    | null;
+  pickupDateTime: string;
+  dropDateTime?: string | null;
+  estimatedFare?: number | null;
+  couponCode?: string | null;
+  discountAmount?: number | null;
+  distanceKm?: number | null;
+  status?: ('pending' | 'confirmed' | 'cancelled' | 'completed') | null;
+  tripStatus?: ('not_started' | 'started' | 'completed' | 'cancelled') | null;
+  otpVerified?: boolean | null;
+  sharingToken?: string | null;
+  paymentStatus?: ('unpaid' | 'partial' | 'paid' | 'failed') | null;
+  paymentAmount?: number | null;
+  sosTriggered?: boolean | null;
+  paymentType?: ('minimum' | 'full') | null;
+  razorpayOrderId?: string | null;
+  razorpayPaymentId?: string | null;
+  razorpaySignature?: string | null;
+  bookingCode?: string | null;
+  notes?: string | null;
+  reallocationHistory?:
+    | {
+        previousDriver?: (string | null) | Driver;
+        timestamp?: string | null;
+        reason?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string | null;
+  accountType?: ('individual' | 'corporate') | null;
+  bookings?: {
+    docs?: (string | Booking)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coupons".
+ */
+export interface Coupon {
+  id: string;
+  name: string;
+  percentage: number;
+  tariffScope: 'all' | 'oneway' | 'roundtrip' | 'packages';
+  vehicleScope: 'all' | 'specific';
+  vehicles?: (string | Vehicle)[] | null;
+  startDate?: string | null;
+  expiryDate?: string | null;
+  /**
+   * Maximum number of times this coupon can be used (leave empty for unlimited)
+   */
+  usageLimit?: number | null;
+  active?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -319,134 +478,11 @@ export interface VehicleIcon {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tariffs".
- */
-export interface Tariff {
-  id: string;
-  vehicle: string | Vehicle;
-  oneway: {
-    perKmRate: number;
-    bata: number;
-    minDistance: number;
-    extras?: string | null;
-  };
-  roundtrip: {
-    perKmRate: number;
-    bata: number;
-    minDistance: number;
-    extras?: string | null;
-  };
-  packages: {
-    hours: number;
-    perHourRate: number;
-    extraKmRate: number;
-    extraHourRate: number;
-    nightBata?: number | null;
-    km: number;
-    bata: number;
-    extras?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "bookings".
- */
-export interface Booking {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  customer?: (string | null) | Customer;
-  vehicle: string | Vehicle;
-  tripType: 'oneway' | 'roundtrip' | 'packages' | 'multilocation';
-  driver?: (string | null) | Driver;
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  pickupLocation: [number, number];
-  pickupLocationName: string;
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  dropoffLocation?: [number, number] | null;
-  dropoffLocationName?: string | null;
-  tourLocations?:
-    | {
-        name: string;
-        /**
-         * @minItems 2
-         * @maxItems 2
-         */
-        point: [number, number];
-        id?: string | null;
-      }[]
-    | null;
-  pickupDateTime: string;
-  dropDateTime?: string | null;
-  estimatedFare?: number | null;
-  couponCode?: string | null;
-  discountAmount?: number | null;
-  distanceKm?: number | null;
-  status?: ('pending' | 'confirmed' | 'cancelled' | 'completed') | null;
-  paymentStatus?: ('unpaid' | 'partial' | 'paid' | 'failed') | null;
-  paymentAmount?: number | null;
-  sosTriggered?: boolean | null;
-  paymentType?: ('minimum' | 'full') | null;
-  razorpayOrderId?: string | null;
-  razorpayPaymentId?: string | null;
-  razorpaySignature?: string | null;
-  bookingCode?: string | null;
-  notes?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "customers".
- */
-export interface Customer {
-  id: string;
-  name: string;
-  phone: string;
-  email?: string | null;
-  bookings?: {
-    docs?: (string | Booking)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "coupons".
- */
-export interface Coupon {
-  id: string;
-  name: string;
-  percentage: number;
-  tariffScope: 'all' | 'oneway' | 'roundtrip' | 'packages';
-  vehicleScope: 'all' | 'specific';
-  vehicles?: (string | Vehicle)[] | null;
-  startDate?: string | null;
-  expiryDate?: string | null;
-  /**
-   * Maximum number of times this coupon can be used (leave empty for unlimited)
-   */
-  usageLimit?: number | null;
-  active?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "slider-images".
  */
 export interface SliderImage {
   id: string;
+  image: string | Media;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -459,24 +495,6 @@ export interface SliderImage {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-  sizes?: {
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
 }
 /**
  * Manage customer, partner, and driver inquiries.
@@ -488,8 +506,9 @@ export interface Contact {
   id: string;
   name: string;
   phone: string;
-  message?: string | null;
-  inquiryType: 'customer' | 'partner' | 'driver';
+  inquiryType: 'service' | 'billing' | 'partnership' | 'emergency';
+  message: string;
+  status?: ('new' | 'pending' | 'resolved' | 'urgent') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -501,7 +520,7 @@ export interface Alert {
   id: string;
   title: string;
   message: string;
-  type: 'info' | 'warning' | 'emergency' | 'payment_fail';
+  type: 'info' | 'warning' | 'emergency' | 'payment_fail' | 'booking';
   triggeredBy?: (string | null) | User;
   isRead?: boolean | null;
   updatedAt: string;
@@ -520,6 +539,139 @@ export interface Review {
    */
   rating: number;
   comment: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revenue-settlements".
+ */
+export interface RevenueSettlement {
+  id: string;
+  tripId: string;
+  driverName: string;
+  customerName: string;
+  distanceKm: number;
+  timeMinutes: number;
+  baseFare: number;
+  distanceFare?: number | null;
+  timeFare?: number | null;
+  totalFare: number;
+  commission: number;
+  driverEarnings: number;
+  platformRevenue: number;
+  paymentMethod?: ('cash' | 'upi' | 'card') | null;
+  status?: ('pending' | 'settled') | null;
+  walletBalance?: number | null;
+  payoutAmount?: number | null;
+  settlementDate?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment-methods".
+ */
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  type: 'cash' | 'upi' | 'card' | 'netbanking' | 'wallet';
+  isActive?: boolean | null;
+  processingFee?: number | null;
+  minimumAmount?: number | null;
+  maximumAmount?: number | null;
+  currency?: string | null;
+  config?: {
+    upiId?: string | null;
+    merchantId?: string | null;
+    apiKey?: string | null;
+    apiSecret?: string | null;
+  };
+  supportedBanks?:
+    | {
+        bankName: string;
+        id?: string | null;
+      }[]
+    | null;
+  icon?: string | null;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoices".
+ */
+export interface Invoice {
+  id: string;
+  invoiceNumber?: string | null;
+  booking: string | Booking;
+  customer: string | Customer;
+  driver: string | Driver;
+  date: string;
+  baseFare: number;
+  tax?: number | null;
+  totalAmount?: number | null;
+  paymentMethod?: (string | null) | PaymentMethod;
+  status?: ('pending' | 'paid' | 'overdue') | null;
+  pickupLocation?: string | null;
+  dropoffLocation?: string | null;
+  distance?: number | null;
+  receiptNumber?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trip-otps".
+ */
+export interface TripOtp {
+  id: string;
+  booking: string | Booking;
+  otp: string;
+  expiresAt: string;
+  verified?: boolean | null;
+  deliveryMethod?: ('sms' | 'whatsapp' | 'email') | null;
+  deliveryStatus?: ('pending' | 'sent' | 'failed') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trip-sharing".
+ */
+export interface TripSharing {
+  id: string;
+  booking: string | Booking;
+  shareToken: string;
+  active?: boolean | null;
+  expiresAt: string;
+  views?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "driver-offline-logs".
+ */
+export interface DriverOfflineLog {
+  id: string;
+  driver: string | Driver;
+  trip?: (string | null) | Booking;
+  offlineCoordinates?:
+    | {
+        /**
+         * @minItems 2
+         * @maxItems 2
+         */
+        location: [number, number];
+        timestamp: string;
+        speed?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  syncedAt?: string | null;
+  batchSize?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -602,6 +754,30 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'reviews';
         value: string | Review;
+      } | null)
+    | ({
+        relationTo: 'revenue-settlements';
+        value: string | RevenueSettlement;
+      } | null)
+    | ({
+        relationTo: 'payment-methods';
+        value: string | PaymentMethod;
+      } | null)
+    | ({
+        relationTo: 'invoices';
+        value: string | Invoice;
+      } | null)
+    | ({
+        relationTo: 'trip-otps';
+        value: string | TripOtp;
+      } | null)
+    | ({
+        relationTo: 'trip-sharing';
+        value: string | TripSharing;
+      } | null)
+    | ({
+        relationTo: 'driver-offline-logs';
+        value: string | DriverOfflineLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -650,15 +826,16 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  password?: T;
+  fullName?: T;
+  phoneNumber?: T;
+  active?: T;
   role?: T;
   driverProfile?: T;
-  fullName?: T;
-  phone?: T;
-  username?: T;
-  active?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
+  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
@@ -678,7 +855,15 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  title?: T;
   alt?: T;
+  category?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -705,6 +890,8 @@ export interface DriversSelect<T extends boolean = true> {
   license?: T;
   photo?: T;
   status?: T;
+  connectionStatus?: T;
+  lastSeen?: T;
   location?: T;
   lastUpdated?: T;
   assignedVehicle?: T;
@@ -717,7 +904,10 @@ export interface DriversSelect<T extends boolean = true> {
  * via the `definition` "tariffs_select".
  */
 export interface TariffsSelect<T extends boolean = true> {
-  vehicle?: T;
+  name?: T;
+  description?: T;
+  status?: T;
+  vehicleType?: T;
   oneway?:
     | T
     | {
@@ -738,13 +928,13 @@ export interface TariffsSelect<T extends boolean = true> {
     | T
     | {
         hours?: T;
-        perHourRate?: T;
+        km?: T;
+        baseRate?: T;
+        baseBata?: T;
         extraKmRate?: T;
         extraHourRate?: T;
         nightBata?: T;
-        km?: T;
-        bata?: T;
-        extras?: T;
+        otherExtras?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -796,6 +986,9 @@ export interface BookingsSelect<T extends boolean = true> {
   discountAmount?: T;
   distanceKm?: T;
   status?: T;
+  tripStatus?: T;
+  otpVerified?: T;
+  sharingToken?: T;
   paymentStatus?: T;
   paymentAmount?: T;
   sosTriggered?: T;
@@ -805,6 +998,14 @@ export interface BookingsSelect<T extends boolean = true> {
   razorpaySignature?: T;
   bookingCode?: T;
   notes?: T;
+  reallocationHistory?:
+    | T
+    | {
+        previousDriver?: T;
+        timestamp?: T;
+        reason?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -816,6 +1017,7 @@ export interface CustomersSelect<T extends boolean = true> {
   name?: T;
   phone?: T;
   email?: T;
+  accountType?: T;
   bookings?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -902,6 +1104,7 @@ export interface VehicleIconsSelect<T extends boolean = true> {
  * via the `definition` "slider-images_select".
  */
 export interface SliderImagesSelect<T extends boolean = true> {
+  image?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -914,30 +1117,6 @@ export interface SliderImagesSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-  sizes?:
-    | T
-    | {
-        card?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -946,8 +1125,9 @@ export interface SliderImagesSelect<T extends boolean = true> {
 export interface ContactsSelect<T extends boolean = true> {
   name?: T;
   phone?: T;
-  message?: T;
   inquiryType?: T;
+  message?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -973,6 +1153,131 @@ export interface ReviewsSelect<T extends boolean = true> {
   user?: T;
   rating?: T;
   comment?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revenue-settlements_select".
+ */
+export interface RevenueSettlementsSelect<T extends boolean = true> {
+  tripId?: T;
+  driverName?: T;
+  customerName?: T;
+  distanceKm?: T;
+  timeMinutes?: T;
+  baseFare?: T;
+  distanceFare?: T;
+  timeFare?: T;
+  totalFare?: T;
+  commission?: T;
+  driverEarnings?: T;
+  platformRevenue?: T;
+  paymentMethod?: T;
+  status?: T;
+  walletBalance?: T;
+  payoutAmount?: T;
+  settlementDate?: T;
+  createdAt?: T;
+  updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment-methods_select".
+ */
+export interface PaymentMethodsSelect<T extends boolean = true> {
+  name?: T;
+  type?: T;
+  isActive?: T;
+  processingFee?: T;
+  minimumAmount?: T;
+  maximumAmount?: T;
+  currency?: T;
+  config?:
+    | T
+    | {
+        upiId?: T;
+        merchantId?: T;
+        apiKey?: T;
+        apiSecret?: T;
+      };
+  supportedBanks?:
+    | T
+    | {
+        bankName?: T;
+        id?: T;
+      };
+  icon?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoices_select".
+ */
+export interface InvoicesSelect<T extends boolean = true> {
+  invoiceNumber?: T;
+  booking?: T;
+  customer?: T;
+  driver?: T;
+  date?: T;
+  baseFare?: T;
+  tax?: T;
+  totalAmount?: T;
+  paymentMethod?: T;
+  status?: T;
+  pickupLocation?: T;
+  dropoffLocation?: T;
+  distance?: T;
+  receiptNumber?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trip-otps_select".
+ */
+export interface TripOtpsSelect<T extends boolean = true> {
+  booking?: T;
+  otp?: T;
+  expiresAt?: T;
+  verified?: T;
+  deliveryMethod?: T;
+  deliveryStatus?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trip-sharing_select".
+ */
+export interface TripSharingSelect<T extends boolean = true> {
+  booking?: T;
+  shareToken?: T;
+  active?: T;
+  expiresAt?: T;
+  views?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "driver-offline-logs_select".
+ */
+export interface DriverOfflineLogsSelect<T extends boolean = true> {
+  driver?: T;
+  trip?: T;
+  offlineCoordinates?:
+    | T
+    | {
+        location?: T;
+        timestamp?: T;
+        speed?: T;
+        id?: T;
+      };
+  syncedAt?: T;
+  batchSize?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1082,6 +1387,20 @@ export interface GeneralSetting {
   whatsappNumber: string;
   supportEmail?: string | null;
   currencySymbol?: string | null;
+  whatsappConfig?: {
+    /**
+     * The endpoint for your custom WhatsApp API
+     */
+    apiEndpoint?: string | null;
+    /**
+     * Authentication key for the API
+     */
+    apiKey?: string | null;
+    /**
+     * Use {name} and {link} as placeholders
+     */
+    messageTemplate?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1144,6 +1463,13 @@ export interface GeneralSettingsSelect<T extends boolean = true> {
   whatsappNumber?: T;
   supportEmail?: T;
   currencySymbol?: T;
+  whatsappConfig?:
+    | T
+    | {
+        apiEndpoint?: T;
+        apiKey?: T;
+        messageTemplate?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

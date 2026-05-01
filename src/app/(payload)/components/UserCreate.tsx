@@ -24,7 +24,7 @@ type UserFormData = {
   email: string
   password: string
   role: string
-  phone: string
+  phoneNumber: string
   fullName: string
   username: string
   driverProfile: string
@@ -59,7 +59,7 @@ export function UserForm({ userId, initialData, onSuccess }: UserFormProps) {
     email: '',
     password: '',
     role: 'driver',
-    phone: '',
+    phoneNumber: '',
     fullName: '',
     username: '',
     driverProfile: '',
@@ -81,7 +81,7 @@ export function UserForm({ userId, initialData, onSuccess }: UserFormProps) {
           email: data.email ?? '',
           password: '',            // never pre-fill password
           role: data.role ?? 'driver',
-          phone: data.phoneNumber ?? '',
+          phoneNumber: data.phoneNumber ?? '',
           fullName: data.fullName ?? '',
           username: data.username ?? '',
           driverProfile:
@@ -103,14 +103,13 @@ export function UserForm({ userId, initialData, onSuccess }: UserFormProps) {
     setLoading(true)
     try {
       const payload: Record<string, any> = {
-        email: form.email,
-        role: form.role,
-        phoneNumber: form.phone,
-        fullName: form.fullName,
-        username: form.username,
-        active: form.active,
-        driverProfile: form.role === 'driver' && form.driverProfile ? form.driverProfile : null,
-      }
+  email: form.email,
+  role: form.role,
+  phoneNumber: form.phoneNumber,
+  fullName: form.fullName,
+  username: form.username,
+  active: form.active,
+}
 
       // Only include password if the user typed one (edit mode: leave blank to keep old)
       if (form.password) payload.password = form.password
@@ -194,8 +193,8 @@ export function UserForm({ userId, initialData, onSuccess }: UserFormProps) {
               label="Phone Number"
               fullWidth
               size="small"
-              value={form.phone}
-              onChange={(e) => handleChange('phone', e.target.value)}
+              value={form.phoneNumber}
+              onChange={(e) => handleChange('phoneNumber', e.target.value)}
             />
           </Grid>
         </Grid>
@@ -232,18 +231,6 @@ export function UserForm({ userId, initialData, onSuccess }: UserFormProps) {
               onChange={(e) => handleChange('password', e.target.value)}
             />
           </Grid>
-          {form.role === 'driver' && (
-            <Grid size={{ xs: 12 }}>
-              <TextField
-                label="Driver Profile ID"
-                fullWidth
-                size="small"
-                value={form.driverProfile}
-                onChange={(e) => handleChange('driverProfile', e.target.value)}
-                helperText="Enter the Driver Collection document ID"
-              />
-            </Grid>
-          )}
         </Grid>
       </Paper>
 

@@ -5,6 +5,13 @@ export const Drivers: CollectionConfig = {
   admin: {
     group: 'Collection',
     useAsTitle: 'name',
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/DriverManagement#default',
+        },
+      },
+    },
   },
   fields: [
     {
@@ -60,10 +67,31 @@ export const Drivers: CollectionConfig = {
       options: [
         { label: 'Available', value: 'available' },
         { label: 'Not Available', value: 'not_available' },
-        { label: 'Driving', value: 'driving' },
+        { label: 'Onduty', value: 'onduty' },
+        { label: 'Offline', value: 'offline' },
       ],
       defaultValue: 'available',
       required: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'connectionStatus',
+      type: 'select',
+      options: [
+        { label: 'Online', value: 'online' },
+        { label: 'Offline', value: 'offline' },
+        { label: 'Syncing', value: 'syncing' },
+      ],
+      defaultValue: 'online',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'lastSeen',
+      type: 'date',
       admin: {
         position: 'sidebar',
       },

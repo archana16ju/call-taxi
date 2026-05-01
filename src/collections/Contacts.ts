@@ -4,13 +4,20 @@ export const Contacts: CollectionConfig = {
   slug: 'contacts',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'phone', 'inquiryType', 'createdAt'],
+    defaultColumns: ['name', 'phone', 'inquiryType', 'status', 'createdAt'],
     group: 'Collection',
     description: 'Manage customer, partner, and driver inquiries.',
+    components: {
+      views: {
+        list: {
+          Component: '@/app/(payload)/components/InquiryManager#default',
+        },
+      },
+    },
   },
   access: {
-    create: () => true, // Allow anyone to submit the contact form
-    read: () => true, // Ideally restrict this in production, but open for now as per common pattern in this project
+    create: () => true,
+    read: () => true,
   },
   fields: [
     {
@@ -24,28 +31,32 @@ export const Contacts: CollectionConfig = {
       required: true,
     },
     {
-      name: 'message',
-      type: 'textarea',
-    },
-    {
       name: 'inquiryType',
       type: 'select',
       required: true,
       options: [
-        {
-          label: 'Customer Inquiry',
-          value: 'customer',
-        },
-        {
-          label: 'Partner Inquiry',
-          value: 'partner',
-        },
-        {
-          label: 'Driver Inquiry',
-          value: 'driver',
-        },
+        { label: 'Service Request', value: 'service' },
+        { label: 'Billing Inquiry', value: 'billing' },
+        { label: 'Partnership', value: 'partnership' },
+        { label: 'Emergency', value: 'emergency' },
       ],
-      defaultValue: 'customer',
+      defaultValue: 'service',
+    },
+    {
+      name: 'message',
+      type: 'textarea',
+      required: true,
+    },
+    {
+      name: 'status',
+      type: 'select',
+      defaultValue: 'new',
+      options: [
+        { label: 'New', value: 'new' },
+        { label: 'Pending', value: 'pending' },
+        { label: 'Resolved', value: 'resolved' },
+        { label: 'Urgent', value: 'urgent' },
+      ],
     },
   ],
 }
