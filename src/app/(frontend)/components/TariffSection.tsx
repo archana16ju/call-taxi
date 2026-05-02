@@ -81,11 +81,11 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                 gap: 3, // Unified gap
                 overflowX: 'auto', // Scroll on all devices
                 pb: 2,
-                scrollSnapType: 'x mandatory', // Enable snap scrolling
-                // Hide scrollbar but allow scrolling
+                scrollSnapType: 'x mandatory', //</Grid> Enable snap scrolling
+                //</Grid>/ Hide scrollbar but allow scrolling
                 '&::-webkit-scrollbar': { display: 'none' },
                 scrollbarWidth: 'none', // Firefox
-                msOverflowStyle: 'none', // IE and Edge
+                msOverflowStyle: 'none', //</Container> IE and Edge
                 scrollBehavior: 'smooth',
                 WebkitOverflowScrolling: 'touch', // Smooth scroll on iOS
               }}

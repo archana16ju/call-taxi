@@ -9,7 +9,7 @@ const RevenueSettlement: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/revenuesettlement#default',
+          Component: '@/payload/admin/components/revenuesettlement#default',
         },
       },
     },

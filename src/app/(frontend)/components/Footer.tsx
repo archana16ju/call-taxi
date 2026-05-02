@@ -12,7 +12,7 @@ import { Box, Container, Typography, Grid, IconButton, SxProps, Theme } from '@m
 const ThreadsIcon = ({ fontSize, sx }: { fontSize?: string; sx?: SxProps<Theme> }) => (
   <Box
     component="img"
-    src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/phosphor-regular/threads-logo-k5c6gxlwykjcqyoby4n7vs.png/threads-logo-3a9s16wq15a0okikkvwic1r.png?_a=DATAiZAAZAA0"
+    src="https:/assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/phosphor-regular/threads-logo-k5c6gxlwykjcqyoby4n7vs.png/threads-logo-3a9s16wq15a0okikkvwic1r.png?_a=DATAiZAAZAA0"
     alt="Threads"
     sx={{
       width: fontSize === 'small' ? 20 : 24,
@@ -167,13 +167,13 @@ export default function Footer() {
             <Box display="flex" flexDirection="column" gap={2}>
               <Box
                 component="img"
-                src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                src="https:/upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
                 alt="App Store"
                 sx={{ width: '135px', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
               />
               <Box
                 component="img"
-                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                src="https:/upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
                 alt="Google Play"
                 sx={{ width: '135px', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
               />
@@ -184,23 +184,23 @@ export default function Footer() {
                   {
                     icon: FacebookIcon,
                     label: 'Facebook',
-                    url: 'https://www.facebook.com/share/17wi9DV1uV/?mibextid=wwXIfr',
+                    url: 'https:/www.facebook.com/share/17wi9DV1uV/?mibextid=wwXIfr',
                   },
                   {
                     icon: InstagramIcon,
                     label: 'Instagram',
-                    url: 'https://www.instagram.com/kani.taxi?igsh=ejNqdHN5cDBsN2c4&utm_source=qr',
+                    url: 'https:/www.instagram.com/kani.taxi?igsh=ejNqdHN5cDBsN2c4&utm_source=qr',
                   },
                   {
                     icon: ThreadsIcon,
                     label: 'Threads',
-                    url: 'https://www.threads.com/@kani.taxi?invite=0',
+                    url: 'https:/www.threads.com/@kani.taxi?invite=0',
                   },
-                  { icon: XIcon, label: 'X', url: 'https://x.com/kanitaxiyia9?s=11' },
+                  { icon: XIcon, label: 'X', url: 'https:/x.com/kanitaxiyia9?s=11' },
                   {
                     icon: YouTubeIcon,
                     label: 'YouTube',
-                    url: 'https://youtube.com/@kanitaxi-b1d?si=olzi_vPKHOvLqvG2',
+                    url: 'https:/youtube.com/@kanitaxi-b1d?si=olzi_vPKHOvLqvG2',
                   },
                 ].map((social, idx) => (
                   <IconButton
@@ -299,7 +299,7 @@ export default function Footer() {
 
         <Box
           component="a"
-          href="https://wa.me/919488104888"
+          href="https:/wa.me/919488104888"
           target="_blank"
           sx={{
             flex: 1,

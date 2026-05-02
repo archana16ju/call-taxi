@@ -9,7 +9,7 @@ export const Tariffs: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/TariffManagement#default',
+          Component: '@/payload/admin/components/TariffManagement#default',
         },
       },
     },

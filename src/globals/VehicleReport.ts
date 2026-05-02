@@ -9,7 +9,7 @@ export const VehicleReport: GlobalConfig = {
       views: {
         edit: {
           default: {
-            Component: '@/app/(payload)/components/VehicleReport#default',
+            Component: '@/payload/admin/components/VehicleReport#default',
           },
         },
       },

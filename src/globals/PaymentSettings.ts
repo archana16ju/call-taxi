@@ -9,7 +9,7 @@ export const PaymentSettings: GlobalConfig = {
       views: {
         edit: {
           default: {
-            Component: '@/app/(payload)/components/PaymentSettingsComponent#default',
+            Component: '@/payload/admin/components/PaymentSettingsComponent#default',
           },
         },
       },

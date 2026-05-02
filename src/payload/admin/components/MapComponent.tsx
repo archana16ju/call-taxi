@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import MapContainer, { TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 import { Box, Typography, Paper, Stack, Avatar, IconButton, Button, CircularProgress, Divider } from '@mui/material'
@@ -21,7 +22,7 @@ const Polyline = dynamic(() => import('react-leaflet').then(m => m.Polyline), { 
 
 export interface MapMarker {
   id: string | number
-  position: [number, number] // [lat, lng]
+  position: [number, number] //[lat, lng]
   icon?: any
   popup?: React.ReactNode
 }
@@ -48,9 +49,6 @@ interface MapComponentProps {
 
 // --- SUB-COMPONENTS ---
 
-/**
- * Handles map view updates when center or zoom props change
- */
 const MapViewUpdater = ({ center, zoom }: { center: [number, number], zoom: number }) => {
   // We use require here to avoid SSR issues with the hook
   const { useMap } = require('react-leaflet')
@@ -95,7 +93,7 @@ export default function MapComponent({
           style={{ height: '100%', width: '100%' }}
           zoomControl={showZoomControl}
         >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <TileLayer url="https:/{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <MapViewUpdater center={center} zoom={zoom} />
           
           {/* Render Polylines */}
@@ -162,7 +160,7 @@ export function LiveTrackingDashboard() {
 
           if (booking && booking.dropoffLocation && Array.isArray(booking.dropoffLocation)) {
             try {
-              const osrm = `https://router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
+              const osrm = `https:/router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
               const routeRes = await fetch(osrm).then(res => {
                 if (!res.ok) return null
                 return res.json()
@@ -331,7 +329,7 @@ export function LiveTrackingDashboard() {
                   <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
                     <div style="background: #1e293b; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; border: 1px solid ${statusColor}; margin-bottom: 4px; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">${loc.name}</div>
                     <div style="width: 44px; height: 44px; background: #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 3px solid ${statusColor}; box-shadow: 0 10px 20px rgba(0,0,0,0.3); position: relative;">
-                      <img src="${isDriving ? 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png' : 'https://cdn-icons-png.flaticon.com/512/1048/1048313.png'}" style="width: 28px; height: 28px; ${isOffline ? 'filter: grayscale(100%); opacity: 0.5;' : ''}" />
+                      <img src="${isDriving ? 'https:/cdn-icons-png.flaticon.com/512/3448/3448339.png' : 'https:/cdn-icons-png.flaticon.com/512/1048/1048313.png'}" style="width: 28px; height: 28px; ${isOffline ? 'filter: grayscale(100%); opacity: 0.5;' : ''}" />
                       ${isOffline ? '<div style="position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; background: #ef4444; border: 2px solid #1e293b; border-radius: 50%;"></div>' : ''}
                     </div>
                     <div style="margin-top: 4px; background: ${statusColor}; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 8px; font-weight: 900; text-transform: uppercase;">

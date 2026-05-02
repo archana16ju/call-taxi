@@ -8,7 +8,7 @@ export const Drivers: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/DriverManagement#default',
+          Component: '@/payload/admin/components/DriverManagement#default',
         },
       },
     },

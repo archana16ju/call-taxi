@@ -1,11 +1,11 @@
-// CSS / SCSS support
-declare module '*.css';
-declare module '*.scss';
+/ CSS / SCSS support
+declare module '@payloadcms/next/css'
+declare module '*.scss'
 
-// Leaflet CSS
+/ Leaflet CSS
 declare module 'leaflet/dist/leaflet.css';
 
-// Payload CSS
+/ Payload CSS
 declare module '@payloadcms/next/css';
 
 export {}

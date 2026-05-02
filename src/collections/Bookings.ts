@@ -23,12 +23,15 @@ export const Bookings: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/booking#default',
+          Component: '@/payload/admin/components/booking#default',
         },
       },
     },
   },
+
+  
   hooks: {
+    
     beforeChange: [
       async ({ data, req, operation }) => {
         if ((operation === 'create' || operation === 'update') && data.customerPhone) {
@@ -76,7 +79,32 @@ export const Bookings: CollectionConfig = {
           }
           data.bookingCode = code
         }
+        // AUTO APPLY RIDE PREFERENCES INTO BOOKING
+if (operation === 'create' && data.customer) {
+  const prefs = await req.payload.find({
+    collection: 'ride-preferences',
+    where: {
+      user: {
+        equals: data.customer,
+      },
+    },
+    limit: 1,
+  })
 
+  if (prefs.docs.length > 0) {
+    const userPref = prefs.docs[0]
+
+    if (userPref.autoApplyToBooking) {
+      data.appliedPreferences = userPref.id
+
+      // optional: snapshot important fields directly into booking
+      data.childSeat = userPref.preferences?.childSeat
+      data.petFriendly = userPref.preferences?.petFriendly
+      data.acLevel = userPref.comfort?.acLevel
+      data.music = userPref.comfort?.music
+    }
+  }
+}
         return data
       },
     ],
@@ -251,7 +279,7 @@ export const Bookings: CollectionConfig = {
           })
         }
 
-        // --- AUTO RE-ALLOCATION LOGIC ---
+        //--- AUTO RE-ALLOCATION LOGIC ---
         // If a driver was assigned but is now unassigned (cancellation)
 
         if (operation === 'update' && oldDriverId && !newDriverId && doc.status === 'confirmed') {
@@ -309,7 +337,7 @@ export const Bookings: CollectionConfig = {
           })
         }
 
-        // --- AUTOMATIC OTP GENERATION ON CONFIRMATION ---
+        //--- AUTOMATIC OTP GENERATION ON CONFIRMATION ---
         if (doc.status === 'confirmed' && previousDoc?.status !== 'confirmed') {
           const otp = Math.floor(100000 + Math.random() * 900000).toString()
           const expiry = new Date()
@@ -337,7 +365,7 @@ export const Bookings: CollectionConfig = {
             },
           })
         }
-
+          
         // --- AUTOMATIC SHARING LINK ON TRIP START ---
         if (doc.tripStatus === 'started' && previousDoc?.tripStatus !== 'started') {
           const shareToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
@@ -403,6 +431,11 @@ export const Bookings: CollectionConfig = {
       type: 'select',
       options: ['oneway', 'roundtrip', 'packages', 'multilocation'],
       required: true,
+    },
+     {
+      name: "appliedPreferences",
+      type: "relationship",
+      relationTo: "ride-preferences",
     },
     {
       name: 'driver',

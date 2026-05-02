@@ -7,7 +7,7 @@ export const Reviews: CollectionConfig = {
      components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/review#default',
+          Component: '@/payload/admin/components/review#default',
         },
       },
     },

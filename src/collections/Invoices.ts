@@ -8,11 +8,11 @@ export const Invoices: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/InvoiceManagement#default',
+          Component: '@/payload/admin/components/InvoiceManagement#default',
         },
         edit: {
           default: {
-            Component: '@/app/(payload)/components/InvoiceCreate#InvoiceForm',
+            Component: '@/payload/admin/components/InvoiceCreate#InvoiceForm',
           },
         },
       },
@@ -38,7 +38,7 @@ export const Invoices: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, previousDoc, req, operation }) => {
-        // If payment status changed to 'paid'
+       // If payment status changed to 'paid'
         if (doc.status === 'paid' && previousDoc?.status !== 'paid') {
           // Update Booking Status
           if (doc.booking) {

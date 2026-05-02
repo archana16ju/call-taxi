@@ -8,7 +8,7 @@ export const DriverOfflineLogs: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/OfflineDriverDashboard#default',
+          Component: '@/payload/admin/components/OfflineDriverDashboard#default',
         },
       },
     },

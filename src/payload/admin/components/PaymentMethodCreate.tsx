@@ -268,8 +268,8 @@ export const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ paymentMet
             </Typography>
             <Box
               component="img"
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-                `upi://pay?pa=${formData.config.upiId}&pn=${formData.name}&cu=INR`
+              src={`https:/api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+                `upi:/pay?pa=${formData.config.upiId}&pn=${formData.name}&cu=INR`
               )}`}
               alt="UPI QR Code"
               sx={{ width: 150, height: 150, mb: 1, borderRadius: '8px' }}
@@ -285,8 +285,8 @@ export const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ paymentMet
                 variant="outlined"
                 size="small"
                 onClick={() => {
-                  const url = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(
-                    `upi://pay?pa=${formData.config.upiId}&pn=${formData.name}&cu=INR`
+                  const url = `https:/api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(
+                    `upi:/pay?pa=${formData.config.upiId}&pn=${formData.name}&cu=INR`
                   )}`
                   window.open(url, '_blank')
                 }}
@@ -298,8 +298,8 @@ export const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ paymentMet
                 variant="contained"
                 size="small"
                 onClick={() => {
-                  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-                    `upi://pay?pa=${formData.config.upiId}&pn=${formData.name}&cu=INR`
+                  const qrUrl = `https:/api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+                    `upi:/pay?pa=${formData.config.upiId}&pn=${formData.name}&cu=INR`
                   )}`
                   const printWindow = window.open('', '_blank')
                   if (printWindow) {

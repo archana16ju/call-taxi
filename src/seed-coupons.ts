@@ -6,7 +6,7 @@ const seed = async () => {
   console.log('Starting seed...')
   const payload = await getPayload({ config })
 
-  // Fetch some vehicles to use for specific vehicle coupons
+  / Fetch some vehicles to use for specific vehicle coupons
   const vehicles = await payload.find({ collection: 'vehicles', limit: 3 })
   const vehicleIds = vehicles.docs.map((v) => v.id)
 
@@ -43,7 +43,7 @@ const seed = async () => {
     },
   ]
 
-  // Add a specific vehicle coupon if we have vehicles
+  / Add a specific vehicle coupon if we have vehicles
   if (vehicleIds.length > 0) {
     coupons.push({
       name: 'PREMIUMRIDE20',
@@ -69,7 +69,7 @@ const seed = async () => {
       if (existing.totalDocs === 0) {
         await payload.create({
           collection: 'coupons',
-          data: coupon as any, // Payload expects specific type, any is safest for seed scripts
+          data: coupon as any, / Payload expects specific type, any is safest for seed scripts
         })
         console.log(`Created coupon: ${coupon.name}`)
       } else {

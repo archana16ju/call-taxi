@@ -9,7 +9,7 @@ export const Customers: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/CustomerManagement#default',
+          Component: '@/payload/admin/components/CustomerManagement#default',
         },
       },
     },

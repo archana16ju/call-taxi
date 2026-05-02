@@ -79,7 +79,7 @@ export const Vehicles: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/VehicleManagement#default',
+          Component: '@/payload/admin/components/VehicleManagement#default',
         },
       },
     },

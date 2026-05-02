@@ -42,13 +42,15 @@ import { GeneralSettings } from './globals/GeneralSettings'
 // Endpoints
 import { getBookingReport } from './endpoints/getBookingReport'
 import { getCustomerReport } from './endpoints/getCustomerReport'
+import { DriverAllocation } from './collections/driver-allocation'
+import RidePreferences from './collections/ridePreferences'
 
 // Paths
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 // 🔥 IMPORTANT: point to /src so "@/..." works
-const srcDir = path.resolve(process.cwd(), 'src')
+const srcDir = path.join(process.cwd(), 'src')
 
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
@@ -70,27 +72,26 @@ export default buildConfig({
     user: Users.slug,
 
     // ✅ FIXED importMap resolution
-    importMap: {
-      baseDir: srcDir,
-    },
-
+  importMap: {
+  baseDir: path.join(process.cwd(), 'src'),
+},
     components: {
       graphics: {
-        Logo: '@/app/(payload)/components/Logo#Logo',
-        Icon: '@/app/(payload)/components/Logo#Logo',
+        Logo: '@/payload/admin/components/Logo',
+        Icon: '@/payload/admin/components/Logo',
       },
 
-      Nav: '@/app/(payload)/components/CustomNav#CustomNav',
+      Nav: '@/payload/admin/components/CustomNav#CustomNav',
 
       views: {
         dashboard: {
-          Component: '@/app/(payload)/components/MainDashboard#default',
+          Component: '@/payload/admin/components/MainDashboard#default',
         },
         'live-tracking': {
-          Component: '@/app/(payload)/components/MapComponent#LiveTrackingDashboard',
+          Component: '@/payload/admin/components/MapComponent#LiveTrackingDashboard',
         },
         'driver-allocation': {
-          Component: '@/app/(payload)/components/DriverAllocationManagement#default',
+          Component: '@/payload/admin/components/DriverAllocationManagement#default',
         },
       },
     },
@@ -117,6 +118,8 @@ export default buildConfig({
     TripOtps,
     TripSharing,
     DriverOfflineLogs,
+    DriverAllocation,
+    RidePreferences
   ],
 
   globals: [

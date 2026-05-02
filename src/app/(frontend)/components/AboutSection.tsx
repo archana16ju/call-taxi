@@ -155,7 +155,7 @@ export default function AboutSection() {
                           opacity: 0.8, // Increased opacity
                           fontFamily: 'monospace',
                           zIndex: 1,
-                          display: { xs: 'none', md: 'block' }, // Hide on mobile
+                          display: { xs: 'none', md: 'block' }, //</Box> Hide on mobile
                         }}
                       >
                         0{index + 1}
@@ -181,7 +181,7 @@ export default function AboutSection() {
                         sx={{
                           color: '#9ca3af', // Light grey text
                           lineHeight: 1.6,
-                          display: { xs: 'none', md: 'block' }, // Hide description on mobile
+                          display: { xs: 'none', md: 'block' }, //</Grid> Hide description on mobile
                         }}
                       >
                         {item.desc}

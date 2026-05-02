@@ -53,7 +53,7 @@ const taxiIcon = typeof window !== 'undefined' ? new L.DivIcon({
   html: `
     <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
       <div style="width: 32px; height: 32px; background: #1e293b; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);">
-        <img src="https://cdn-icons-png.flaticon.com/512/3448/3448339.png" style="width: 18px; height: 18px;" />
+        <img src="https:/cdn-icons-png.flaticon.com/512/3448/3448339.png" style="width: 18px; height: 18px;" />
       </div>
       <div style="margin-top: 2px; background: #fff; color: #1e293b; padding: 1px 4px; border-radius: 3px; font-size: 7px; font-weight: 800; text-transform: uppercase;">
         On Route
@@ -150,7 +150,7 @@ export default function MainDashboard() {
 
           if (booking && booking.dropoffLocation && Array.isArray(booking.dropoffLocation)) {
             try {
-              const osrm = `https://router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
+              const osrm = `https:/router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
               const routeRes = await fetch(osrm).then(res => {
                 if (!res.ok) return null
                 return res.json()

@@ -25,7 +25,6 @@ export default function ReviewsSection() {
 
   const [page, setPage] = useState(0)
 
-  // Reset page when switching views to prevent out of bounds (though slice handles safely usually)
   useEffect(() => {
     setPage(0)
   }, [isMobile])
@@ -174,7 +173,7 @@ export default function ReviewsSection() {
                             sx={{
                               fontSize: 40,
                               color: '#fbbf24',
-                              transform: 'rotate(180deg)', // Flip for start quotes look if desired
+                              transform: 'rotate(180deg)', 
                               opacity: 0.8,
                               ml: -1,
                               mt: -0.5,

@@ -134,7 +134,7 @@ export default function ContactSection() {
                   sx={{
                     fontWeight: 800,
                     mb: 1, // Reduced margin
-                    fontSize: { xs: '1.5rem', md: '2.2rem' }, // Reduced font size to fit one line
+                    fontSize: { xs: '1.5rem', md: '2.2rem' }, //</Box> Reduced font size to fit one line
                     whiteSpace: 'nowrap', // Force one line
                     color: inquiryType !== 'default' ? '#fbbf24' : 'inherit',
                   }}
@@ -146,7 +146,7 @@ export default function ContactSection() {
                   sx={{
                     color: '#bae6fe',
                     mb: 2, // Reduced margin
-                    fontSize: '0.9rem', // Slightly smaller text
+                    fontSize: '0.9rem', //</Grid> Slightly smaller text
                     lineHeight: 1.5,
                   }}
                 >

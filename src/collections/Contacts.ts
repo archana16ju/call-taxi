@@ -10,7 +10,7 @@ export const Contacts: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/InquiryManager#default',
+          Component: '@/payload/admin/components/InquiryManager#default',
         },
       },
     },

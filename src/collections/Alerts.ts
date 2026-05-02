@@ -7,7 +7,7 @@ export const Alerts: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/AlertPage#default',
+          Component: '@/payload/admin/components/AlertPage#default',
         },
       },
     },

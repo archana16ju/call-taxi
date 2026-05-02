@@ -172,7 +172,7 @@ const BookingReport = () => {
 
     // Fetch route
     try {
-      const osrm = `https://router.project-osrm.org/route/v1/driving/${booking.pickupLocation[0]},${booking.pickupLocation[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
+      const osrm = `https:/router.project-osrm.org/route/v1/driving/${booking.pickupLocation[0]},${booking.pickupLocation[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
       const res = await fetch(osrm).then(res => res.json())
       if (res.routes && res.routes[0]) {
         setMapRoute(res.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]))

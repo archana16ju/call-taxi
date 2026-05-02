@@ -8,7 +8,7 @@ export const CancellationControl: GlobalConfig = {
       views: {
         edit: {
           default: {
-            Component: '@/app/(payload)/components/CancellationControlComponent#default',
+            Component: '@/payload/admin/components/CancellationControlComponent#default',
           },
         },
       },

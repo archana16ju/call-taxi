@@ -8,11 +8,11 @@ const PaymentMethods: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/PaymentMethodManagement#default',
+          Component: '@/payload/admin/components/PaymentMethodManagement#default',
         },
         edit: {
           default: {
-            Component: '@/app/(payload)/components/PaymentMethodCreate#PaymentMethodForm',
+            Component: '@/payload/admin/components/PaymentMethodCreate#PaymentMethodForm',
           },
         },
       },

@@ -9,7 +9,7 @@ export const TripSharing: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/TripSharingManagement#default',
+          Component: '@/payload/admin/components/TripSharingManagement#default',
         },
       },
     },

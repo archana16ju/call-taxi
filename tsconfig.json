@@ -14,6 +14,7 @@
     "jsx": "preserve",
     "incremental": true,
     "target": "ES2022",
+    "forceConsistentCasingInFileNames": true,
 
     // ✅ keep this (required for your setup)
     "baseUrl": ".",
@@ -27,13 +28,18 @@
     },
 
     "plugins": [{ "name": "next" }]
+    
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "data/tamil_nadu_locations_names.cjs"
+    "data/tamil_nadu_locations_names.cjs",
+    "src/types/**/*.d.ts"
   ],
+
   "exclude": ["node_modules"]
+
+  
 }

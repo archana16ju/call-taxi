@@ -9,7 +9,7 @@ export const TripOtps: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/OtpManagement#default',
+          Component: '@/payload/admin/components/OtpManagement#default',
         },
       },
     },

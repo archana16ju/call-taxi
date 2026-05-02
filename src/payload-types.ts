@@ -72,11 +72,11 @@ export interface Config {
     drivers: Driver;
     tariffs: Tariff;
     vehicles: Vehicle;
+    'vehicle-images': VehicleImage;
+    'vehicle-icons': VehicleIcon;
     bookings: Booking;
     customers: Customer;
     coupons: Coupon;
-    'vehicle-images': VehicleImage;
-    'vehicle-icons': VehicleIcon;
     'slider-images': SliderImage;
     contacts: Contact;
     alerts: Alert;
@@ -87,6 +87,8 @@ export interface Config {
     'trip-otps': TripOtp;
     'trip-sharing': TripSharing;
     'driver-offline-logs': DriverOfflineLog;
+    'driver-allocation': DriverAllocation;
+    'ride-preferences': RidePreference;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -103,11 +105,11 @@ export interface Config {
     drivers: DriversSelect<false> | DriversSelect<true>;
     tariffs: TariffsSelect<false> | TariffsSelect<true>;
     vehicles: VehiclesSelect<false> | VehiclesSelect<true>;
+    'vehicle-images': VehicleImagesSelect<false> | VehicleImagesSelect<true>;
+    'vehicle-icons': VehicleIconsSelect<false> | VehicleIconsSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     coupons: CouponsSelect<false> | CouponsSelect<true>;
-    'vehicle-images': VehicleImagesSelect<false> | VehicleImagesSelect<true>;
-    'vehicle-icons': VehicleIconsSelect<false> | VehicleIconsSelect<true>;
     'slider-images': SliderImagesSelect<false> | SliderImagesSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     alerts: AlertsSelect<false> | AlertsSelect<true>;
@@ -118,6 +120,8 @@ export interface Config {
     'trip-otps': TripOtpsSelect<false> | TripOtpsSelect<true>;
     'trip-sharing': TripSharingSelect<false> | TripSharingSelect<true>;
     'driver-offline-logs': DriverOfflineLogsSelect<false> | DriverOfflineLogsSelect<true>;
+    'driver-allocation': DriverAllocationSelect<false> | DriverAllocationSelect<true>;
+    'ride-preferences': RidePreferencesSelect<false> | RidePreferencesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -144,9 +148,10 @@ export interface Config {
     'general-settings': GeneralSettingsSelect<false> | GeneralSettingsSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
@@ -197,6 +202,7 @@ export interface User {
         expiresAt: string;
       }[]
     | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -318,6 +324,62 @@ export interface Tariff {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-images".
+ */
+export interface VehicleImage {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-icons".
+ */
+export interface VehicleIcon {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "bookings".
  */
 export interface Booking {
@@ -327,6 +389,7 @@ export interface Booking {
   customer?: (string | null) | Customer;
   vehicle: string | Vehicle;
   tripType: 'oneway' | 'roundtrip' | 'packages' | 'multilocation';
+  appliedPreferences?: (string | null) | RidePreference;
   driver?: (string | null) | Driver;
   /**
    * @minItems 2
@@ -401,6 +464,44 @@ export interface Customer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ride-preferences".
+ */
+export interface RidePreference {
+  id: string;
+  user: string | User;
+  preferences?: {
+    childSeat?: boolean | null;
+    extraLuggage?: boolean | null;
+    petFriendly?: boolean | null;
+    wheelchairAccess?: boolean | null;
+  };
+  comfort?: {
+    acLevel?: ('low' | 'medium' | 'high') | null;
+    music?: ('off' | 'soft' | 'loud') | null;
+  };
+  ridePresets?:
+    | {
+        presetName: string;
+        acLevel?: ('low' | 'medium' | 'high') | null;
+        music?: ('off' | 'soft' | 'loud') | null;
+        notes?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  lastBooking?: (string | null) | Booking;
+  favoriteLocations?:
+    | {
+        label?: string | null;
+        address?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  autoApplyToBooking?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "coupons".
  */
 export interface Coupon {
@@ -419,62 +520,6 @@ export interface Coupon {
   active?: boolean | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "vehicle-images".
- */
-export interface VehicleImage {
-  id: string;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "vehicle-icons".
- */
-export interface VehicleIcon {
-  id: string;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -677,6 +722,43 @@ export interface DriverOfflineLog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "driver-allocation".
+ */
+export interface DriverAllocation {
+  id: string;
+  booking: string | Booking;
+  driver?: (string | null) | Driver;
+  status: 'pending' | 'assigned' | 'rejected' | 'timeout' | 'reallocated';
+  allocationType?: ('auto' | 'manual') | null;
+  /**
+   * Distance between driver and pickup
+   */
+  distanceKm?: number | null;
+  /**
+   * ETA in minutes
+   */
+  estimatedArrivalTime?: number | null;
+  attempts?: number | null;
+  reallocationHistory?:
+    | {
+        previousDriver?: (string | null) | Driver;
+        reason?: string | null;
+        timestamp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  logs?:
+    | {
+        message?: string | null;
+        timestamp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -720,6 +802,14 @@ export interface PayloadLockedDocument {
         value: string | Vehicle;
       } | null)
     | ({
+        relationTo: 'vehicle-images';
+        value: string | VehicleImage;
+      } | null)
+    | ({
+        relationTo: 'vehicle-icons';
+        value: string | VehicleIcon;
+      } | null)
+    | ({
         relationTo: 'bookings';
         value: string | Booking;
       } | null)
@@ -730,14 +820,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'coupons';
         value: string | Coupon;
-      } | null)
-    | ({
-        relationTo: 'vehicle-images';
-        value: string | VehicleImage;
-      } | null)
-    | ({
-        relationTo: 'vehicle-icons';
-        value: string | VehicleIcon;
       } | null)
     | ({
         relationTo: 'slider-images';
@@ -778,6 +860,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'driver-offline-logs';
         value: string | DriverOfflineLog;
+      } | null)
+    | ({
+        relationTo: 'driver-allocation';
+        value: string | DriverAllocation;
+      } | null)
+    | ({
+        relationTo: 'ride-preferences';
+        value: string | RidePreference;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -959,6 +1049,66 @@ export interface VehiclesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-images_select".
+ */
+export interface VehicleImagesSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-icons_select".
+ */
+export interface VehicleIconsSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "bookings_select".
  */
 export interface BookingsSelect<T extends boolean = true> {
@@ -967,6 +1117,7 @@ export interface BookingsSelect<T extends boolean = true> {
   customer?: T;
   vehicle?: T;
   tripType?: T;
+  appliedPreferences?: T;
   driver?: T;
   pickupLocation?: T;
   pickupLocationName?: T;
@@ -1038,66 +1189,6 @@ export interface CouponsSelect<T extends boolean = true> {
   active?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "vehicle-images_select".
- */
-export interface VehicleImagesSelect<T extends boolean = true> {
-  alt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
-    | T
-    | {
-        card?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "vehicle-icons_select".
- */
-export interface VehicleIconsSelect<T extends boolean = true> {
-  alt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1278,6 +1369,77 @@ export interface DriverOfflineLogsSelect<T extends boolean = true> {
       };
   syncedAt?: T;
   batchSize?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "driver-allocation_select".
+ */
+export interface DriverAllocationSelect<T extends boolean = true> {
+  booking?: T;
+  driver?: T;
+  status?: T;
+  allocationType?: T;
+  distanceKm?: T;
+  estimatedArrivalTime?: T;
+  attempts?: T;
+  reallocationHistory?:
+    | T
+    | {
+        previousDriver?: T;
+        reason?: T;
+        timestamp?: T;
+        id?: T;
+      };
+  logs?:
+    | T
+    | {
+        message?: T;
+        timestamp?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ride-preferences_select".
+ */
+export interface RidePreferencesSelect<T extends boolean = true> {
+  user?: T;
+  preferences?:
+    | T
+    | {
+        childSeat?: T;
+        extraLuggage?: T;
+        petFriendly?: T;
+        wheelchairAccess?: T;
+      };
+  comfort?:
+    | T
+    | {
+        acLevel?: T;
+        music?: T;
+      };
+  ridePresets?:
+    | T
+    | {
+        presetName?: T;
+        acLevel?: T;
+        music?: T;
+        notes?: T;
+        id?: T;
+      };
+  lastBooking?: T;
+  favoriteLocations?:
+    | T
+    | {
+        label?: T;
+        address?: T;
+        id?: T;
+      };
+  autoApplyToBooking?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1473,6 +1635,16 @@ export interface GeneralSettingsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

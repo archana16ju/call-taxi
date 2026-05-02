@@ -18,7 +18,7 @@ export const metadata = {
     title: 'Kani Taxi - Best Call Taxi in Thoothukudi',
     description:
       'Book reliable and affordable call taxi services in Thoothukudi and Sawyerpuram. 24/7 Availability. Call +91 94881 04888.',
-    url: 'https://kanitaxi.com', // Assuming this or will be updated
+    url: 'https:/kanitaxi.com', // Assuming this or will be updated
     siteName: 'Kani Taxi',
     locale: 'en_IN',
     type: 'website',

@@ -8,11 +8,11 @@ export const Users: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '../app/(payload)/components/UserManagement#default',
+          Component: '@/payload/admin/components/UserManagement#default',
         },
         edit: {
           default: {
-            Component: '../app/(payload)/components/UserCreate#default',
+            Component: '@/payload/admin/components/UserCreate#default',
           },
         },
       },

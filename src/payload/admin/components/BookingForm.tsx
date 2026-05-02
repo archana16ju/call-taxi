@@ -46,6 +46,7 @@ export type BookingFormData = {
   razorpayOrderId?: string
   razorpayPaymentId?: string
   razorpaySignature?: string
+  ridePreference?: string
 }
 
 type Props = {
@@ -57,6 +58,7 @@ type Props = {
 
 export default function BookingForm({ initialData, onSave, onCancel, isEditing }: Props) {
   const [formData, setFormData] = useState<BookingFormData>({
+    ridePreference: initialData?.ridePreference || '',
     customerName: initialData?.customerName || '',
     customerPhone: initialData?.customerPhone || '',
     vehicle: initialData?.vehicle || '',
@@ -152,6 +154,7 @@ export default function BookingForm({ initialData, onSave, onCancel, isEditing }
           <Paper sx={{ p: 3, mb: 3, borderRadius: 2, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
             <Typography variant="subtitle1" fontWeight={700} color="#0f172a" mb={3}>Location Information</Typography>
             <Grid container spacing={2} mb={2}>
+              
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>PICKUP LOCATION - LONGITUDE*</Typography>
                 <TextField fullWidth size="small" value={formData.pickupLocation[0]} onChange={e => handleLocationChange('pickup', 0, e.target.value)} />
@@ -271,7 +274,27 @@ export default function BookingForm({ initialData, onSave, onCancel, isEditing }
 
           {/* ADMINISTRATION & ASSIGNMENTS */}
           <Paper sx={{ p: 3, borderRadius: 2, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
+
             <Typography variant="subtitle1" fontWeight={700} color="#0f172a" mb={3}>Administration & Assignments</Typography>
+            {/* RIDE PREFERENCES */}
+<Box sx={{ mb: 2 }}>
+  <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>
+    RIDE PREFERENCES
+  </Typography>
+
+  <TextField
+    select
+    fullWidth
+    size="small"
+    value={(formData as any).ridePreference || ''}
+    onChange={e => handleChange('ridePreference' as any, e.target.value)}
+  >
+    <MenuItem value="">None</MenuItem>
+    <MenuItem value="auto">Auto Assign Driver</MenuItem>
+    <MenuItem value="female_only">Female Driver Only</MenuItem>
+    <MenuItem value="premium">Premium Priority</MenuItem>
+  </TextField>
+</Box>
             <Grid container spacing={2} mb={2}>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>STATUS</Typography>

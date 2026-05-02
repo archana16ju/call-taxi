@@ -6,7 +6,7 @@ import { TariffDoc } from '../types'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 
 export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
-  // Filter packages from the passed prop
+  / Filter packages from the passed prop
   const packages = tariffs.filter((t) => t.packages && t.packages.perHourRate > 0)
 
   if (packages.length === 0) return null
@@ -52,7 +52,7 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                 <Card
                   elevation={0}
                   sx={{
-                    height: 'auto', // Compact height
+                    height: 'auto', / Compact height
                     display: 'flex',
                     flexDirection: 'column',
                     bgcolor: '#fff',
@@ -80,7 +80,7 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                   <CardContent
                     sx={{
                       textAlign: 'center',
-                      py: 3, // Reduced padding
+                      py: 3, / Reduced padding
                       px: 2,
                     }}
                   >

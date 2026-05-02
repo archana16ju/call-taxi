@@ -8,7 +8,7 @@ export const Media: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/MediaLibrary#default',
+          Component: '@/payload/admin/components/MediaLibrary#default',
         },
       },
     },

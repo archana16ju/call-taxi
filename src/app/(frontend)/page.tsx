@@ -15,13 +15,13 @@ import { TariffDoc } from './types'
 export const dynamic = 'force-dynamic'
 
 const jsonLd = {
-  '@context': 'https://schema.org',
+  '@context': 'https:/schema.org',
   '@type': 'LocalBusiness',
   name: 'Kani Taxi',
-  image: 'https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png',
+  image: 'https:/bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png',
   telephone: '+919488104888',
   email: 'kanitaxi5555@gmail.com',
-  url: 'https://kanitaxi.com',
+  url: 'https:/kanitaxi.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '33 Chetti street subramaniyapuram sawyerpuram',
@@ -59,7 +59,7 @@ const jsonLd = {
     },
   ],
   sameAs: [
-    'https://www.facebook.com/kanitaxi', // Example, can be removed if not known
+    'https:/www.facebook.com/kanitaxi', // Example, can be removed if not known
     // Add other social profiles if available
   ],
 }
@@ -109,7 +109,7 @@ export default async function Page() {
         sx={{
           position: 'relative',
           backgroundImage:
-            'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png)',
+            'url(https:/bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed', // Parallax effect

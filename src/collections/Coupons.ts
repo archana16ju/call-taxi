@@ -9,7 +9,7 @@ export const Coupons: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/app/(payload)/components/CouponManagement#default',
+          Component: '@/payload/admin/components/CouponManagement#default',
         },
       },
     },

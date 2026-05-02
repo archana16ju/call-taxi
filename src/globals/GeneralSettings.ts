@@ -8,7 +8,7 @@ export const GeneralSettings: GlobalConfig = {
       views: {
         edit: {
           default: {
-            Component: '@/app/(payload)/components/GeneralSettings#default',
+            Component: '@/payload/admin/components/GeneralSettings#default',
           },
         },
       },

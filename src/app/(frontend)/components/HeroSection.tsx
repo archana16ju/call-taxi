@@ -97,7 +97,7 @@ const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  const d = R * c // Distance in km
+  const d = R * c / Distance in km
   return d
 }
 
@@ -253,7 +253,7 @@ export default function HeroSection() {
           `/api/tariffs?limit=100&sort=-updatedAt&depth=2`,
         )
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint//no-explicit-any
         const parsed = docs.map((d: any) => {
           return {
             id: d.id || d._id,
@@ -489,7 +489,7 @@ export default function HeroSection() {
 
       if (tripType !== 'packages' && tripType !== 'multilocation' && dropCoords) {
         // Standard Oneway/Roundtrip
-        const osrm = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
+        const osrm = `https:/router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
         const res = await axios.get(osrm)
         const route = res.data.routes?.[0]
         if (route) {
@@ -502,11 +502,11 @@ export default function HeroSection() {
         let totalDist = 0
         let totalDur = 0
 
-        // Loop through locations pair by pair
+        //Loop through locations pair by pair
         for (let i = 0; i < tourLocations.length - 1; i++) {
           const start = tourLocations[i]
           const end = tourLocations[i + 1]
-          const osrm = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=false`
+          const osrm = `https:/router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=false`
           try {
             const res = await axios.get(osrm)
             const route = res.data.routes?.[0]
@@ -783,7 +783,7 @@ export default function HeroSection() {
 
     return new Promise<boolean>((resolve) => {
       const script = document.createElement('script')
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.src = 'https:/checkout.razorpay.com/v1/checkout.js'
       script.onload = () => resolve(true)
       script.onerror = () => resolve(false)
       document.body.appendChild(script)
@@ -1076,7 +1076,7 @@ export default function HeroSection() {
             right: 0,
             bottom: { xs: '500px', md: '220px' },
             backgroundImage:
-              'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
+              'url(https:/bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             zIndex: 0,
@@ -1320,10 +1320,8 @@ export default function HeroSection() {
                       bgcolor: '#1C2E4A',
                       p: { xs: 2, md: 3 },
                       boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
-                      // border: '1px solid #e2e8f0', // Removed as per request
                       borderRadius: 3,
-                      borderTopLeftRadius: 0, // Connects to the active tab (assuming first tab is active defaults? No, if RoundTrip active, visually it's weird if top-left is sharp. Ideally should be rounded if active tab is not first. But simple folder look usually has sharp corner where tab connects. Let's stick to standard radius for now essentially, maybe 0 if first tab active. For simplicity, keeping standard radius 3 usually looks fine or 0 looks "attached". Let's use 0 because the tab sits on top.)
-                      position: 'relative',
+                      borderTopLeftRadius: 0, 
                       zIndex: 0, // Behind tabs? No, tabs zIndex 1.
                     }}
                   >
@@ -2239,17 +2237,16 @@ export default function HeroSection() {
                           // Wait, to put text ON the connector, we can use the `StepConnector` with a custom component or styled.
                           // Easier approach: Just render the connector normally but use CSS to add content? Content from where?
                           // Better approach: Use a custom connector component that takes the distance as a prop?
-                          // Stepper `connector` prop applies to ALL. We need individual distances.
+                          //Stepper `connector` prop applies to ALL. We need individual distances.
                           // Limitation: `connector` prop is generic.
-                          // Alternative: Render the line manually between steps?
+                          //Alternative: Render the line manually between steps?
                           // Let's try to override the StepConnector for each step? No, it's one prop.
                           // Workaround: We can render the distance label as part of the StepLabel or absolute position it?
-                          // Actually, we can use the `Step` children or `StepLabel` to render a line to the right?
+                          //Actually, we can use the `Step` children or `StepLabel` to render a line to the right?
                           // Let's try this: Render a straight horizontal Box between items manually instead of MUI Stepper?
                           // Or stick to MUI Stepper and overlay the distance?
                           // Let's manually map and render items to have full control.
                         />
-                        {/* Manual Stepper Implementation for Custom Connector Content */}
                         <Box
                           sx={{
                             display: 'flex',
@@ -2271,7 +2268,7 @@ export default function HeroSection() {
                               )
                               // Estimate time: assume 50 km/h avg speed
                               const speed = 50
-                              const hours = d / speed
+                              const hours = d // speed
                               const h = Math.floor(hours)
                               const m = Math.round((hours - h) * 60)
                               timeStr = h > 0 ? `${h} hr ${m > 0 ? `${m} min` : ''}` : `${m} min`
@@ -2322,7 +2319,6 @@ export default function HeroSection() {
                                   </Typography>
                                 </Box>
 
-                                {/* Connector with Distance (if not last) */}
                                 {index < tourLocations.length - 1 && (
                                   <Box
                                     sx={{
