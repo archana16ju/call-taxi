@@ -13,7 +13,7 @@ import {
   Container,
   CircularProgress,
 } from '@mui/material'
-import MapComponent from '../../(payload)/CustomNav.tsx/MapComponent'
+import MapComponent from '@/payload/admin/components/MapComponent'
 import PersonIcon from '@mui/icons-material/Person'
 import LocalTaxiIcon from '@mui/icons-material/LocalTaxi'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'

@@ -37,7 +37,6 @@ import {
 
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 
-import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet components to avoid SSR issues
