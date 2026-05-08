@@ -44,7 +44,9 @@ import { getBookingReport } from './endpoints/getBookingReport'
 import { getCustomerReport } from './endpoints/getCustomerReport'
 import { DriverAllocation } from './collections/driver-allocation'
 import RidePreferences from './collections/ridePreferences'
-import { SmartRide } from './collections/SmartRide'
+
+import MapComponent from '@/payload/admin/components/MapComponent'
+import AiChatConversations from './collections/AiChatConversations'
 
 // Paths
 const filename = fileURLToPath(import.meta.url)
@@ -122,7 +124,7 @@ export default buildConfig({
     DriverOfflineLogs,
     DriverAllocation,
     RidePreferences,
-    SmartRide
+    AiChatConversations
   ],
 
   globals: [

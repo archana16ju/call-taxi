@@ -36,6 +36,7 @@ import SecurityIcon from '@mui/icons-material/Security'
 import ShareIcon from '@mui/icons-material/Share'
 import HistoryIcon from '@mui/icons-material/History'
 import HubIcon from '@mui/icons-material/Hub'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 
 const menuItems = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
@@ -49,12 +50,13 @@ const menuItems = [
   { type: 'header', label: 'SMART BOOKING' },
   { label: 'Bookings', icon: <BookIcon />, path: '/admin/collections/bookings' },
   { label: 'Driver Allocation', icon: <HubIcon />, path: '/admin/driver-allocation' },
-  { label: 'Smart Ride', icon: <HubIcon />, path: '/admin/collections/smart-rides' },
+  { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/smart-rides' },
   { type: 'header', label: 'LIVE TRACKING SYSTEM' },
   { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/admin/live-tracking' },
   { label: 'Offline Sync Logs', icon: <HistoryIcon />, path: '/admin/collections/driver-offline-logs' },
   { type: 'header', label: 'SMART COMMUNICATION' },
   { label: 'Support (WhatsApp)', icon: <WhatsAppIcon />, path: '/admin/globals/general-settings' },
+  { label: 'AI Chat Support', icon: <WhatsAppIcon />, path: '/admin/collections/ai-chat-conversations' },
   { type: 'header', label: 'SECURITY SYSTEM' },
   { label: 'Cancellation Control',icon: <CancelIcon />,path: '/admin/globals/cancellation-control',},
   { label: 'Trip OTPs', icon: <SecurityIcon />, path: '/admin/collections/trip-otps' },

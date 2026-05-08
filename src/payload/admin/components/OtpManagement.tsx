@@ -3,120 +3,426 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
-  Typography,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
+  Typography,
+  Grid,
   Stack,
-  IconButton,
-  TextField,
-  InputAdornment,
+  Button,
+  Chip,
+  Divider,
+  CircularProgress,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
-import SecurityIcon from '@mui/icons-material/Security'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import PendingActionsIcon from '@mui/icons-material/PendingActions'
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import TimerIcon from '@mui/icons-material/Timer'
+import SmsOutlinedIcon from '@mui/icons-material/SmsOutlined'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
+import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined'
+import AccessTimeFilledOutlinedIcon from '@mui/icons-material/AccessTimeFilledOutlined'
+import LocalTaxiOutlinedIcon from '@mui/icons-material/LocalTaxiOutlined'
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 
-export default function OtpManagement() {
-  const [otps, setOtps] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+type Props = {
+  booking?: any
+}
+
+const OTPDashboard: React.FC<Props> = ({ booking }) => {
+  const [otp, setOtp] = useState<string>('')
+  const [seconds, setSeconds] = useState<number>(300)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [method, setMethod] = useState<'sms' | 'whatsapp' | 'email'>('sms')
 
   useEffect(() => {
-    fetch('/api/trip-otps?limit=100&sort=-createdAt&depth=1')
-      .then((res) => res.json())
-      .then((data) => {
-        setOtps(data.docs || [])
-        setLoading(false)
+    if (booking) {
+      generateOTP()
+    }
+  }, [booking])
+
+  useEffect(() => {
+    if (seconds <= 0) return
+
+    const timer = setInterval(() => {
+      setSeconds((prev) => prev - 1)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [seconds])
+
+  const generateOTP = async () => {
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/generate-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId: booking?.id,
+          method,
+        }),
       })
-  }, [])
 
-  const filteredOtps = otps.filter((otp) => 
-    otp.otp.includes(search) || 
-    (otp.booking && (typeof otp.booking === 'object' ? otp.booking.bookingCode : otp.booking).toLowerCase().includes(search.toLowerCase()))
-  )
+      const data = await res.json()
 
-  const getStatusChip = (otp: any) => {
-    if (otp.verified) return <Chip icon={<CheckCircleIcon />} label="Verified" color="success" size="small" />
-    const isExpired = new Date(otp.expiresAt) < new Date()
-    if (isExpired) return <Chip icon={<ErrorOutlineIcon />} label="Expired" color="error" size="small" />
-    return <Chip icon={<PendingActionsIcon />} label="Active" color="primary" size="small" />
+      setOtp(data.otp || '')
+      setSeconds(300)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatTime = (value: number) => {
+    const mins = Math.floor(value / 60)
+    const secs = value % 60
+
+    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   return (
-    <Box sx={{ p: 4, bgcolor: '#f8fafc', minHeight: '100vh' }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
-        <Box>
-          <Typography variant="h4" fontWeight={800} color="#0f172a">OTP Command Center</Typography>
-          <Typography color="text.secondary">Monitor and manage ride verification security codes</Typography>
-        </Box>
-        <TextField
-          size="small"
-          placeholder="Search by OTP or Booking ID..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ bgcolor: '#fff', borderRadius: 2, width: 300 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon fontSize="small" />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Stack>
+    <Box p={3}>
+      <Typography
+        variant="h5"
+        fontWeight={700}
+        mb={1}
+      >
+        Generate Ride OTP
+      </Typography>
 
-      <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', border: '1px solid #e2e8f0' }}>
-        <Table>
-          <TableHead sx={{ bgcolor: '#f1f5f9' }}>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>BOOKING</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>SECURITY OTP</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>STATUS</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>METHOD</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>EXPIRY</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>CREATED AT</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredOtps.map((otp) => (
-              <TableRow key={otp.id} hover>
-                <TableCell>
-                  <Typography fontWeight={700}>#{typeof otp.booking === 'object' ? otp.booking.bookingCode : 'N/A'}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'inline-flex', alignItems: 'center', bgcolor: '#0f172a', color: '#fff', px: 2, py: 0.5, borderRadius: 1.5, gap: 1 }}>
-                    <SecurityIcon sx={{ fontSize: 16, color: '#fbbf24' }} />
-                    <Typography variant="body2" fontWeight={800} letterSpacing={2}>{otp.otp}</Typography>
-                  </Box>
-                </TableCell>
-                <TableCell>{getStatusChip(otp)}</TableCell>
-                <TableCell>
-                  <Typography variant="body2" sx={{ textTransform: 'uppercase', fontWeight: 600, color: '#64748b' }}>
-                    {otp.deliveryMethod}
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        mb={3}
+      >
+        Authenticate secure trip session using auto generated booking OTP.
+      </Typography>
+
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 7 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              border: '1px solid #E5E7EB',
+              borderRadius: 3,
+              p: 3,
+            }}
+          >
+            <Stack spacing={3}>
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#6B7280',
+                    fontWeight: 600,
+                    letterSpacing: 1,
+                  }}
+                >
+                  BOOKING ID
+                </Typography>
+
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    mt: 1,
+                    p: 2,
+                    borderRadius: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
+                  <LocalTaxiOutlinedIcon fontSize="small" />
+
+                  <Typography fontWeight={600}>
+                    {booking?.bookingID || 'N/A'}
                   </Typography>
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <TimerIcon sx={{ fontSize: 14, color: '#94a3b8' }} />
-                    <Typography variant="body2">{new Date(otp.expiresAt).toLocaleTimeString()}</Typography>
-                  </Stack>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" color="text.secondary">{new Date(otp.createdAt).toLocaleString()}</Typography>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                </Paper>
+              </Box>
+
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#6B7280',
+                    fontWeight: 600,
+                    letterSpacing: 1,
+                  }}
+                >
+                  PASSENGER NAME
+                </Typography>
+
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    mt: 1,
+                    p: 2,
+                    borderRadius: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
+                  <PersonOutlineOutlinedIcon fontSize="small" />
+
+                  <Typography fontWeight={600}>
+                    {booking?.customerName || 'Passenger'}
+                  </Typography>
+                </Paper>
+              </Box>
+
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#6B7280',
+                    fontWeight: 600,
+                    letterSpacing: 1,
+                  }}
+                >
+                  DELIVERY METHOD
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  mt={1.5}
+                >
+                  <Button
+                    variant={method === 'sms' ? 'contained' : 'outlined'}
+                    startIcon={<SmsOutlinedIcon />}
+                    onClick={() => setMethod('sms')}
+                    sx={{
+                      borderRadius: 2,
+                      height: 54,
+                      textTransform: 'none',
+                      minWidth: 120,
+                    }}
+                  >
+                    SMS
+                  </Button>
+
+                  <Button
+                    variant={method === 'whatsapp' ? 'contained' : 'outlined'}
+                    startIcon={<WhatsAppIcon />}
+                    onClick={() => setMethod('whatsapp')}
+                    sx={{
+                      borderRadius: 2,
+                      height: 54,
+                      textTransform: 'none',
+                      minWidth: 120,
+                    }}
+                  >
+                    WhatsApp
+                  </Button>
+
+                  <Button
+                    variant={method === 'email' ? 'contained' : 'outlined'}
+                    startIcon={<EmailOutlinedIcon />}
+                    onClick={() => setMethod('email')}
+                    sx={{
+                      borderRadius: 2,
+                      height: 54,
+                      textTransform: 'none',
+                      minWidth: 120,
+                    }}
+                  >
+                    Email
+                  </Button>
+                </Stack>
+              </Box>
+
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={generateOTP}
+                disabled={loading}
+                sx={{
+                  height: 52,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  background: '#081B44',
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={22} sx={{ color: '#fff' }} />
+                ) : (
+                  'Generate OTP'
+                )}
+              </Button>
+            </Stack>
+          </Paper>
+
+          <Paper
+            elevation={0}
+            sx={{
+              mt: 3,
+              borderRadius: 3,
+              border: '1px solid #D6E4FF',
+              background: '#F4F8FF',
+              p: 3,
+            }}
+          >
+            <Stack direction="row" spacing={2}>
+              <VerifiedOutlinedIcon color="info" />
+
+              <Box>
+                <Typography fontWeight={700}>
+                  Security Protocol
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  mt={1}
+                >
+                  OTP codes are auto generated after booking confirmation and
+                  remain valid for only 5 minutes.
+                </Typography>
+              </Box>
+            </Stack>
+          </Paper>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              borderRadius: 3,
+              background: '#081B44',
+              color: '#fff',
+              p: 3,
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                letterSpacing: 2,
+                opacity: 0.7,
+              }}
+            >
+              GENERATED OTP
+            </Typography>
+
+            <Stack
+              direction="row"
+              spacing={1.2}
+              mt={3}
+              mb={3}
+            >
+              {(otp || '000000').split('').map((digit, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    width: 48,
+                    height: 58,
+                    borderRadius: 2,
+                    background: 'rgba(255,255,255,0.08)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 30,
+                    fontWeight: 800,
+                  }}
+                >
+                  {digit}
+                </Box>
+              ))}
+            </Stack>
+
+            <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+            <Stack
+              direction="row"
+              spacing={1}
+              mt={2}
+              alignItems="center"
+            >
+              <AccessTimeFilledOutlinedIcon fontSize="small" />
+
+              <Typography variant="body2">
+                Expires in {formatTime(seconds)} minutes
+              </Typography>
+            </Stack>
+          </Paper>
+
+          <Paper
+            elevation={0}
+            sx={{
+              mt: 3,
+              borderRadius: 3,
+              border: '1px solid #E5E7EB',
+              p: 3,
+            }}
+          >
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              mb={3}
+            >
+              DELIVERY STATUS
+            </Typography>
+
+            <Stack spacing={3}>
+              <Stack direction="row" spacing={2}>
+                <Chip
+                  color="success"
+                  size="small"
+                  label="✓"
+                />
+
+                <Box>
+                  <Typography fontWeight={600}>
+                    OTP Generated
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    Booking confirmation completed
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Stack direction="row" spacing={2}>
+                <Chip
+                  color="success"
+                  size="small"
+                  label="✓"
+                />
+
+                <Box>
+                  <Typography fontWeight={600}>
+                    OTP Sent Successfully
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    Delivered via {method.toUpperCase()}
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Stack direction="row" spacing={2}>
+                <Chip
+                  color="primary"
+                  size="small"
+                  label="⏳"
+                />
+
+                <Box>
+                  <Typography fontWeight={600}>
+                    Waiting For Verification
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    Driver verification pending
+                  </Typography>
+                </Box>
+              </Stack>
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
     </Box>
   )
 }
+
+export default OTPDashboard
