@@ -49,6 +49,7 @@ const menuItems = [
   { type: 'header', label: 'SMART BOOKING' },
   { label: 'Bookings', icon: <BookIcon />, path: '/admin/collections/bookings' },
   { label: 'Driver Allocation', icon: <HubIcon />, path: '/admin/driver-allocation' },
+  { label: 'Smart Ride', icon: <HubIcon />, path: '/admin/collections/smart-rides' },
   { type: 'header', label: 'LIVE TRACKING SYSTEM' },
   { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/admin/live-tracking' },
   { label: 'Offline Sync Logs', icon: <HistoryIcon />, path: '/admin/collections/driver-offline-logs' },
