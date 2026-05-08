@@ -69,12 +69,12 @@ export type TariffDoc = {
   roundtrip?: TariffGroup
   packages?: {
     hours: number
-    perHourRate: number
+    baseRate: number
     extraKmRate: number
     extraHourRate: number
     nightBata?: number
     km: number
-    bata: number
+    baseBata: number
     extras?: string
   }
   updatedAt?: string

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react'
 
 export default function GeneralSettings() {
   const [systemName, setSystemName] = useState("WhatsApp Support");
@@ -8,17 +8,54 @@ export default function GeneralSettings() {
   const [supportEmail, setSupportEmail] = useState("support@whatsapp.com");
   const [currencySymbol, setCurrencySymbol] = useState("$");
 
-  const handleSave = () => {
-    const payload = {
-      systemName,
-      supportNumber,
-      supportEmail,
-      currencySymbol,
-    };
+  const [form, setForm] = useState({
+  systemName: '',
+  supportNumber: '',
+  supportEmail: '',
+  currencySymbol: '',
+})
 
-    console.log("Saved Config:", payload);
-    alert("Configuration Saved Successfully");
-  };
+ // LOAD DATA FROM PAYLOAD
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/globals/general-settings')
+      const data = await res.json()
+
+      setForm({
+        systemName: data.systemName || '',
+        supportNumber: data.supportNumber || '',
+        supportEmail: data.supportEmail || '',
+        currencySymbol: data.currencySymbol || '',
+      })
+    }
+
+    fetchData()
+  }, [])
+
+  // HANDLE INPUT CHANGE
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  // SAVE TO PAYLOAD
+  const handleSave = async () => {
+    const res = await fetch('/api/globals/general-settings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(form),
+    })
+
+    if (res.ok) {
+      alert('Configuration Saved Successfully')
+    } else {
+      alert('Save failed')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">

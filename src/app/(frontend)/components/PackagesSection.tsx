@@ -6,8 +6,8 @@ import { TariffDoc } from '../types'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 
 export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
-  / Filter packages from the passed prop
-  const packages = tariffs.filter((t) => t.packages && t.packages.perHourRate > 0)
+  // Filter packages from the passed prop
+  const packages = tariffs.filter((t) => t.packages && t.packages.baseRate > 0)
 
   if (packages.length === 0) return null
 
@@ -45,14 +45,14 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
         <Grid container spacing={2} justifyContent="center">
           {packages.map((pkg) => {
             const vName = typeof pkg.vehicle === 'string' ? pkg.vehicle : pkg.vehicle?.name
-            const calculatedAmount = (pkg.packages?.hours || 0) * (pkg.packages?.perHourRate || 0)
+            const calculatedAmount = (pkg.packages?.hours || 0) * (pkg.packages?.baseRate || 0)
 
             return (
               <Grid size={{ xs: 12, md: 4 }} key={pkg.id}>
                 <Card
                   elevation={0}
                   sx={{
-                    height: 'auto', / Compact height
+                    height: 'auto', // Compact height
                     display: 'flex',
                     flexDirection: 'column',
                     bgcolor: '#fff',
@@ -80,7 +80,7 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                   <CardContent
                     sx={{
                       textAlign: 'center',
-                      py: 3, / Reduced padding
+                      py: 3, // Reduced padding
                       px: 2,
                     }}
                   >

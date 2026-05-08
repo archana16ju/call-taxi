@@ -232,7 +232,7 @@ export default function InquiryManager() {
                   </TableCell>
                   <TableCell><Typography variant="body2" color="#64748b">{i.phone}</Typography></TableCell>
                   <TableCell>{getTypeChip(i.inquiryType)}</TableCell>
-                  <TableCell sx={{ maxWidth: 300 }}><Typography variant="body2" color="#64748b" noWrap>"{i.message}"</Typography></TableCell>
+                  <TableCell sx={{ maxWidth: 300 }}><Typography variant="body2" color="#64748b" noWrap> {i.message} </Typography></TableCell>
                   <TableCell>{getStatusBadge(i.status)}</TableCell>
                   <TableCell align="right">
                     <IconButton size="small"><MoreVertIcon fontSize="small" /></IconButton>

@@ -37,15 +37,13 @@ import {
 
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 
+import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet components to avoid SSR issues
 import MapComponent, { MapMarker, MapPolyline } from './MapComponent'
 
-let L: any;
-if (typeof window !== 'undefined') {
-  L = require('leaflet');
-}
+import L from 'leaflet'
 
 const taxiIcon = typeof window !== 'undefined' ? new L.DivIcon({
   className: 'custom-taxi-icon',
@@ -340,19 +338,19 @@ export default function MainDashboard() {
 
       <Grid container spacing={3}>
         {/* Stat Cards */}
-        <Grid size={{ xs: 12, md: 2.4 }}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <StatCard title="Total Bookings" value={stats.totalBookings} trend="up" trendValue="Live" icon={<BookIcon />} color="#3b82f6" />
         </Grid>
-        <Grid size={{ xs: 12, md: 2.4 }}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <StatCard title="Completed Bookings" value={stats.completedBookings} trend="up" trendValue="Live" icon={<LocalTaxiIcon />} color="#10b981" />
         </Grid>
-        <Grid size={{ xs: 12, md: 2.4 }}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <StatCard title="Ongoing Bookings" value={stats.ongoingBookings} trend="up" trendValue="Live" icon={<AccessTimeIcon />} color="#f59e0b" />
         </Grid>
-        <Grid size={{ xs: 12, md: 2.4 }}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <StatCard title="Total Revenue" value={stats.totalRevenue} trend="up" trendValue="Live" icon={<PaymentsIcon />} color="#8b5cf6" />
         </Grid>
-        <Grid size={{ xs: 12, md: 2.4 }}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <StatCard title="Avg. Rating" value={stats.avgRating} trend="up" trendValue="Live" icon={<StarIcon />} color="#f43f5e" />
         </Grid>
 

@@ -195,7 +195,7 @@ export default function CustomerManagement() {
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={4}>
           <Box>
             <Typography variant="h5" fontWeight={800} color="#0f172a" mb={0.5}>Customer Directory</Typography>
-            <Typography variant="body2" color="#64748b">Manage your fleet's customer base and booking history.</Typography>
+            <Typography variant="body2" color="#64748b">Manage your fleet customer base and booking history.</Typography>
           </Box>
           <Button 
             variant="contained" 

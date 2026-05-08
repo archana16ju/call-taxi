@@ -327,7 +327,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                               sx={{ fontSize: '0.95rem', whiteSpace: 'nowrap' }}
                             >
                               Package - ₹
-                              {(row.packages?.hours || 0) * (row.packages?.perHourRate || 0)}{' '}
+                              {(row.packages?.hours || 0) * (row.packages?.baseRate || 0)}{' '}
                               <Box
                                 component="span"
                                 sx={{

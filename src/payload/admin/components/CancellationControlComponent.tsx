@@ -119,7 +119,7 @@ export default function CancellationControlComponent() {
                 }}
               />
               <Typography variant="caption" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>
-                This amount is deducted from the customer's wallet or added to the next trip invoice.
+                This amount is deducted from the customer wallet or added to the next trip invoice.
               </Typography>
             </Box>
           </Paper>

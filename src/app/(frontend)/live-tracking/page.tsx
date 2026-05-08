@@ -13,7 +13,12 @@ import {
   Container,
   CircularProgress,
 } from '@mui/material'
-import MapComponent from '@/payload/admin/components/MapComponent'
+import dynamic from 'next/dynamic'
+
+const MapComponent = dynamic(
+  () => import('@/payload/admin/components/MapComponent'),
+  { ssr: false }
+)
 import PersonIcon from '@mui/icons-material/Person'
 import LocalTaxiIcon from '@mui/icons-material/LocalTaxi'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
@@ -92,12 +97,15 @@ function TrackingContent() {
   const { booking } = data
   const driver = booking.driver
   const vehicle = booking.vehicle
-  const driverLocation = driver?.location || booking.pickupLocation
+  const driverLocation =
+  driver?.location?.length === 2
+    ? driver.location
+    : booking.pickupLocation
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#0f172a' }}>
       {/* HEADER */}
-      <Box sx={{ p: 2, bgcolor: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.1)', zIdx: 1000 }}>
+      <Box sx={{ p: 2, bgcolor: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.1)', zIndex: '1000' }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Box>
             <Typography variant="h6" fontWeight={800} color="#fbbf24">LIVE TRACKING</Typography>

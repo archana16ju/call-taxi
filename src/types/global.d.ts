@@ -9,8 +9,12 @@ declare module '@payloadcms/next/css'
 
 declare module '@custom/next/css'
 
+declare module 'leaflet/dist/leaflet.css'
+
+declare module '*.css'
+
 export {}
 
 declare global {
-  var io: any
+  var io: unknown
 }

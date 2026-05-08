@@ -49,8 +49,6 @@ import RidePreferences from './collections/ridePreferences'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// 🔥 IMPORTANT: point to /src so "@/..." works
-const srcDir = path.join(process.cwd(), 'src')
 
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
@@ -73,17 +71,20 @@ export default buildConfig({
 
     // ✅ FIXED importMap resolution
   importMap: {
-  baseDir: path.join(process.cwd(), 'src'),
+  baseDir: path.resolve(process.cwd(), 'src'),
 },
     components: {
       graphics: {
-        Logo: '@/payload/admin/components/Logo',
-        Icon: '@/payload/admin/components/Logo',
+        Logo: '@/payload/admin/components/Logo#Logo',
+        Icon: '@/payload/admin/components/Logo#Logo',
       },
 
       Nav: '@/payload/admin/components/CustomNav#CustomNav',
 
       views: {
+        login: {
+          Component: '@/payload/admin/components/Logo#default',
+        },
         dashboard: {
           Component: '@/payload/admin/components/MainDashboard#default',
         },

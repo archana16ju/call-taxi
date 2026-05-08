@@ -280,7 +280,7 @@ export default function TripControls({
               </Button>
 
               <Typography variant="caption" color="text.secondary" display="block" mt={3}>
-                Didn't receive the code? <Button variant="text" size="small" onClick={handleGenerateOtp}>Resend</Button>
+                Didn&apos;t receive the code? <Button variant="text" size="small" onClick={handleGenerateOtp}>Resend</Button>
               </Typography>
             </Paper>
           ) : (

@@ -27,6 +27,7 @@ import { default as default_d84c32017ecd9f3287ccf7a95d2ae3c1 } from '@/payload/a
 import { default as default_01f37de369c845877414b9d5ecb21f75 } from '@/payload/admin/components/CancellationControlComponent'
 import { default as default_ff5a31734237957d23c1f4cd8514df9b } from '@/payload/admin/components/GeneralSettings'
 import { CustomNav as CustomNav_74938c92845bb01c77f2dd17dc23b6ee } from '@/payload/admin/components/CustomNav'
+import { Logo as Logo_496eb1bb82d4de50de1b90e5cfe26738 } from '@/payload/admin/components/Logo'
 import { default as default_496eb1bb82d4de50de1b90e5cfe26738 } from '@/payload/admin/components/Logo'
 import { default as default_b052aa9cc458fdb1145016dfed72a76a } from '@/payload/admin/components/MainDashboard'
 import { LiveTrackingDashboard as LiveTrackingDashboard_892bd23a03c861c5a5cd5cd2501f8fab } from '@/payload/admin/components/MapComponent'
@@ -63,6 +64,7 @@ export const importMap = {
   "@/payload/admin/components/CancellationControlComponent#default": default_01f37de369c845877414b9d5ecb21f75,
   "@/payload/admin/components/GeneralSettings#default": default_ff5a31734237957d23c1f4cd8514df9b,
   "@/payload/admin/components/CustomNav#CustomNav": CustomNav_74938c92845bb01c77f2dd17dc23b6ee,
+  "@/payload/admin/components/Logo#Logo": Logo_496eb1bb82d4de50de1b90e5cfe26738,
   "@/payload/admin/components/Logo#default": default_496eb1bb82d4de50de1b90e5cfe26738,
   "@/payload/admin/components/MainDashboard#default": default_b052aa9cc458fdb1145016dfed72a76a,
   "@/payload/admin/components/MapComponent#LiveTrackingDashboard": LiveTrackingDashboard_892bd23a03c861c5a5cd5cd2501f8fab,

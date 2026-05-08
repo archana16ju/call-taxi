@@ -97,7 +97,7 @@ const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  const d = R * c / Distance in km
+  const d = R * c // Distance in km
   return d
 }
 
@@ -253,7 +253,6 @@ export default function HeroSection() {
           `/api/tariffs?limit=100&sort=-updatedAt&depth=2`,
         )
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
-        // eslint-disable-next-line @typescript-eslint//no-explicit-any
         const parsed = docs.map((d: any) => {
           return {
             id: d.id || d._id,
@@ -544,14 +543,14 @@ export default function HeroSection() {
       if (tripType === 'packages') {
         if (chosen?.packages) {
           const hrs = packageHours
-          const rate = chosen.packages.perHourRate || 0
+          const rate = chosen.packages.baseRate || 0
           const amount = rate * hrs
           const allowedKm = hrs * chosen.packages.km
           setDistanceInfo(
             `Package: ${hrs} Hrs / ${allowedKm} km\nExtra: ₹${chosen.packages.extraHourRate}/hr, ₹${chosen.packages.extraKmRate}/km`,
           )
           setCalculatedDistance(allowedKm)
-          setFare((amount + chosen.packages.bata).toFixed(2))
+          setFare((amount + chosen.packages.baseBata).toFixed(2))
         } else {
           setDistanceInfo('')
           setCalculatedDistance(null)

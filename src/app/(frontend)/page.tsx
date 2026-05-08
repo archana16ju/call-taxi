@@ -76,7 +76,7 @@ export default async function Page() {
   // Normalize data for client components
   const tariffs = tariffsRes.docs
     .filter((doc) => {
-      const vehicle = doc.vehicle
+      const vehicle = doc.vehicleType
       if (typeof vehicle === 'object' && vehicle !== null) {
         return vehicle.category === 'tariff'
       }
@@ -85,7 +85,7 @@ export default async function Page() {
     .map((doc) => {
       return {
         id: doc.id,
-        vehicle: doc.vehicle,
+        vehicle: doc.vehicleType,
         oneway: doc.oneway,
         roundtrip: doc.roundtrip,
         packages: doc.packages,

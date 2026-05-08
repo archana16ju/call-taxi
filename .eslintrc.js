@@ -1,41 +1,17 @@
-{
-  "root": true,
-  "extends": ["next/core-web-vitals"],
-  "rules": {
-    "no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          "../../*",
-          "../../../*",
-          "../../../../*"
-        ]
-      }
-    ],
-
-    "@typescript-eslint/no-explicit-any": "warn",
-
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      {
-        "argsIgnorePattern": "^_"
-      }
-    ],
-
-    "react/no-unescaped-entities": "error",
-
-  "extends": [
+// .eslintrc.js
+module.exports = {
+  extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
     "plugin:react/recommended"
   ],
-  "plugins": [
+  plugins: [
     "@typescript-eslint",
     "react",
     "jsx-a11y"
   ],
-  "settings": {
+  settings: {
     "react": {
       "version": "detect"
     },
@@ -54,8 +30,7 @@
       }
     }
   },
-  "rules": {
+  rules: {
     // Your ESLint rules here
   }
-  }
-}
+};

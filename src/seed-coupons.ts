@@ -1,55 +1,66 @@
-import 'dotenv/config'
-import config from './payload.config'
-import { getPayload } from 'payload'
+import "dotenv/config"
+import config from "./payload.config"
+import { getPayload } from "payload"
+
+type CouponSeed = {
+  name: string
+  percentage: number
+  tariffScope: string
+  vehicleScope: string
+  active: boolean
+  usageLimit?: number
+  expiryDate?: string
+  vehicles?: string[]
+}
 
 const seed = async () => {
-  console.log('Starting seed...')
+  console.log("Starting seed...")
   const payload = await getPayload({ config })
 
-  / Fetch some vehicles to use for specific vehicle coupons
-  const vehicles = await payload.find({ collection: 'vehicles', limit: 3 })
-  const vehicleIds = vehicles.docs.map((v) => v.id)
+  const vehicles = await payload.find({ collection: "vehicles", limit: 3 })
+  const vehicleIds = vehicles.docs.map((v) => String(v.id))
 
-  const coupons: Record<string, unknown>[] = [
+  const coupons: CouponSeed[] = [
     {
-      name: 'WELCOME50',
+      name: "WELCOME50",
       percentage: 50,
-      tariffScope: 'all',
-      vehicleScope: 'all',
+      tariffScope: "all",
+      vehicleScope: "all",
       active: true,
       usageLimit: 100,
     },
     {
-      name: 'SUMMER25',
+      name: "SUMMER25",
       percentage: 25,
-      tariffScope: 'packages',
-      vehicleScope: 'all',
+      tariffScope: "packages",
+      vehicleScope: "all",
       active: true,
     },
     {
-      name: 'LONGDRIVE15',
+      name: "LONGDRIVE15",
       percentage: 15,
-      tariffScope: 'roundtrip',
-      vehicleScope: 'all',
+      tariffScope: "roundtrip",
+      vehicleScope: "all",
       active: true,
-      expiryDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString(),
+      expiryDate: new Date(
+        new Date().setMonth(new Date().getMonth() + 3)
+      ).toISOString(),
     },
     {
-      name: 'CITYZOOM10',
+      name: "CITYZOOM10",
       percentage: 10,
-      tariffScope: 'oneway',
-      vehicleScope: 'all',
+      tariffScope: "oneway",
+      vehicleScope: "all",
       active: true,
     },
   ]
 
-  / Add a specific vehicle coupon if we have vehicles
   if (vehicleIds.length > 0) {
     coupons.push({
-      name: 'PREMIUMRIDE20',
+      name: "PREMIUMRIDE20",
       percentage: 20,
-      tariffScope: 'all',
-      vehicleScope: 'specific',
+      tariffScope: "all",
+      vehicleScope: "specific",
       vehicles: vehicleIds,
       active: true,
     })
@@ -58,19 +69,18 @@ const seed = async () => {
   for (const coupon of coupons) {
     try {
       const existing = await payload.find({
-        collection: 'coupons',
+        collection: "coupons",
         where: {
-          name: {
-            equals: coupon.name,
-          },
+          name: { equals: coupon.name },
         },
       })
 
       if (existing.totalDocs === 0) {
         await payload.create({
-          collection: 'coupons',
-          data: coupon as any, / Payload expects specific type, any is safest for seed scripts
+          collection: "coupons",
+          data: coupon as any,
         })
+
         console.log(`Created coupon: ${coupon.name}`)
       } else {
         console.log(`Coupon already exists: ${coupon.name}`)
@@ -80,7 +90,7 @@ const seed = async () => {
     }
   }
 
-  console.log('Seed complete.')
+  console.log("Seed complete.")
   process.exit(0)
 }
 

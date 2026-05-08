@@ -3,7 +3,6 @@ import { GlobalConfig } from 'payload'
 export const GeneralSettings: GlobalConfig = {
   slug: 'general-settings',
   admin: {
-    group: 'Management',
     components: {
       views: {
         edit: {
