@@ -1,32 +1,52 @@
 "use client";
 
 import React, { useEffect, useState } from 'react'
+import {
+  Box,
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  Stack,
+  Divider,
+  Alert,
+  Snackbar,
+  Chip,
+  IconButton,
+} from '@mui/material'
+import SaveIcon from '@mui/icons-material/Save'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import EmailIcon from '@mui/icons-material/Email'
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee'
 
 export default function GeneralSettings() {
-  const [systemName, setSystemName] = useState("WhatsApp Support");
-  const [supportNumber, setSupportNumber] = useState("12025550178");
-  const [supportEmail, setSupportEmail] = useState("support@whatsapp.com");
-  const [currencySymbol, setCurrencySymbol] = useState("$");
-
   const [form, setForm] = useState({
-  systemName: '',
-  supportNumber: '',
-  supportEmail: '',
-  currencySymbol: '',
-})
+    systemName: '',
+    whatsappNumber: '',
+    supportEmail: '',
+    currencySymbol: '',
+  })
+  
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
- // LOAD DATA FROM PAYLOAD
+  // LOAD DATA FROM PAYLOAD
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('/api/globals/general-settings')
-      const data = await res.json()
+      try {
+        const res = await fetch('/api/globals/general-settings')
+        const data = await res.json()
 
-      setForm({
-        systemName: data.systemName || '',
-        supportNumber: data.supportNumber || '',
-        supportEmail: data.supportEmail || '',
-        currencySymbol: data.currencySymbol || '',
-      })
+        setForm({
+          systemName: data.systemName || 'Kani Taxi',
+          whatsappNumber: data.whatsappNumber || '',
+          supportEmail: data.supportEmail || '',
+          currencySymbol: data.currencySymbol || '₹',
+        })
+      } catch (err) {
+        console.error('Failed to fetch settings:', err)
+      }
     }
 
     fetchData()
@@ -42,122 +62,158 @@ export default function GeneralSettings() {
 
   // SAVE TO PAYLOAD
   const handleSave = async () => {
-    const res = await fetch('/api/globals/general-settings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form),
-    })
+    setLoading(true)
+    try {
+      const res = await fetch('/api/globals/general-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      })
 
-    if (res.ok) {
-      alert('Configuration Saved Successfully')
-    } else {
-      alert('Save failed')
+      if (res.ok) {
+        setSuccess(true)
+      } else {
+        alert('Save failed')
+      }
+    } catch (err) {
+      alert('Error saving configuration')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8">
-        
+    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: '800px', mx: 'auto' }}>
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          p: 4, 
+          borderRadius: '16px', 
+          border: '1px solid var(--theme-border-color)',
+          backgroundColor: 'var(--theme-bg-card)',
+          backgroundImage: 'none'
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-gray-800">
-            WhatsApp Support Configuration
-          </h1>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: 'var(--theme-text)' }}>
+              General Settings
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'var(--theme-text-secondary)', mt: 0.5 }}>
+              Manage global support and platform parameters
+            </Typography>
+          </Box>
+          <Chip 
+            label="Live Sync Active" 
+            color="primary" 
+            size="small" 
+            variant="outlined"
+            sx={{ fontWeight: 600 }}
+          />
+        </Stack>
 
-          <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-600">
-            Live Sync Active
-          </span>
-        </div>
+        <Divider sx={{ mb: 4, borderColor: 'var(--theme-border-color)' }} />
 
-        <p className="text-sm text-gray-500 mb-6">
-          Update global support parameters for the consumer platform.
-        </p>
+        {/* Form Fields */}
+        <Stack spacing={3}>
+          <TextField
+            fullWidth
+            label="System Name"
+            name="systemName"
+            value={form.systemName}
+            onChange={handleChange}
+            variant="outlined"
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+          />
 
-        {/* Form */}
-        <div className="space-y-5">
-          
-          {/* System Name */}
-          <div>
-            <label className="text-sm font-medium text-gray-600">
-              System Name
-            </label>
-            <input
-              type="text"
-              value={systemName}
-              onChange={(e) => setSystemName(e.target.value)}
-              className="w-full mt-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          <TextField
+            fullWidth
+            label="WhatsApp Support Number"
+            name="whatsappNumber"
+            placeholder="91XXXXXXXXXX"
+            value={form.whatsappNumber}
+            onChange={handleChange}
+            helperText="Include country code (e.g. 91)"
+            InputProps={{
+              startAdornment: <WhatsAppIcon sx={{ mr: 1, color: '#25D366' }} />,
+            }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+          />
+
+          <TextField
+            fullWidth
+            label="Support Email"
+            name="supportEmail"
+            value={form.supportEmail}
+            onChange={handleChange}
+            InputProps={{
+              startAdornment: <EmailIcon sx={{ mr: 1, color: 'primary.main' }} />,
+            }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+          />
+
+          <Box sx={{ width: '150px' }}>
+            <TextField
+              fullWidth
+              label="Currency Symbol"
+              name="currencySymbol"
+              value={form.currencySymbol}
+              onChange={handleChange}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
             />
-          </div>
+          </Box>
+        </Stack>
 
-          {/* Support Number */}
-          <div>
-            <label className="text-sm font-medium text-gray-600">
-              WhatsApp Support Number
-            </label>
-            <input
-              type="text"
-              value={supportNumber}
-              onChange={(e) => setSupportNumber(e.target.value)}
-              className="w-full mt-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <p className="text-xs text-gray-400 mt-1">
-              Include country code (e.g. 91XXXXXXXXXX)
-            </p>
-          </div>
+        <Alert 
+          severity="info" 
+          sx={{ 
+            mt: 4, 
+            borderRadius: '12px',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            color: 'var(--theme-text)',
+            border: '1px solid rgba(59, 130, 246, 0.2)'
+          }}
+        >
+          Real-time database sync is enabled. Changes will reflect instantly across the platform.
+        </Alert>
 
-          {/* Support Email */}
-          <div>
-            <label className="text-sm font-medium text-gray-600">
-              Support Email
-            </label>
-            <input
-              type="email"
-              value={supportEmail}
-              onChange={(e) => setSupportEmail(e.target.value)}
-              className="w-full mt-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          {/* Currency Symbol */}
-          <div className="w-32">
-            <label className="text-sm font-medium text-gray-600">
-              Currency Symbol
-            </label>
-            <input
-              type="text"
-              value={currencySymbol}
-              onChange={(e) => setCurrencySymbol(e.target.value)}
-              className="w-full mt-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-        </div>
-
-        {/* Info Box */}
-        <div className="mt-6 p-4 bg-gray-100 rounded-lg text-sm text-gray-600">
-          Real-time database sync is enabled. Changes will reflect instantly
-          across the platform.
-        </div>
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-3 mt-6">
-          <button
+        {/* Action Buttons */}
+        <Stack direction="row" spacing={2} justifyContent="flex-end" mt={4}>
+          <Button
+            variant="outlined"
             onClick={() => window.location.reload()}
-            className="px-5 py-2 border rounded-lg text-gray-600 hover:bg-gray-100"
+            sx={{ borderRadius: '12px', px: 3 }}
           >
             Discard
-          </button>
-
-          <button
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SaveIcon />}
             onClick={handleSave}
-            className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+            disabled={loading}
+            sx={{ 
+              borderRadius: '12px', 
+              px: 4,
+              backgroundColor: '#fbbf24',
+              color: '#000',
+              '&:hover': { backgroundColor: '#f59e0b' }
+            }}
           >
-            Save Configuration
-          </button>
-        </div>
-      </div>
-    </div>
+            {loading ? 'Saving...' : 'Save Configuration'}
+          </Button>
+        </Stack>
+      </Paper>
+
+      <Snackbar
+        open={success}
+        autoHideDuration={4000}
+        onClose={() => setSuccess(false)}
+        message="Configuration saved successfully"
+      />
+    </Box>
   );
 }

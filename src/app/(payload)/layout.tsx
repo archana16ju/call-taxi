@@ -8,6 +8,7 @@ import ThemeRegistry from '@/payload/admin/theme/ThemeRegistry'
 
 import { importMap } from '@/app/(payload)/admin/importMap.js'
 import './custom.scss'
+import '@/app/globals.css'
 import '@payloadcms/ui/styles.css'
 
 type Args = {

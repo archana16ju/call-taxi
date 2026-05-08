@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "set NODE_OPTIONS=--no-deprecation && next dev",
-    "build": "set NODE_OPTIONS=--no-deprecation --max-old-space-size=8000 && next build",
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" npm run generate:importmap && next build",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
-    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap && node scripts/auto-fix-imports.cjs",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap && node scripts/fix-importmap.cjs",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
