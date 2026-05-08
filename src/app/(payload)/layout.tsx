@@ -24,9 +24,11 @@ const serverFunction: ServerFunctionClient = async function (args) {
 }
 
 const Layout = ({ children }: Args) => (
-  <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
-    <ThemeRegistry>{children}</ThemeRegistry>
-  </RootLayout>
+  <ThemeRegistry>
+    <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
+      {children}
+    </RootLayout>
+  </ThemeRegistry>
 )
 
 export default Layout

@@ -84,13 +84,13 @@ export const CustomNav: React.FC = () => {
     <Box
       sx={{
         width: 260,
-        height: '100vh',
-        backgroundColor: 'var(--theme-bg-nav)',
-        color: 'var(--theme-text)',
+        height: '100%',
+        backgroundColor: '#1e293b',
+        color: '#ffffff',
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        borderRight: '1px solid var(--theme-border-color)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
       }}
     >
       {/* Header */}

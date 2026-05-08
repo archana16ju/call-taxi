@@ -22,7 +22,7 @@ import { useRouter } from 'next/navigation'
 
 export const Logo: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 1 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
       <Box
         sx={{
           width: 32,
