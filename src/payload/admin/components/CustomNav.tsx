@@ -28,15 +28,16 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AssessmentIcon from '@mui/icons-material/Assessment'
 import CollectionsIcon from '@mui/icons-material/Collections'
+import MicIcon from '@mui/icons-material/Mic'
+import HubIcon from '@mui/icons-material/Hub'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import HistoryIcon from '@mui/icons-material/History'
+import SecurityIcon from '@mui/icons-material/Security'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import ContactMailIcon from '@mui/icons-material/ContactMail'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import ReceiptIcon from '@mui/icons-material/Receipt'
-import SecurityIcon from '@mui/icons-material/Security'
 import ShareIcon from '@mui/icons-material/Share'
-import HistoryIcon from '@mui/icons-material/History'
-import HubIcon from '@mui/icons-material/Hub'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 
 const menuItems = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
@@ -50,7 +51,8 @@ const menuItems = [
   { type: 'header', label: 'SMART BOOKING' },
   { label: 'Bookings', icon: <BookIcon />, path: '/admin/collections/bookings' },
   { label: 'Driver Allocation', icon: <HubIcon />, path: '/admin/driver-allocation' },
-  { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/smart-rides' },
+  { label: 'Voice Dispatch', icon: <MicIcon />, path: '/admin/voice-bookings' },
+  { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/ridePreferences' },
   { type: 'header', label: 'LIVE TRACKING SYSTEM' },
   { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/admin/live-tracking' },
   { label: 'Offline Sync Logs', icon: <HistoryIcon />, path: '/admin/collections/driver-offline-logs' },

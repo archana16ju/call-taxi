@@ -1,12 +1,14 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+
 import config from '@payload-config'
 import type { ServerFunctionClient } from 'payload'
 import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts'
 import React from 'react'
-import ThemeRegistry from '../../payload/admin/theme/ThemeRegistry'
 
+import ThemeRegistry from '../../payload/admin/theme/ThemeRegistry'
 import { importMap } from './admin/importMap.js'
+
 import './custom.scss'
 import '../globals.css'
 import '@payloadcms/ui/styles.css'
@@ -15,8 +17,9 @@ type Args = {
   children: React.ReactNode
 }
 
-const serverFunction: ServerFunctionClient = async function (args) {
+const serverFunction: ServerFunctionClient = async (args) => {
   'use server'
+
   return handleServerFunctions({
     ...args,
     config,
@@ -24,12 +27,16 @@ const serverFunction: ServerFunctionClient = async function (args) {
   })
 }
 
-const Layout = ({ children }: Args) => (
-  <ThemeRegistry>
-    <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
-      {children}
-    </RootLayout>
-  </ThemeRegistry>
-)
-
-export default Layout
+export default function Layout({ children }: Args) {
+  return (
+    <ThemeRegistry>
+      <RootLayout
+        config={config}
+        importMap={importMap}
+        serverFunction={serverFunction}
+      >
+        {children}
+      </RootLayout>
+    </ThemeRegistry>
+  )
+}

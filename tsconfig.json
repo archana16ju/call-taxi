@@ -20,7 +20,7 @@
     "baseUrl": ".",
 
     // 🔕 silence TS deprecation warning
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0",
 
     "paths": {
       "@/*": ["./src/*"],
@@ -28,7 +28,6 @@
     },
 
     "plugins": [{ "name": "next" }]
-    
   },
   "include": [
     "next-env.d.ts",
@@ -37,13 +36,15 @@
     ".next/types/**/*.ts",
     "data/tamil_nadu_locations_names.cjs",
     "src/types/**/*.d.ts",
-    "next-env.d.ts", "**/*.ts", "**/*.tsx", "src/types",
-    "next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts"
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/types",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.d.ts"
   ],
 
   "exclude": ["node_modules"]
-
-  
-
-  
 }

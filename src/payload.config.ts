@@ -47,6 +47,7 @@ import RidePreferences from './collections/ridePreferences'
 
 import MapComponent from '@/payload/admin/components/MapComponent'
 import AiChatConversations from './collections/AiChatConversations'
+import { VoiceBooking } from './collections/voicebooking'
 
 // Paths
 const filename = fileURLToPath(import.meta.url)
@@ -97,6 +98,9 @@ export default buildConfig({
         'driver-allocation': {
           Component: '@/payload/admin/components/DriverAllocationManagement#default',
         },
+        'voice-dispatch': {
+          Component: '@/payload/admin/components/voicebooking#default',
+        },
       },
     },
   },
@@ -124,7 +128,8 @@ export default buildConfig({
     DriverOfflineLogs,
     DriverAllocation,
     RidePreferences,
-    AiChatConversations
+    AiChatConversations,
+    VoiceBooking
   ],
 
   globals: [
