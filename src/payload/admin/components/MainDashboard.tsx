@@ -39,11 +39,18 @@ import {
 
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 
-import 'leaflet/dist/leaflet.css'
+React.useEffect(() => {
+  import('leaflet/dist/leaflet.css')
+}, [])
 import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet components to avoid SSR issues
-import MapComponent, { MapMarker, MapPolyline } from './MapComponent'
+const MapComponent = dynamic(
+  () => import('./MapComponent'),
+  {
+    ssr: false,
+  },
+)
 
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
@@ -202,7 +209,7 @@ React.useEffect(() => {
 
           if (booking && booking.dropoffLocation && Array.isArray(booking.dropoffLocation)) {
             try {
-              const osrm = `https:/router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
+             const osrm = `https://router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
               const routeRes = await fetch(osrm).then(res => {
                 if (!res.ok) return null
                 return res.json()
@@ -499,19 +506,19 @@ React.useEffect(() => {
 
       <Grid container spacing={3} sx={{ px: 3, pb: 3 }}>
         {/* Stat Cards - Exactly like Image */}
-        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 2, xl: 2.4 }}>
           <StatCard title="Total Bookings" value={stats.totalBookings.toLocaleString()} trend="up" trendValue="+13.6%" icon={<BookIcon />} color="#3b82f6" />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+        <Grid size={{ xs: 12, sm: 6,lg: 2, xl: 2.4 }}>
           <StatCard title="Completed" value={stats.completedBookings.toLocaleString()} trend="up" trendValue="+15.2%" icon={<LocalTaxiIcon />} color="#10b981" />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 2, xl: 2.4  }}>
           <StatCard title="Ongoing" value={stats.ongoingBookings.toLocaleString()} trend="down" trendValue="-6.2%" icon={<AccessTimeIcon />} color="#f59e0b" />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 2, xl: 2.4  }}>
           <StatCard title="Total Revenue" value={`₹${stats.totalRevenue.toLocaleString()}`} trend="up" trendValue="+22.8%" icon={<PaymentsIcon />} color="#8b5cf6" />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 2, xl: 2.4 }}>
           <StatCard title="Avg. Rating" value={stats.avgRating} trend="up" trendValue="4.6" icon={<StarIcon />} color="#f43f5e" />
         </Grid>
 
@@ -560,41 +567,151 @@ React.useEffect(() => {
         </Grid>
 
         <Grid size={{ xs: 12, lg: 5 }}>
-          <Paper sx={{ p: 0, borderRadius: '16px', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', height: '100%', position: 'relative', overflow: 'hidden' }}>
-             <Box sx={{ p: 2, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1 }}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#1e293b' }}>Live GPS Tracking</Typography>
-                <Button component={Link} href="/admin/live-tracking" size="small" sx={{ textTransform: 'none', color: '#3b82f6', fontWeight: 700 }}>View Full Map</Button>
-              </Stack>
-            </Box>
-            <Box sx={{ height: 320, mt: 6 }}>
-              <MapComponent 
-                center={[13.0827, 80.2707]}
-                zoom={12}
-                polylines={Object.entries(activeRoutes).map(([id, positions]) => ({
-                  id,
-                  positions: positions as [number, number][],
-                  color: '#3b82f6',
-                  weight: 3
-                }))}
-                markers={driverLocations
-                  .filter(loc => loc.location && Array.isArray(loc.location) && loc.location.length >= 2)
-                  .map((loc) => ({
-                    id: loc.id,
-                    position: [loc.location[1], loc.location[0]],
-                    icon: taxiIcon
-                }))}
-              />
-            </Box>
-            <Stack direction="row" spacing={2} justifyContent="center" sx={{ py: 1.5, backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
-               <Typography variant="caption" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}><Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#3b82f6' }} /> On Trip (56)</Typography>
-               <Typography variant="caption" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}><Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#10b981' }} /> Available (28)</Typography>
-               <Typography variant="caption" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}><Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#94a3b8' }} /> Offline (32)</Typography>
-            </Stack>
-          </Paper>
-        </Grid>
+  <Paper
+    sx={{
+      borderRadius: '16px',
+      border: '1px solid #e2e8f0',
+      overflow: 'hidden',
+      backgroundColor: '#ffffff',
+      height: '100%',
+    }}
+  >
+    {/* Header */}
+    <Box
+      sx={{
+        p: 2,
+        borderBottom: '1px solid #e2e8f0',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
+      <Box>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontWeight: 900,
+            color: '#1e293b',
+          }}
+        >
+          Live GPS Tracking
+        </Typography>
 
-        <Grid size={{ xs: 12, lg: 3 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: '#64748b',
+          }}
+        >
+          Real-time driver tracking
+        </Typography>
+      </Box>
+
+      <Button
+        component={Link}
+        href="/admin/live-tracking"
+        size="small"
+        sx={{
+          textTransform: 'none',
+          fontWeight: 800,
+        }}
+      >
+        Open Full Map
+      </Button>
+    </Box>
+
+    {/* Map */}
+    <Box sx={{ height: 320 }}>
+      <MapComponent
+        center={[13.0827, 80.2707]}
+        zoom={12}
+        polylines={Object.entries(activeRoutes).map(
+          ([id, positions]) => ({
+            id,
+            positions: positions as [number, number][],
+            color: '#3b82f6',
+            weight: 3,
+          }),
+        )}
+        markers={driverLocations
+          .filter(
+            (d) =>
+              d.location &&
+              Array.isArray(d.location),
+          )
+          .map((d) => ({
+            id: d.id,
+            position: [
+              d.location[1],
+              d.location[0],
+            ],
+          }))}
+      />
+    </Box>
+
+    {/* Bottom */}
+    <Stack
+      direction="row"
+      justifyContent="space-around"
+      sx={{
+        py: 1.5,
+        borderTop: '1px solid #e2e8f0',
+        backgroundColor: '#f8fafc',
+      }}
+    >
+      <Box textAlign="center">
+        <Typography
+          sx={{
+            fontWeight: 900,
+            color: '#3b82f6',
+          }}
+        >
+          {driverLocations.length}
+        </Typography>
+
+        <Typography variant="caption">
+          Drivers
+        </Typography>
+      </Box>
+
+      <Divider orientation="vertical" flexItem />
+
+      <Box textAlign="center">
+        <Typography
+          sx={{
+            fontWeight: 900,
+            color: '#10b981',
+          }}
+        >
+          {Object.keys(activeRoutes).length}
+        </Typography>
+
+        <Typography variant="caption">
+          On Trip
+        </Typography>
+      </Box>
+
+      <Divider orientation="vertical" flexItem />
+
+      <Box textAlign="center">
+        <Typography
+          sx={{
+            fontWeight: 900,
+            color: '#f59e0b',
+          }}
+        >
+          LIVE
+        </Typography>
+
+        <Typography variant="caption">
+          Status
+        </Typography>
+      </Box>
+    </Stack>
+  </Paper>
+</Grid>
+
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Paper sx={{ p: 2.5, borderRadius: '16px', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', height: '100%' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#1e293b' }}>Alerts Center</Typography>
