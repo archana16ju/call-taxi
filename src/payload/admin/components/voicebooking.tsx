@@ -7,33 +7,22 @@ interface VoiceBooking {
   bookingId: string;
   status: "confirmed" | "pending" | "flagged" | "archived";
   transcript: string;
-
   pickup: { address: string };
   dropoff: { address: string };
-
   fare: { amount: number; currency: string };
-
-  driver: {
-    id: string;
-    name: string;
-    vehicle?: string;
-  };
-
+  driver: { id: string; name: string; vehicle?: string };
   allocatedTime: string;
   estimatedArrival: string;
-
   ai: { confidence: number };
-
   bookingType: "standard" | "premium" | "luxury";
-
   createdAt: string;
 }
 
-const statusStyles = {
-  confirmed: "bg-emerald-500/15 text-emerald-400",
+const statusStyles: any = {
+  confirmed: "bg-green-500/15 text-green-400",
   pending: "bg-yellow-500/15 text-yellow-400",
   flagged: "bg-red-500/15 text-red-400",
-  archived: "bg-slate-500/15 text-slate-300",
+  archived: "bg-gray-500/15 text-gray-300",
 };
 
 export default function VoiceBookingDashboard() {
@@ -54,8 +43,7 @@ export default function VoiceBookingDashboard() {
         b.driver.name.toLowerCase().includes(search.toLowerCase()) ||
         b.pickup.address.toLowerCase().includes(search.toLowerCase());
 
-      const matchStatus =
-        status === "all" ? true : b.status === status;
+      const matchStatus = status === "all" ? true : b.status === status;
 
       return matchSearch && matchStatus;
     });
@@ -63,57 +51,103 @@ export default function VoiceBookingDashboard() {
 
   return (
     <div className="min-h-screen bg-[#050816] text-white p-6">
-      <h1 className="text-3xl font-bold mb-6">
-        Voice Booking Dashboard
-      </h1>
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">
+          🚖 Voice Booking Collection
+        </h1>
+
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search bookings..."
+          className="px-4 py-2 rounded-lg bg-white/10 border border-white/10 outline-none"
+        />
+      </div>
 
       {/* FILTERS */}
-      <div className="flex gap-3 mb-5">
-        {["all", "confirmed", "pending", "flagged"].map((s) => (
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {["all", "confirmed", "pending", "flagged", "archived"].map((s) => (
           <button
             key={s}
             onClick={() => setStatus(s)}
-            className={`px-4 py-2 rounded-full text-sm ${
+            className={`px-4 py-2 rounded-full text-xs border transition ${
               status === s
                 ? "bg-cyan-400 text-black"
-                : "bg-white/10"
+                : "bg-white/5 border-white/10"
             }`}
           >
-            {s}
+            {s.toUpperCase()}
           </button>
         ))}
       </div>
 
-      {/* LIST */}
-      <div className="space-y-4">
-        {filtered.map((b) => (
-          <div
-            key={b._id}
-            className="p-5 rounded-2xl bg-white/5 border border-white/10"
-          >
-            <div className="flex justify-between">
-              <h2 className="font-bold">{b.bookingId}</h2>
+      {/* TABLE */}
+      <div className="overflow-x-auto rounded-2xl border border-white/10">
+        <table className="w-full text-sm">
+          <thead className="bg-white/5 text-gray-300">
+            <tr>
+              <th className="p-3 text-left">Booking ID</th>
+              <th className="p-3 text-left">Driver</th>
+              <th className="p-3 text-left">Pickup</th>
+              <th className="p-3 text-left">Dropoff</th>
+              <th className="p-3 text-left">Fare</th>
+              <th className="p-3 text-left">Status</th>
+              <th className="p-3 text-left">AI Score</th>
+            </tr>
+          </thead>
 
-              <span
-                className={`px-3 py-1 rounded-full text-xs ${statusStyles[b.status]}`}
+          <tbody>
+            {filtered.map((b) => (
+              <tr
+                key={b._id}
+                className="border-t border-white/10 hover:bg-white/5 transition"
               >
-                {b.status}
-              </span>
-            </div>
+                <td className="p-3 font-semibold">{b.bookingId}</td>
 
-            <p className="text-slate-400 mt-2 text-sm">
-              {b.transcript}
-            </p>
+                <td className="p-3">
+                  {b.driver.name}
+                  <div className="text-xs text-gray-400">
+                    {b.driver.vehicle}
+                  </div>
+                </td>
 
-            <div className="grid grid-cols-2 gap-3 mt-4 text-sm text-slate-300">
-              <p>📍 {b.pickup.address}</p>
-              <p>📍 {b.dropoff.address}</p>
-              <p>🚗 {b.driver.name}</p>
-              <p>💰 {b.fare.currency}{b.fare.amount}</p>
-            </div>
-          </div>
-        ))}
+                <td className="p-3 text-gray-300">
+                  {b.pickup.address}
+                </td>
+
+                <td className="p-3 text-gray-300">
+                  {b.dropoff.address}
+                </td>
+
+                <td className="p-3">
+                  {b.fare.currency} {b.fare.amount}
+                </td>
+
+                <td className="p-3">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs ${statusStyles[b.status]}`}
+                  >
+                    {b.status}
+                  </span>
+                </td>
+
+                <td className="p-3 text-cyan-300">
+                  {b.ai.confidence}%
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      {/* EMPTY STATE */}
+      {filtered.length === 0 && (
+        <div className="text-center text-gray-400 mt-10">
+          No bookings found
+        </div>
+      )}
     </div>
   );
 }
