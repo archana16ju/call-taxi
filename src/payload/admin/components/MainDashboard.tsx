@@ -279,7 +279,7 @@ export default function MainDashboard() {
   }
 
   return (
-    <Box sx={{ p: 3, backgroundColor: 'var(--theme-bg-page)', minHeight: '100%', color: 'var(--theme-text)' }}>
+    <Box sx={{ backgroundColor: 'var(--theme-bg-page)', minHeight: '100%', color: 'var(--theme-text)' }}>
       <LocationTracker />
       <style>{`
         .leaflet-tile-container {
@@ -292,16 +292,20 @@ export default function MainDashboard() {
       `}</style>
       {/* White Top Bar */}
       <Paper elevation={0} sx={{ 
-        p: 2, 
-        mb: 4, 
-        mx: -3, 
-        mt: -3, 
+        px: 3,
+        py: 1.5, 
+        mb: 3, 
+        mx: 0,
+        mt: 0, 
         borderRadius: 0, 
         backgroundColor: '#ffffff', 
         borderBottom: '1px solid #e2e8f0',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
       }}>
         <Stack direction="row" spacing={3} alignItems="center" sx={{ flexGrow: 1 }}>
           <Typography variant="h6" sx={{ fontWeight: 800, color: '#1e293b' }}>Dashboard</Typography>
@@ -345,7 +349,7 @@ export default function MainDashboard() {
           </Stack>
         </Stack>
       </Paper>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ px: 3, pb: 3 }}>
         {/* Stat Cards - Exactly like Image */}
         <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
           <StatCard title="Total Bookings" value={stats.totalBookings.toLocaleString()} trend="up" trendValue="+13.6%" icon={<BookIcon />} color="#3b82f6" />

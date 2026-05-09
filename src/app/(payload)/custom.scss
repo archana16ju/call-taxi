@@ -185,3 +185,99 @@ div.nav__link,
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
 }
+
+/* ================================================================
+   ADMIN UI FIXES — Account, Stray Line, Dashboard Sizing
+   ================================================================ */
+
+/* ── 1. REMOVE the upward hairline / divider above Payload's
+       collapse / account zone in the native nav ── */
+aside.nav .nav__scroll::before,
+aside.nav::before,
+.template-default__nav::before,
+[class*="navWrapper"]::before,
+.nav__controls::before,
+.nav__scroll > hr,
+.nav__scroll + hr,
+aside.nav hr {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+  height: 0 !important;
+}
+
+/* Also hide the Payload "collapse" button divider line */
+button[class*="navTogglerIcon"],
+button[class*="nav-toggler"],
+.nav__toggler-icon::before,
+.nav__toggler-icon::after {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* ── 2. ACCOUNT BUTTON — proper spacing, not crammed in corner ── */
+.nav__controls {
+  padding: 12px 16px 20px 16px !important;
+  margin: 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: transparent !important;
+}
+
+/* The account link row */
+.nav__controls a,
+.account-control a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  transition: background 0.2s ease !important;
+  text-decoration: none !important;
+  color: #94a3b8 !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+.nav__controls a:hover,
+.account-control a:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #ffffff !important;
+}
+
+/* ── 3. DASHBOARD main content — fluid width that changes with sidebar ── */
+/* Remove any fixed widths so the content properly fills remaining space */
+.template-default__main {
+  flex: 1 1 auto !important;
+  width: 0 !important;          /* forces it to shrink-grow with flex */
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: 100vh !important;
+}
+
+/* The inner content wrapper — no fixed padding that fights sidebar */
+.template-default__main > div,
+.render-custom-component,
+.render-custom-component > div {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* ── 4. Collection / settings pages — ensure full-width layout ── */
+.collection-list,
+.collection-edit,
+.document-controls,
+.gutter--left,
+.gutter--right {
+  max-width: 100% !important;
+}
+
+/* ── 5. Fix the top bar in custom admin pages ── */
+/* The negative margin on the top bar needs to compensate only for padding, not sidebar */
+.MuiPaper-root[style*="mx: -3"] {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}

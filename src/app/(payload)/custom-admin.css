@@ -1,0 +1,103 @@
+/* ============================================
+   PAYLOAD ADMIN SHELL — GLOBAL UI OVERRIDES
+   Fixes account position, removes stray lines,
+   makes content area fluid with sidebar
+   ============================================ */
+
+/* ─── Layout: Make main content fill remaining width ─── */
+.template-default__wrap,
+[class*="template-default"] {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+}
+
+/* ─── Remove the top hairline above the nav collapse area ─── */
+.nav__scroll::before,
+.nav-wrapper::before,
+.nav::before,
+[class*="navWrapper"]::before,
+[class*="nav-scroll"]::before,
+.payload-nav::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Also target the Payload collapse button divider */
+[class*="nav__toggle"]::before,
+[class*="navToggle"]::before,
+.nav-toggle::before {
+  display: none !important;
+}
+
+/* Remove any top border/hr that shows above account area */
+.account__relation-to::before,
+[class*="account"]::before,
+.logout::before {
+  display: none !important;
+}
+
+/* ─── Account button: Pull out of corner, add proper spacing ─── */
+.nav__controls,
+[class*="navControls"],
+[class*="nav-controls"] {
+  padding: 16px !important;
+  padding-bottom: 20px !important;
+  border-top: 1px solid rgba(255,255,255,0.05) !important;
+  margin-top: auto !important;
+}
+
+/* Account button itself */
+.nav__controls a,
+[class*="navControls"] a,
+[class*="account-link"],
+.account {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 10px 12px !important;
+  border-radius: 10px !important;
+  transition: background 0.2s !important;
+  text-decoration: none !important;
+}
+
+.nav__controls a:hover,
+[class*="navControls"] a:hover {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* ─── Remove the stray upward line / separator that Payload adds ─── */
+.nav hr,
+.nav__scroll hr,
+[class*="navScroll"] hr,
+[class*="nav"] > hr {
+  display: none !important;
+}
+
+/* ─── Payload nav: ensure our custom nav fills the height properly ─── */
+nav[class*="nav"],
+.payload-nav,
+[class*="payload-nav"] {
+  height: 100vh !important;
+  position: sticky !important;
+  top: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ─── Main content area: fluid, no overflow issues ─── */
+.template-default main,
+.payload-main,
+main[class*="template"] {
+  flex: 1 !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* ─── Payload account item — fix text overflow ─── */
+.account__relation-to span,
+[class*="account"] span {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 160px !important;
+}
