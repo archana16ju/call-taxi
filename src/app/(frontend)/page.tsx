@@ -137,93 +137,65 @@ export default async function Page() {
           <TariffSection tariffs={tariffs} />
         </Box>
       </Box>
-      <Box
+      'use client'
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Paper
         sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'radial-gradient(circle at top, #1a1a2e, #0f0f1a, #050510)',
-          px: 2,
+          p: 6,
+          textAlign: 'center',
+          borderRadius: 5,
+          maxWidth: 500,
+          width: '100%',
+          background: 'rgba(255,255,255,0.08)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          boxShadow: '0 0 25px rgba(0,255,255,0.15)',
         }}
       >
-        <Paper
-          elevation={10}
-          sx={{
-            p: 6,
-            textAlign: 'center',
-            borderRadius: 5,
-            maxWidth: 500,
-            width: '100%',
-            background: 'rgba(255,255,255,0.06)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.15)',
-            boxShadow: '0 0 30px rgba(0,255,255,0.15)',
-          }}
-        >
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 700,
-              color: '#ffffff',
-              mb: 1,
-            }}
-          >
-            🚖 Book Your Taxi Instantly
-          </Typography>
+        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+          🚖 Book Your Taxi Instantly
+        </Typography>
 
-          <Typography sx={{ color: '#b0b0b0', mb: 4 }}>
-            Choose AI or Voice booking powered by smart automation
-          </Typography>
+        <Typography sx={{ color: 'gray', mt: 1, mb: 4 }}>
+          AI & Voice powered booking system
+        </Typography>
 
-          <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap">
-            {/* AI Booking */}
-            <Link href="/aichat">
-              <Button
-                sx={{
-                  px: 4,
-                  py: 1.5,
-                  fontWeight: 600,
-                  color: '#fff',
-                  background: 'linear-gradient(45deg, #00f5ff, #007cf0)',
-                  borderRadius: 3,
-                  transition: '0.3s',
-                  boxShadow: '0 0 10px rgba(0,255,255,0.3)',
-                  '&:hover': {
-                    transform: 'scale(1.08)',
-                    boxShadow: '0 0 20px rgba(0,255,255,0.8), 0 0 40px rgba(0,124,240,0.6)',
-                  },
-                }}
-              >
-                AI Booking ✨
-              </Button>
-            </Link>
+        <Stack direction="row" spacing={2} justifyContent="center">
+          <Link href="/aichat">
+            <Button
+              variant="contained"
+              sx={{
+                background: 'linear-gradient(45deg, #00f5ff, #007cf0)',
+                '&:hover': { transform: 'scale(1.05)' },
+              }}
+            >
+              AI Booking
+            </Button>
+          </Link>
 
-            {/* Voice Booking */}
-            <Link href="/voice">
-              <Button
-                sx={{
-                  px: 4,
-                  py: 1.5,
-                  fontWeight: 600,
-                  color: '#fff',
-                  background: 'linear-gradient(45deg, #ff00cc, #3333ff)',
-                  borderRadius: 3,
-                  transition: '0.3s',
-                  boxShadow: '0 0 10px rgba(255,0,204,0.3)',
-                  '&:hover': {
-                    transform: 'scale(1.08)',
-                    boxShadow: '0 0 20px rgba(255,0,204,0.8), 0 0 40px rgba(51,51,255,0.6)',
-                  },
-                }}
-              >
-                Voice Booking 🎤
-              </Button>
-            </Link>
-          </Stack>
-        </Paper>
-      </Box>
-      <ReviewsSection />
+          <Link href="/voice">
+            <Button
+              variant="contained"
+              sx={{
+                background: 'linear-gradient(45deg, #ff00cc, #3333ff)',
+                '&:hover': { transform: 'scale(1.05)' },
+              }}
+            >
+              Voice Booking
+            </Button>
+          </Link>
+        </Stack>
+      </Paper>
+    </div>
+
+     <ReviewsSection />
 
       <PartnerSection />
 
