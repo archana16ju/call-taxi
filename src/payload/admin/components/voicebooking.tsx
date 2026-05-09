@@ -19,10 +19,10 @@ interface VoiceBooking {
 }
 
 const statusStyles: any = {
-  confirmed: "bg-green-500/15 text-green-400",
-  pending: "bg-yellow-500/15 text-yellow-400",
-  flagged: "bg-red-500/15 text-red-400",
-  archived: "bg-gray-500/15 text-gray-300",
+  confirmed: "bg-green-100 text-green-700",
+  pending: "bg-yellow-100 text-yellow-700",
+  flagged: "bg-red-100 text-red-700",
+  archived: "bg-gray-100 text-gray-600",
 };
 
 export default function VoiceBookingDashboard() {
@@ -50,19 +50,17 @@ export default function VoiceBookingDashboard() {
   }, [bookings, search, status]);
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white p-6">
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">
-          🚖 Voice Booking Collection
-        </h1>
+        <h1 className="text-2xl font-bold">🚖 Voice Booking Collection</h1>
 
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search bookings..."
-          className="px-4 py-2 rounded-lg bg-white/10 border border-white/10 outline-none"
+          className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none"
         />
       </div>
 
@@ -74,8 +72,8 @@ export default function VoiceBookingDashboard() {
             onClick={() => setStatus(s)}
             className={`px-4 py-2 rounded-full text-xs border transition ${
               status === s
-                ? "bg-cyan-400 text-black"
-                : "bg-white/5 border-white/10"
+                ? "bg-blue-500 text-white"
+                : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
             }`}
           >
             {s.toUpperCase()}
@@ -84,9 +82,9 @@ export default function VoiceBookingDashboard() {
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto rounded-2xl border border-white/10">
+      <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-700">
         <table className="w-full text-sm">
-          <thead className="bg-white/5 text-gray-300">
+          <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
             <tr>
               <th className="p-3 text-left">Booking ID</th>
               <th className="p-3 text-left">Driver</th>
@@ -102,38 +100,24 @@ export default function VoiceBookingDashboard() {
             {filtered.map((b) => (
               <tr
                 key={b._id}
-                className="border-t border-white/10 hover:bg-white/5 transition"
+                className="border-t border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
               >
                 <td className="p-3 font-semibold">{b.bookingId}</td>
-
                 <td className="p-3">
                   {b.driver.name}
-                  <div className="text-xs text-gray-400">
-                    {b.driver.vehicle}
-                  </div>
+                  <div className="text-xs text-gray-500">{b.driver.vehicle}</div>
                 </td>
-
-                <td className="p-3 text-gray-300">
-                  {b.pickup.address}
-                </td>
-
-                <td className="p-3 text-gray-300">
-                  {b.dropoff.address}
-                </td>
-
+                <td className="p-3">{b.pickup.address}</td>
+                <td className="p-3">{b.dropoff.address}</td>
                 <td className="p-3">
                   {b.fare.currency} {b.fare.amount}
                 </td>
-
                 <td className="p-3">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs ${statusStyles[b.status]}`}
-                  >
+                  <span className={`px-3 py-1 rounded-full text-xs ${statusStyles[b.status]}`}>
                     {b.status}
                   </span>
                 </td>
-
-                <td className="p-3 text-cyan-300">
+                <td className="p-3 text-blue-600 dark:text-blue-400">
                   {b.ai.confidence}%
                 </td>
               </tr>
@@ -142,9 +126,8 @@ export default function VoiceBookingDashboard() {
         </table>
       </div>
 
-      {/* EMPTY STATE */}
       {filtered.length === 0 && (
-        <div className="text-center text-gray-400 mt-10">
+        <div className="text-center text-gray-500 mt-10">
           No bookings found
         </div>
       )}
