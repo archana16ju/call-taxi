@@ -55,17 +55,33 @@ const menuItems = [
   { label: 'Voice Dispatch', icon: <MicIcon />, path: '/admin/voice-dispatch' },
   { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/ride-preferences' },
   { type: 'header', label: 'LIVE TRACKING SYSTEM' },
-  { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/admin/live-tracking' },
-  { label: 'Offline Sync Logs', icon: <HistoryIcon />, path: '/admin/collections/driver-offline-logs' },
+  { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/live-tracking' },
+  {
+    label: 'Offline Sync Logs',
+    icon: <HistoryIcon />,
+    path: '/admin/collections/driver-offline-logs',
+  },
   { type: 'header', label: 'SMART COMMUNICATION' },
   { label: 'Support (WhatsApp)', icon: <WhatsAppIcon />, path: '/admin/globals/general-settings' },
-  { label: 'AI Chat Support', icon: <WhatsAppIcon />, path: '/admin/collections/ai-chat-conversations' },
+  {
+    label: 'AI Chat Support',
+    icon: <WhatsAppIcon />,
+    path: '/admin/collections/ai-chat-conversations',
+  },
   { type: 'header', label: 'SECURITY SYSTEM' },
-  { label: 'Cancellation Control',icon: <CancelIcon />,path: '/admin/globals/cancellation-control',},
+  {
+    label: 'Cancellation Control',
+    icon: <CancelIcon />,
+    path: '/admin/globals/cancellation-control',
+  },
   { label: 'Trip OTPs', icon: <SecurityIcon />, path: '/admin/collections/trip-otps' },
   { label: 'Trip Sharing', icon: <ShareIcon />, path: '/admin/collections/trip-sharing' },
   { type: 'header', label: 'FINANCIAL SETTLEMENTS' },
-  { label: 'Revenue & Settlements',icon: <AccountBalanceWalletIcon />,path: '/admin/collections/revenue-settlements' },
+  {
+    label: 'Revenue & Settlements',
+    icon: <AccountBalanceWalletIcon />,
+    path: '/admin/collections/revenue-settlements',
+  },
   { type: 'header', label: 'ACCOUNTS' },
   { label: 'Invoices', icon: <ReceiptIcon />, path: '/admin/collections/invoices' },
   { label: 'Payment Settings', icon: <PaymentsIcon />, path: '/admin/globals/payment-settings' },
@@ -113,14 +129,14 @@ export const CustomNav: React.FC = () => {
       }}
     >
       {/* Premium Header */}
-      <Box 
-        sx={{ 
-          p: isCollapsed ? 1.5 : 3, 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 2, 
+      <Box
+        sx={{
+          p: isCollapsed ? 1.5 : 3,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
           justifyContent: isCollapsed ? 'center' : 'flex-start',
-          mb: 2
+          mb: 2,
         }}
       >
         <Box
@@ -137,9 +153,9 @@ export const CustomNav: React.FC = () => {
             flexShrink: 0,
             transition: 'transform 0.2s',
             boxShadow: '0 4px 12px rgba(251, 191, 36, 0.2)',
-            '&:hover': { 
+            '&:hover': {
               backgroundColor: '#f59e0b',
-              transform: 'scale(1.05)'
+              transform: 'scale(1.05)',
             },
           }}
         >
@@ -147,10 +163,22 @@ export const CustomNav: React.FC = () => {
         </Box>
         {!isCollapsed && (
           <Box sx={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            <Typography variant="h6" sx={{ fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', color: '#fff' }}>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', color: '#fff' }}
+            >
               Taxi System
             </Typography>
-            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#64748b',
+                fontWeight: 600,
+                fontSize: '0.65rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               Advanced Premium
             </Typography>
           </Box>
@@ -160,7 +188,13 @@ export const CustomNav: React.FC = () => {
       <List sx={{ px: isCollapsed ? 1 : 2, pb: 4, pt: 0 }}>
         {menuItems.map((item, index) => {
           if (item.type === 'header') {
-            if (isCollapsed) return <Divider key={index} sx={{ my: 2, backgroundColor: 'rgba(255,255,255,0.05)', mx: 1 }} />
+            if (isCollapsed)
+              return (
+                <Divider
+                  key={index}
+                  sx={{ my: 2, backgroundColor: 'rgba(255,255,255,0.05)', mx: 1 }}
+                />
+              )
             return (
               <Typography
                 key={index}
@@ -209,14 +243,14 @@ export const CustomNav: React.FC = () => {
                     },
                   }}
                 >
-                  <ListItemIcon 
-                    sx={{ 
-                      minWidth: isCollapsed ? 0 : 32, 
-                      color: 'inherit', 
+                  <ListItemIcon
+                    sx={{
+                      minWidth: isCollapsed ? 0 : 32,
+                      color: 'inherit',
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      '& .MuiSvgIcon-root': { fontSize: '1.2rem' }
+                      '& .MuiSvgIcon-root': { fontSize: '1.2rem' },
                     }}
                   >
                     {item.icon}
@@ -249,7 +283,7 @@ export const CustomNav: React.FC = () => {
               textAlign: 'center',
               border: '1px solid rgba(255, 255, 255, 0.05)',
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
             }}
           >
             <Box sx={{ mb: 1, color: '#fbbf24' }}>
