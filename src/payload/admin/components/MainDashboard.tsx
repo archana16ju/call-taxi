@@ -38,10 +38,7 @@ import {
 } from 'recharts'
 
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
-
-React.useEffect(() => {
-  import('leaflet/dist/leaflet.css')
-}, [])
+import 'leaflet/dist/leaflet.css'
 import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet components to avoid SSR issues
