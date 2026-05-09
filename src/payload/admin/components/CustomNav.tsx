@@ -68,6 +68,7 @@ const menuItems = [
     icon: <WhatsAppIcon />,
     path: '/admin/collections/ai-chat-conversations',
   },
+  { label: 'Voice Support', icon: <MicIcon />, path: '/admin/collections/voice-bookings' },
   { type: 'header', label: 'SECURITY SYSTEM' },
   {
     label: 'Cancellation Control',
