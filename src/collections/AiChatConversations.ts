@@ -63,7 +63,7 @@ const AiChatConversations: CollectionConfig = {
           name: 'message',
           type: 'textarea',
         },
-       {
+        {
           name: 'timestamp',
           type: 'date',
           defaultValue: () => new Date(),

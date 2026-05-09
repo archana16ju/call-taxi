@@ -1,509 +1,329 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
-import ChatIcon from '@mui/icons-material/Chat'
-import SendIcon from '@mui/icons-material/Send'
-import CloseIcon from '@mui/icons-material/Close'
-import SmartToyIcon from '@mui/icons-material/SmartToy'
-import PersonIcon from '@mui/icons-material/Person'
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'
-import PaymentsIcon from '@mui/icons-material/Payments'
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import React, { useEffect, useState } from 'react'
 
 import {
   Box,
-  Drawer,
-  IconButton,
   Typography,
-  TextField,
-  Button,
-  Stack,
   Paper,
-  Badge,
-  Avatar,
-  Divider,
+  Stack,
   Chip,
-  CircularProgress,
+  TextField,
+  MenuItem,
+  Avatar,
+  IconButton,
+  Pagination,
+  Divider,
 } from '@mui/material'
 
-type Message = {
-  role: 'user' | 'bot'
-  text: string
-  createdAt?: string
+import SearchIcon from '@mui/icons-material/Search'
+import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded'
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded'
+
+type Chat = {
+  id: string
+  role: 'user' | 'ai'
+  message: string
+  createdAt: string
 }
 
-type BookingData = {
-  customerName?: string
-  pickup?: string
-  drop?: string
-  status?: string
-}
+const AIChatSupportPage = () => {
+  const [search, setSearch] = useState('')
+  const [roleFilter, setRoleFilter] = useState('all')
 
-const AIChatSupport = () => {
-  const [open, setOpen] = useState(false)
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [messages, setMessages] = useState<Chat[]>([])
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'bot',
-      text: 'Hello 👋 Welcome to Call Taxi AI Support. I can help you with bookings, refunds, pricing, and ride support.',
-      createdAt: new Date().toISOString(),
-    },
-  ])
-
-  const [unreadAlerts, setUnreadAlerts] = useState(0)
-
-  const bottomRef = useRef<HTMLDivElement | null>(null)
-
-  // ================= FETCH UNREAD ALERTS =================
+  // ================= FETCH CHATS =================
   useEffect(() => {
-    fetchAlerts()
+    const fetchChats = async () => {
+      try {
+        const res = await fetch('/api/chat-support?limit=100')
+
+        const data = await res.json()
+
+        const formatted = data.docs.map((item: any) => ({
+          id: item.id,
+          role: item.role === 'bot' ? 'ai' : 'user',
+          message: item.message,
+          createdAt: item.createdAt,
+        }))
+
+        setMessages(formatted)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchChats()
   }, [])
 
-  const fetchAlerts = async () => {
-    try {
-      const res = await fetch('/api/alerts?limit=100')
-      const data = await res.json()
+  // ================= FILTER =================
+  const filteredMessages = messages.filter((msg) => {
+    const matchesSearch = msg.message
+      .toLowerCase()
+      .includes(search.toLowerCase())
 
-      const unread = data?.docs?.filter((a: any) => !a.isRead).length || 0
+    const matchesRole =
+      roleFilter === 'all' || msg.role === roleFilter
 
-      setUnreadAlerts(unread)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  // ================= AUTO SCROLL =================
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({
-      behavior: 'smooth',
-    })
-  }, [messages])
-
-  // ================= SAVE CHAT =================
-  const saveChat = async (message: Message) => {
-    try {
-      await fetch('/api/chat-support', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          role: message.role,
-          message: message.text,
-          createdAt: new Date(),
-        }),
-      })
-    } catch (err) {
-      console.log('Chat save error:', err)
-    }
-  }
-
-  // ================= CREATE ALERT =================
-  const createAlert = async (payload: any) => {
-    try {
-      await fetch('/api/alerts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: payload.title,
-          message: payload.message,
-          type: payload.type,
-          triggeredBy: 'chatbot',
-          isRead: false,
-        }),
-      })
-
-      fetchAlerts()
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  // ================= CREATE BOOKING =================
-  const createBooking = async (data: BookingData) => {
-    try {
-      await fetch('/api/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          customerName: data.customerName || 'AI Customer',
-          pickup: data.pickup || 'Unknown Pickup',
-          drop: data.drop || 'Unknown Drop',
-          status: data.status || 'pending',
-          bookingSource: 'AI Chatbot',
-        }),
-      })
-    } catch (err) {
-      console.log('Booking error:', err)
-    }
-  }
-
-  // ================= BOT REPLY =================
-  const getBotReply = (text: string) => {
-    const msg = text.toLowerCase()
-
-    if (msg.includes('refund')) {
-      return 'Refund request received 💳 Refunds are processed within 3–5 business days.'
-    }
-
-    if (msg.includes('book')) {
-      return 'Your taxi booking request has been created 🚕 Our driver allocation system will process it soon.'
-    }
-
-    if (msg.includes('price')) {
-      return 'Taxi pricing depends on distance, traffic, and ride type.'
-    }
-
-    if (msg.includes('cancel')) {
-      return 'Your cancellation request has been submitted successfully.'
-    }
-
-    if (msg.includes('hello') || msg.includes('hi')) {
-      return 'Hello 👋 How can I help you today?'
-    }
-
-    return 'I can help with booking, refund, cancellation, pricing, and taxi support.'
-  }
-
-  // ================= SEND MESSAGE =================
-  const handleSend = async () => {
-    if (!input.trim()) return
-
-    setLoading(true)
-
-    const userMessage: Message = {
-      role: 'user',
-      text: input,
-      createdAt: new Date().toISOString(),
-    }
-
-    const botMessage: Message = {
-      role: 'bot',
-      text: getBotReply(input),
-      createdAt: new Date().toISOString(),
-    }
-
-    setMessages((prev) => [...prev, userMessage])
-
-    await saveChat(userMessage)
-
-    const msg = input.toLowerCase()
-
-    // BOOKING
-    if (msg.includes('book')) {
-      await createBooking({
-        customerName: 'AI Customer',
-        pickup: 'Current Location',
-        drop: 'Destination',
-        status: 'pending',
-      })
-
-      await createAlert({
-        title: 'New Booking from AI Chat',
-        message: input,
-        type: 'booking',
-      })
-    }
-
-    // REFUND
-    if (msg.includes('refund')) {
-      await createAlert({
-        title: 'Refund Request',
-        message: input,
-        type: 'payment_fail',
-      })
-    }
-
-    // HELP
-    if (msg.includes('help')) {
-      await createAlert({
-        title: 'Customer Help Request',
-        message: input,
-        type: 'system',
-      })
-    }
-
-    setTimeout(async () => {
-      setMessages((prev) => [...prev, botMessage])
-
-      await saveChat(botMessage)
-
-      setLoading(false)
-    }, 800)
-
-    setInput('')
-  }
+    return matchesSearch && matchesRole
+  })
 
   return (
-    <>
-      {/* FLOATING BUTTON */}
-      <IconButton
-        onClick={() => setOpen(true)}
+    <Box
+      sx={{
+        p: 3,
+        background: '#f5f7fb',
+        minHeight: '100vh',
+      }}
+    >
+      {/* TOP */}
+      <Box mb={3}>
+        <Typography
+          variant="h4"
+          fontWeight={700}
+          color="#111827"
+        >
+          AI Chat Support
+        </Typography>
+
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          mt={1}
+        >
+          All chats from website users with AI Support
+        </Typography>
+      </Box>
+
+      {/* FILTERS */}
+      <Paper
         sx={{
-          position: 'fixed',
-          bottom: 20,
-          right: 20,
-          width: 65,
-          height: 65,
-          background:
-            'linear-gradient(135deg,#1976d2 0%,#42a5f5 100%)',
-          color: 'white',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
-          '&:hover': {
-            background:
-              'linear-gradient(135deg,#1565c0 0%,#1e88e5 100%)',
-          },
-          zIndex: 9999,
+          p: 2,
+          borderRadius: 4,
+          mb: 3,
+          boxShadow: '0 4px 18px rgba(0,0,0,0.06)',
         }}
       >
-        <Badge badgeContent={unreadAlerts} color="error">
-          <ChatIcon sx={{ fontSize: 30 }} />
-        </Badge>
-      </IconButton>
+        <Stack
+          direction={{
+            xs: 'column',
+            md: 'row',
+          }}
+          spacing={2}
+        >
+          <TextField
+            fullWidth
+            placeholder="Search messages..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <SearchIcon sx={{ mr: 1 }} />
+              ),
+            }}
+          />
 
-      {/* DRAWER */}
-      <Drawer
-        anchor="right"
-        open={open}
-        onClose={() => setOpen(false)}
+          <TextField
+            select
+            sx={{ minWidth: 180 }}
+            value={roleFilter}
+            onChange={(e) =>
+              setRoleFilter(e.target.value)
+            }
+          >
+            <MenuItem value="all">All Roles</MenuItem>
+
+            <MenuItem value="user">User</MenuItem>
+
+            <MenuItem value="ai">AI</MenuItem>
+          </TextField>
+        </Stack>
+      </Paper>
+
+      {/* TABLE */}
+      <Paper
+        sx={{
+          borderRadius: 4,
+          overflow: 'hidden',
+          boxShadow: '0 4px 18px rgba(0,0,0,0.06)',
+        }}
       >
+        {/* HEADER */}
         <Box
           sx={{
-            width: 380,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            background: '#f4f7fb',
+            px: 3,
+            py: 2,
+            background: '#f8fafc',
+            borderBottom: '1px solid #e5e7eb',
           }}
         >
-          {/* HEADER */}
-          <Box
-            sx={{
-              p: 2,
-              color: 'white',
-              background:
-                'linear-gradient(135deg,#1976d2 0%,#42a5f5 100%)',
-            }}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
           >
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
+            <Typography fontWeight={700}>
+              Chat Messages
+            </Typography>
+
+            <Chip
+              label={`${filteredMessages.length} Chats`}
+              color="primary"
+            />
+          </Stack>
+        </Box>
+
+        {/* TABLE HEADER */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns:
+              '1fr 120px 3fr 200px 60px',
+            gap: 2,
+            px: 3,
+            py: 2,
+            background: '#f9fafb',
+            fontWeight: 700,
+            borderBottom: '1px solid #e5e7eb',
+          }}
+        >
+          <Typography fontWeight={700}>ID</Typography>
+
+          <Typography fontWeight={700}>Role</Typography>
+
+          <Typography fontWeight={700}>
+            Message
+          </Typography>
+
+          <Typography fontWeight={700}>
+            Created At
+          </Typography>
+
+          <Typography fontWeight={700}>
+            Action
+          </Typography>
+        </Box>
+
+        {/* ROWS */}
+        {filteredMessages.map((msg) => (
+          <Box key={msg.id}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns:
+                  '1fr 120px 3fr 200px 60px',
+                gap: 2,
+                px: 3,
+                py: 2,
+                alignItems: 'center',
+                transition: '0.2s',
+                '&:hover': {
+                  background: '#f9fafb',
+                },
+              }}
             >
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Avatar
-                  sx={{
-                    bgcolor: 'white',
-                    color: '#1976d2',
-                  }}
-                >
-                  <SmartToyIcon />
-                </Avatar>
-
-                <Box>
-                  <Typography fontWeight={700}>
-                    AI Support Assistant
-                  </Typography>
-
-                  <Typography variant="caption">
-                    Online • 24/7 Support
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <IconButton onClick={() => setOpen(false)}>
-                <CloseIcon sx={{ color: 'white' }} />
-              </IconButton>
-            </Stack>
-          </Box>
-
-          {/* QUICK ACTIONS */}
-          <Box sx={{ p: 2 }}>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              <Chip
-                icon={<DirectionsCarIcon />}
-                label="Book Ride"
-                color="primary"
-              />
-
-              <Chip
-                icon={<PaymentsIcon />}
-                label="Refund"
-                color="success"
-              />
-
-              <Chip
-                icon={<HelpOutlineIcon />}
-                label="Help"
-                color="warning"
-              />
-            </Stack>
-          </Box>
-
-          <Divider />
-
-          {/* CHAT AREA */}
-          <Box
-            sx={{
-              flex: 1,
-              overflowY: 'auto',
-              p: 2,
-            }}
-          >
-            <Stack spacing={2}>
-              {messages.map((msg, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: 'flex',
-                    justifyContent:
-                      msg.role === 'user'
-                        ? 'flex-end'
-                        : 'flex-start',
-                  }}
-                >
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    alignItems="flex-end"
-                  >
-                    {msg.role === 'bot' && (
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          bgcolor: '#1976d2',
-                        }}
-                      >
-                        <SmartToyIcon sx={{ fontSize: 18 }} />
-                      </Avatar>
-                    )}
-
-                    <Paper
-                      elevation={2}
-                      sx={{
-                        p: 1.5,
-                        borderRadius: 3,
-                        maxWidth: 250,
-                        background:
-                          msg.role === 'user'
-                            ? '#1976d2'
-                            : 'white',
-                        color:
-                          msg.role === 'user'
-                            ? 'white'
-                            : 'black',
-                      }}
-                    >
-                      <Typography variant="body2">
-                        {msg.text}
-                      </Typography>
-
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          opacity: 0.7,
-                          mt: 0.5,
-                          display: 'block',
-                        }}
-                      >
-                        {new Date(
-                          msg.createdAt || ''
-                        ).toLocaleTimeString()}
-                      </Typography>
-                    </Paper>
-
-                    {msg.role === 'user' && (
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          bgcolor: '#424242',
-                        }}
-                      >
-                        <PersonIcon sx={{ fontSize: 18 }} />
-                      </Avatar>
-                    )}
-                  </Stack>
-                </Box>
-              ))}
-
-              {loading && (
-                <Stack direction="row" spacing={1}>
-                  <Avatar
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      bgcolor: '#1976d2',
-                    }}
-                  >
-                    <SmartToyIcon sx={{ fontSize: 18 }} />
-                  </Avatar>
-
-                  <Paper
-                    sx={{
-                      p: 1.5,
-                      borderRadius: 3,
-                    }}
-                  >
-                    <CircularProgress size={18} />
-                  </Paper>
-                </Stack>
-              )}
-
-              <div ref={bottomRef} />
-            </Stack>
-          </Box>
-
-          {/* INPUT */}
-          <Box
-            sx={{
-              p: 2,
-              borderTop: '1px solid #e0e0e0',
-              background: 'white',
-            }}
-          >
-            <Stack direction="row" spacing={1}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Type your message..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSend()
-                  }
-                }}
+              {/* ID */}
+              <Typography
+                variant="body2"
                 sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
-                  },
-                }}
-              />
-
-              <Button
-                variant="contained"
-                onClick={handleSend}
-                sx={{
-                  minWidth: 55,
-                  borderRadius: 3,
+                  color: '#64748b',
+                  fontWeight: 600,
                 }}
               >
-                <SendIcon />
-              </Button>
-            </Stack>
+                {msg.id.slice(0, 16)}
+              </Typography>
+
+              {/* ROLE */}
+              <Box>
+                {msg.role === 'ai' ? (
+                  <Chip
+                    icon={
+                      <SmartToyRoundedIcon />
+                    }
+                    label="AI"
+                    color="success"
+                    size="small"
+                  />
+                ) : (
+                  <Chip
+                    icon={
+                      <PersonRoundedIcon />
+                    }
+                    label="User"
+                    color="primary"
+                    size="small"
+                  />
+                )}
+              </Box>
+
+              {/* MESSAGE */}
+              <Stack
+                direction="row"
+                spacing={1.5}
+                alignItems="center"
+              >
+                <Avatar
+                  sx={{
+                    bgcolor:
+                      msg.role === 'ai'
+                        ? '#16a34a'
+                        : '#1976d2',
+                  }}
+                >
+                  {msg.role === 'ai' ? (
+                    <SmartToyRoundedIcon />
+                  ) : (
+                    <PersonRoundedIcon />
+                  )}
+                </Avatar>
+
+                <Typography
+                  variant="body2"
+                  sx={{
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {msg.message}
+                </Typography>
+              </Stack>
+
+              {/* DATE */}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+              >
+                {new Date(
+                  msg.createdAt
+                ).toLocaleString()}
+              </Typography>
+
+              {/* ACTION */}
+              <IconButton>
+                <MoreHorizRoundedIcon />
+              </IconButton>
+            </Box>
+
+            <Divider />
           </Box>
+        ))}
+
+        {/* PAGINATION */}
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <Pagination
+            count={10}
+            color="primary"
+          />
         </Box>
-      </Drawer>
-    </>
+      </Paper>
+    </Box>
   )
 }
 
-export default AIChatSupport
+export default AIChatSupportPage
