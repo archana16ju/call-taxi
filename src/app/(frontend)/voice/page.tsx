@@ -21,20 +21,38 @@ export default function VoiceUI() {
       (window as any).SpeechRecognition ||
       (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) return;
+    if (!SpeechRecognition) {
+      speak("Speech recognition not supported");
+      return;
+    }
 
     const recognition = new SpeechRecognition();
     recognition.lang = language;
 
     recognition.onstart = () => setListening(true);
 
-    recognition.onresult = (e: any) => {
-      const transcript = e.results[0][0].transcript;
+    recognition.onerror = () => {
+      setListening(false);
+      speak("Microphone error. Please try again.");
+    };
 
+    recognition.onresult = async (e: any) => {
+      const transcript = e.results[0][0].transcript;
       setText(transcript);
 
-      // AI response simulation
-      speak("Booking received. Processing your request.");
+      try {
+        const response = await fetch("/api/ai-chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: transcript }),
+        });
+
+        const data = await response.json();
+
+        speak(data.reply || "Your booking is confirmed");
+      } catch (err) {
+        speak("Error processing booking. Please try again.");
+      }
     };
 
     recognition.onend = () => setListening(false);
@@ -72,14 +90,17 @@ export default function VoiceUI() {
           {text || "Speak something..."}
         </div>
 
+        {text && (
+          <div className="mt-4 p-3 bg-green-500/20 rounded-xl text-sm">
+            🚖 Processing booking: {text}
+          </div>
+        )}
+
         {/* MIC BUTTON */}
         <button
-          onMouseDown={start}
-          onMouseUp={stop}
+          onClick={() => (listening ? stop() : start())}
           className={`w-full h-24 rounded-full flex items-center justify-center transition ${
-            listening
-              ? "bg-red-500 animate-pulse"
-              : "bg-cyan-400"
+            listening ? "bg-red-500 animate-pulse" : "bg-cyan-400"
           }`}
         >
           <Mic size={36} />
@@ -93,6 +114,7 @@ export default function VoiceUI() {
           <Volume2 size={18} />
           Play Response
         </button>
+
       </div>
     </div>
   );

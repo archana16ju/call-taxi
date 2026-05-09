@@ -39,6 +39,7 @@ export default function AIChatPage() {
 
     setMessages((prev) => [...prev, userMessage])
     setInput('')
+
     setLoading(true)
 
     try {
@@ -140,6 +141,15 @@ export default function AIChatPage() {
               </Box>
             </Box>
           ))}
+          {loading && (
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+      <Paper sx={{ p: 1.5, borderRadius: 2 }}>
+        <Typography variant="body2">
+          AI is typing...
+        </Typography>
+      </Paper>
+    </Box>
+  )}
         </Stack>
       </Box>
 
