@@ -222,16 +222,6 @@ export default function MainDashboard() {
   }, [])
 
   const fetchLocations = React.useCallback(async () => {
-    React.useEffect(() => {
-      fetchLocations()
-
-      const interval = setInterval(() => {
-        fetchLocations()
-      }, 10000)
-
-      return () => clearInterval(interval)
-    }, [fetchLocations])
-
     try {
       const driversRes = await fetch('/api/drivers?where[location][exists]=true&limit=100').then(
         (res) => {
@@ -315,6 +305,15 @@ export default function MainDashboard() {
       console.error('Live GPS Error:', error)
     }
   }, [])
+  React.useEffect(() => {
+  fetchLocations()
+
+  const interval = setInterval(() => {
+    fetchLocations()
+  }, 10000)
+
+  return () => clearInterval(interval)
+}, [fetchLocations])
 
   return (
     <Box
