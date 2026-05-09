@@ -306,14 +306,14 @@ export default function MainDashboard() {
     }
   }, [])
   React.useEffect(() => {
-  fetchLocations()
-
-  const interval = setInterval(() => {
     fetchLocations()
-  }, 10000)
 
-  return () => clearInterval(interval)
-}, [fetchLocations])
+    const interval = setInterval(() => {
+      fetchLocations()
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [fetchLocations])
 
   return (
     <Box
@@ -366,7 +366,7 @@ export default function MainDashboard() {
                 letterSpacing: '-0.5px',
               }}
             >
-             Dashboard Overview
+              Dashboard Overview
             </Typography>
 
             {/* Search */}
@@ -784,7 +784,7 @@ export default function MainDashboard() {
                 </Typography>
                 <Button
                   component={Link}
-                  href="/admin/live-tracking"
+                  href="/live-tracking"
                   size="small"
                   sx={{ textTransform: 'none', color: '#3b82f6', fontWeight: 700 }}
                 >
