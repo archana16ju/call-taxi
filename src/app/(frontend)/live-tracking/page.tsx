@@ -161,23 +161,25 @@ if (!driversRes.ok) {
                 zoom={11}
                 polylines={[]}
                 markers={drivers
-                  .filter(
-                    (driver) =>
-                      driver.location &&
-                      Array.isArray(driver.location) &&
-                      driver.location.length >= 2,
-                  )
-                  .map((driver) => ({
-                    id: driver.id,
-                    position: [Number(driver.location[1]), Number(driver.location[0])],
-                    popup: `
-                      <div>
-                        <b>${driver.name || 'Driver'}</b>
-                        <br/>
-                        ${driver.phone || ''}
-                      </div>
-                    `,
-                  }))}
+  .filter((driver) =>
+    Array.isArray(driver?.location) &&
+    driver.location.length >= 2 &&
+    !isNaN(Number(driver.location[0])) &&
+    !isNaN(Number(driver.location[1]))
+  )
+  .map((driver) => ({
+    id: driver.id,
+    position: [
+      Number(driver.location[1]),
+      Number(driver.location[0]),
+    ],
+    popup: `
+      <div>
+        <b>${driver.name || 'Driver'}</b><br/>
+        ${driver.phone || ''}
+      </div>
+    `,
+  }))}
               />
             </Box>
           </Paper>

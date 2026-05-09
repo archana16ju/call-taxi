@@ -6,6 +6,15 @@ import dynamic from 'next/dynamic'
 import { Box } from '@mui/material'
 import L from 'leaflet'
 
+
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+  useMap,
+} from 'react-leaflet'
 /* ---------------------------------------
    FIX LEAFLET DEFAULT ICONS (CRITICAL)
 ---------------------------------------- */
@@ -65,14 +74,6 @@ function MapInner(props: MapComponentProps) {
     darkMode = true,
   } = props
 
-  const {
-    MapContainer,
-    TileLayer,
-    Marker,
-    Popup,
-    Polyline,
-    useMap,
-  } = require('react-leaflet')
 
   function MapViewUpdater({
     center,
