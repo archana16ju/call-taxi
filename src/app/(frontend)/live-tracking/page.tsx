@@ -21,9 +21,10 @@ import PersonIcon from '@mui/icons-material/Person'
 import Link from 'next/link'
 
 // Map (same as dashboard style)
-const MapComponent = dynamic(() => import('@/payload/admin/components/MapComponent'), {
-  ssr: false,
-})
+const MapComponent = dynamic(
+  () => import('@/payload/admin/components/MapComponent'),
+  { ssr: false }
+)
 
 export default function LiveTrackingPage() {
   const [loading, setLoading] = useState(true)
