@@ -111,7 +111,9 @@ function DriverForm({
       const formData = new FormData()
       formData.append('file', file)
       formData.append('alt', form.name || 'Driver Photo')
+      formData.append('title', `Driver - ${form.name || 'Unknown'}`)
       formData.append('category', 'drivers')
+      if (driverId) formData.append('sourceId', driverId)
 
       const res = await fetch('/api/media', {
         method: 'POST',

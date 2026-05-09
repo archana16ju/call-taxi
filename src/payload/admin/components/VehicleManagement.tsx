@@ -132,7 +132,9 @@ export default function VehicleManagement() {
         const formData = new FormData()
         formData.append('file', imageFile)
         formData.append('alt', form.name || 'Vehicle Image')
+        formData.append('title', `Vehicle - ${form.name || 'Unknown'}`)
         formData.append('category', 'vehicles')
+        if (editingId) formData.append('sourceId', editingId)
         const res = await fetch('/api/media', { 
           method: 'POST', 
           body: formData,
@@ -152,7 +154,9 @@ export default function VehicleManagement() {
         const formData = new FormData()
         formData.append('file', iconFile)
         formData.append('alt', form.name || 'Vehicle Icon')
+        formData.append('title', `Vehicle Icon - ${form.name || 'Unknown'}`)
         formData.append('category', 'vehicles')
+        if (editingId) formData.append('sourceId', editingId)
         const res = await fetch('/api/media', { 
           method: 'POST', 
           body: formData,

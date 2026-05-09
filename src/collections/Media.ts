@@ -13,6 +13,17 @@ export const Media: CollectionConfig = {
       },
     },
   },
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        // Auto-set title from alt if not provided
+        if (!data.title && data.alt) {
+          data.title = data.alt
+        }
+        return data
+      },
+    ],
+  },
   access: {
     read: () => true,
     create: () => true,
@@ -36,9 +47,18 @@ export const Media: CollectionConfig = {
         { label: 'Drivers', value: 'drivers' },
         { label: 'Vehicles', value: 'vehicles' },
         { label: 'Banners', value: 'banners' },
+        { label: 'Sliders', value: 'sliders' },
         { label: 'Other', value: 'other' },
       ],
       defaultValue: 'other',
+    },
+    {
+      name: 'sourceId',
+      type: 'text',
+      admin: {
+        description: 'ID of the linked entity (driver, vehicle, etc.)',
+        readOnly: false,
+      },
     },
     {
       name: 'tags',

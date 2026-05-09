@@ -159,72 +159,152 @@ export default function Login() {
                 )}
 
                 <TextField
-                  fullWidth
-                  label="Username"
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <PersonIcon sx={{ color: '#64748b' }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: '12px',
-                      color: '#fff',
-                      backgroundColor: 'rgba(15, 23, 42, 0.5)',
-                      '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                      '&:hover fieldset': { borderColor: '#fbbf24' },
-                      '&.Mui-focused fieldset': { borderColor: '#fbbf24' },
-                    },
-                    '& .MuiInputLabel-root': { color: '#94a3b8' },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#fbbf24' },
-                  }}
-                />
+  fullWidth
+  label="Username"
+  placeholder="Enter your username"
+  value={username}
+  onChange={(e) => setUsername(e.target.value)}
+  required
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <PersonIcon sx={{ color: '#64748b' }} />
+      </InputAdornment>
+    ),
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '14px',
+      color: '#ffffff',
+      background:
+        'linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.75))',
+      backdropFilter: 'blur(10px)',
+      transition: 'all 0.3s ease',
+
+      '& input': {
+        color: '#ffffff',
+      },
+
+      '& input::placeholder': {
+        color: '#94a3b8',
+        opacity: 1,
+      },
+
+      '& input:-webkit-autofill': {
+        WebkitBoxShadow: '0 0 0 100px rgba(15,23,42,0.95) inset',
+        WebkitTextFillColor: '#ffffff',
+        caretColor: '#ffffff',
+        borderRadius: '14px',
+        transition: 'background-color 5000s ease-in-out 0s',
+      },
+
+      '& fieldset': {
+        borderColor: 'rgba(255,255,255,0.08)',
+      },
+
+      '&:hover fieldset': {
+        borderColor: '#fbbf24',
+      },
+
+      '&.Mui-focused': {
+        boxShadow: '0 0 0 3px rgba(251,191,36,0.15)',
+      },
+
+      '&.Mui-focused fieldset': {
+        borderColor: '#fbbf24',
+        borderWidth: '1.5px',
+      },
+    },
+
+    '& .MuiInputLabel-root': {
+      color: '#94a3b8',
+    },
+
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: '#fbbf24',
+    },
+  }}
+/>
 
                 <TextField
-                  fullWidth
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LockIcon sx={{ color: '#64748b' }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                          sx={{ color: '#64748b' }}
-                        >
-                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: '12px',
-                      color: '#fff',
-                      backgroundColor: 'rgba(15, 23, 42, 0.5)',
-                      '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                      '&:hover fieldset': { borderColor: '#fbbf24' },
-                      '&.Mui-focused fieldset': { borderColor: '#fbbf24' },
-                    },
-                    '& .MuiInputLabel-root': { color: '#94a3b8' },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#fbbf24' },
-                  }}
-                />
+  fullWidth
+  label="Password"
+  type={showPassword ? 'text' : 'password'}
+  placeholder="••••••••"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  required
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <LockIcon sx={{ color: '#64748b' }} />
+      </InputAdornment>
+    ),
+    endAdornment: (
+      <InputAdornment position="end">
+        <IconButton
+          onClick={() => setShowPassword(!showPassword)}
+          edge="end"
+          sx={{ color: '#94a3b8' }}
+        >
+          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+        </IconButton>
+      </InputAdornment>
+    ),
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '14px',
+      color: '#ffffff',
+      background:
+        'linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.75))',
+      backdropFilter: 'blur(10px)',
+      transition: 'all 0.3s ease',
+
+      '& input': {
+        color: '#ffffff',
+      },
+
+      '& input::placeholder': {
+        color: '#94a3b8',
+        opacity: 1,
+      },
+
+      '& input:-webkit-autofill': {
+        WebkitBoxShadow: '0 0 0 100px rgba(15,23,42,0.95) inset',
+        WebkitTextFillColor: '#ffffff',
+        caretColor: '#ffffff',
+        borderRadius: '14px',
+        transition: 'background-color 5000s ease-in-out 0s',
+      },
+
+      '& fieldset': {
+        borderColor: 'rgba(255,255,255,0.08)',
+      },
+
+      '&:hover fieldset': {
+        borderColor: '#fbbf24',
+      },
+
+      '&.Mui-focused': {
+        boxShadow: '0 0 0 3px rgba(251,191,36,0.15)',
+      },
+
+      '&.Mui-focused fieldset': {
+        borderColor: '#fbbf24',
+        borderWidth: '1.5px',
+      },
+    },
+
+    '& .MuiInputLabel-root': {
+      color: '#94a3b8',
+    },
+
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: '#fbbf24',
+    },
+  }}
+/>
 
                 <Button
                   fullWidth

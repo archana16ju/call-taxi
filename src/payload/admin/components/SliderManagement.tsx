@@ -98,10 +98,21 @@ export default function SliderManagement() {
       setIsUploading(true)
       try {
         for (const file of bulkFiles) {
-          const data = new FormData()
-          data.append('alt', file.name.split('.')[0])
-          data.append('file', file)
-          await fetch('/api/slider-images', { method: 'POST', body: data })
+          const altText = file.name.split('.')[0]
+          
+          // Upload to slider-images collection
+          const sliderData = new FormData()
+          sliderData.append('alt', altText)
+          sliderData.append('file', file)
+          const sliderRes = await fetch('/api/slider-images', { method: 'POST', body: sliderData, credentials: 'include' })
+          
+          // Mirror to media collection for centralized management
+          const mediaData = new FormData()
+          mediaData.append('alt', altText)
+          mediaData.append('title', `Slider - ${altText}`)
+          mediaData.append('category', 'sliders')
+          mediaData.append('file', file)
+          await fetch('/api/media', { method: 'POST', body: mediaData, credentials: 'include' })
         }
         await fetchImages()
         handleClose()
@@ -128,12 +139,18 @@ export default function SliderManagement() {
       const url = editItem ? `/api/slider-images/${editItem.id}` : '/api/slider-images'
       const method = editItem ? 'PATCH' : 'POST'
 
-      const res = await fetch(url, {
-        method,
-        body: data
-      })
+      const res = await fetch(url, { method, body: data, credentials: 'include' })
 
       if (res.ok) {
+        // Mirror new uploads to media collection for centralized management
+        if (!editItem && formData.file) {
+          const mediaData = new FormData()
+          mediaData.append('alt', formData.alt)
+          mediaData.append('title', `Slider - ${formData.alt}`)
+          mediaData.append('category', 'sliders')
+          mediaData.append('file', formData.file)
+          await fetch('/api/media', { method: 'POST', body: mediaData, credentials: 'include' })
+        }
         await fetchImages()
         handleClose()
       } else {
