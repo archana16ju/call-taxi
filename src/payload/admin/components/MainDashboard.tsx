@@ -784,7 +784,7 @@ export default function MainDashboard() {
                 </Typography>
                 <Button
                   component={Link}
-                  href="/(frontend)/live-tracking"
+                  href="/live-tracking"
                   size="small"
                   sx={{ textTransform: 'none', color: '#3b82f6', fontWeight: 700 }}
                 >
