@@ -55,7 +55,7 @@ const menuItems = [
   { label: 'Voice Dispatch', icon: <MicIcon />, path: '/admin/voice-dispatch' },
   { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/ride-preferences' },
   { type: 'header', label: 'LIVE TRACKING SYSTEM' },
-  { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/app/frontend/live-tracking' },
+  { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/(frontend)/live-tracking' },
   {
     label: 'Offline Sync Logs',
     icon: <HistoryIcon />,
