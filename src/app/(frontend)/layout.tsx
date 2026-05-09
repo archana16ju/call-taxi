@@ -1,5 +1,6 @@
 import React from 'react'
 import './styles.css'
+import '../globals.css'
 
 export const metadata = {
   title: 'Kani Taxi - Best Call Taxi in Thoothukudi | 24/7 Cab Service',

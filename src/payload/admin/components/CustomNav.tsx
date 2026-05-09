@@ -38,6 +38,7 @@ import ContactMailIcon from '@mui/icons-material/ContactMail'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import ShareIcon from '@mui/icons-material/Share'
+import StarIcon from '@mui/icons-material/Star'
 
 const menuItems = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
@@ -51,8 +52,8 @@ const menuItems = [
   { type: 'header', label: 'SMART BOOKING' },
   { label: 'Bookings', icon: <BookIcon />, path: '/admin/collections/bookings' },
   { label: 'Driver Allocation', icon: <HubIcon />, path: '/admin/driver-allocation' },
-  { label: 'Voice Dispatch', icon: <MicIcon />, path: '/admin/voice-bookings' },
-  { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/ridePreferences' },
+  { label: 'Voice Dispatch', icon: <MicIcon />, path: '/admin/voice-dispatch' },
+  { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/ride-preferences' },
   { type: 'header', label: 'LIVE TRACKING SYSTEM' },
   { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/admin/live-tracking' },
   { label: 'Offline Sync Logs', icon: <HistoryIcon />, path: '/admin/collections/driver-offline-logs' },
@@ -84,48 +85,82 @@ const menuItems = [
 
 export const CustomNav: React.FC = () => {
   const pathname = usePathname()
+  const [isCollapsed, setIsCollapsed] = React.useState(false)
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed)
+  }
+
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--nav-width', isCollapsed ? '70px' : '280px')
+  }, [isCollapsed])
+
+  const navWidth = isCollapsed ? 70 : 280
 
   return (
     <Box
       sx={{
-        width: 260,
+        width: navWidth,
         height: '100%',
-        backgroundColor: '#1e293b',
+        backgroundColor: '#0a192f',
         color: '#ffffff',
         overflowY: 'auto',
+        overflowX: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.05)',
+        transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
-      {/* Header */}
-      <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+      {/* Premium Header */}
+      <Box 
+        sx={{ 
+          p: isCollapsed ? 1.5 : 3, 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 2, 
+          justifyContent: isCollapsed ? 'center' : 'flex-start',
+          mb: 2
+        }}
+      >
         <Box
+          onClick={toggleCollapse}
           sx={{
-            width: 40,
-            height: 40,
+            width: 44,
+            height: 44,
             backgroundColor: '#fbbf24',
-            borderRadius: '8px',
+            borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+            transition: 'transform 0.2s',
+            boxShadow: '0 4px 12px rgba(251, 191, 36, 0.2)',
+            '&:hover': { 
+              backgroundColor: '#f59e0b',
+              transform: 'scale(1.05)'
+            },
           }}
         >
-          <LocalTaxiIcon sx={{ color: '#000000' }} />
+          <LocalTaxiIcon sx={{ color: '#000000', fontSize: '1.8rem' }} />
         </Box>
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1 }}>
-            Taxi Service
-          </Typography>
-          <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>
-            Advanced Premium
-          </Typography>
-        </Box>
+        {!isCollapsed && (
+          <Box sx={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+            <Typography variant="h6" sx={{ fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', color: '#fff' }}>
+              Taxi System
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Advanced Premium
+            </Typography>
+          </Box>
+        )}
       </Box>
 
-      <List sx={{ px: 2, pb: 4 }}>
+      <List sx={{ px: isCollapsed ? 1 : 2, pb: 4, pt: 0 }}>
         {menuItems.map((item, index) => {
           if (item.type === 'header') {
+            if (isCollapsed) return <Divider key={index} sx={{ my: 2, backgroundColor: 'rgba(255,255,255,0.05)', mx: 1 }} />
             return (
               <Typography
                 key={index}
@@ -133,11 +168,14 @@ export const CustomNav: React.FC = () => {
                 sx={{
                   display: 'block',
                   mt: 3,
-                  mb: 1,
+                  mb: 1.5,
                   px: 2,
-                  color: 'var(--theme-text-secondary)',
-                  fontWeight: 700,
-                  letterSpacing: '0.05em',
+                  color: '#475569',
+                  fontWeight: 800,
+                  fontSize: '0.6rem',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {item.label}
@@ -153,25 +191,46 @@ export const CustomNav: React.FC = () => {
               key={index}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              <ListItem disablePadding sx={{ mb: 0.5 }}>
+              <ListItem disablePadding sx={{ mb: 0.8, display: 'block' }}>
                 <ListItemButton
                   sx={{
-                    borderRadius: '8px',
+                    borderRadius: '10px',
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    alignItems: 'center',
+                    px: isCollapsed ? 0 : 2,
+                    py: 1.2,
+                    minHeight: 44,
                     backgroundColor: active ? '#fbbf24' : 'transparent',
-                    color: active ? '#000000' : 'var(--theme-text)',
+                    color: active ? '#000000' : '#94a3b8',
+                    transition: 'all 0.2s',
                     '&:hover': {
-                      backgroundColor: active ? '#fbbf24' : 'var(--theme-elevation-100)',
+                      backgroundColor: active ? '#fbbf24' : 'rgba(255, 255, 255, 0.05)',
+                      color: active ? '#000000' : '#ffffff',
                     },
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>{item.icon}</ListItemIcon>
-                  <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{
-                      fontSize: '0.875rem',
-                      fontWeight: active ? 700 : 500,
+                  <ListItemIcon 
+                    sx={{ 
+                      minWidth: isCollapsed ? 0 : 32, 
+                      color: 'inherit', 
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      '& .MuiSvgIcon-root': { fontSize: '1.2rem' }
                     }}
-                  />
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  {!isCollapsed && (
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        fontSize: '0.825rem',
+                        fontWeight: active ? 800 : 600,
+                        noWrap: true,
+                      }}
+                    />
+                  )}
                 </ListItemButton>
               </ListItem>
             </Link>
@@ -179,45 +238,56 @@ export const CustomNav: React.FC = () => {
         })}
       </List>
 
-      {/* Upgrade Card */}
-      <Box sx={{ p: 2, mt: 'auto' }}>
-        <Box
-          sx={{
-            p: 2,
-            borderRadius: '12px',
-            backgroundColor: 'var(--theme-bg-card)',
-            textAlign: 'center',
-            border: '1px solid var(--theme-border-color)',
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: 700, color: 'var(--theme-text)' }}>
-            Subscription Plans
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{ display: 'block', mb: 2, color: 'var(--theme-text-secondary)' }}
-          >
-            Unlock Powerful Features
-          </Typography>
-          <Button
-            variant="contained"
-            fullWidth
+      {/* Upgrade Card - Matches Image Exactly */}
+      {!isCollapsed && (
+        <Box sx={{ p: 2, mt: 'auto' }}>
+          <Box
             sx={{
-              backgroundColor: '#fbbf24',
-              color: '#000000',
-              fontWeight: 700,
-              textTransform: 'none',
-              '&:hover': { backgroundColor: '#f59e0b' },
+              p: 2.5,
+              borderRadius: '16px',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              textAlign: 'center',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
-            Upgrade Plan
-          </Button>
+            <Box sx={{ mb: 1, color: '#fbbf24' }}>
+              <StarIcon sx={{ fontSize: '1.5rem' }} />
+            </Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#fff' }}>
+              ₹80K / 40K Plan
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ display: 'block', mb: 2, color: '#64748b', fontSize: '0.7rem' }}
+            >
+              Advanced Premium System
+            </Typography>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{
+                backgroundColor: '#fbbf24',
+                color: '#000000',
+                fontWeight: 900,
+                borderRadius: '8px',
+                py: 1,
+                fontSize: '0.75rem',
+                textTransform: 'none',
+                boxShadow: 'none',
+                '&:hover': { backgroundColor: '#f59e0b', boxShadow: 'none' },
+              }}
+            >
+              Upgrade Plan
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      )}
 
-      <Box sx={{ p: 2, textAlign: 'center' }}>
-        <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>
-          © 2026 Taxi Services
+      <Box sx={{ p: 2, textAlign: 'center', mt: isCollapsed ? 'auto' : 0 }}>
+        <Typography variant="caption" sx={{ color: '#334155', fontSize: '0.65rem' }}>
+          {isCollapsed ? 'v1' : '© 2025 Taxi System. All rights reserved.'}
         </Typography>
       </Box>
     </Box>

@@ -4,9 +4,11 @@ import { default as default_dc492d610073af662de9eabd72b6e852 } from '@/payload/a
 import { default as default_b1bc34af47783a9945f4c59f1a290f17 } from '@/payload/admin/components/DriverManagement'
 import { default as default_932c1deb66a369cd72929c624025293f } from '@/payload/admin/components/TariffManagement'
 import { default as default_30b69085f93a0fafc5fb3ce7e9d0c8ad } from '@/payload/admin/components/VehicleManagement'
+import { default as default_232020227703d46fd44ce00412f0ebf6 } from '@/payload/admin/components/BookingLiveTracking'
 import { default as default_4af3b9f9bb9338539ab2e3c16fdd8843 } from '@/payload/admin/components/booking'
 import { default as default_9c6baad56541108eb48b5e310cbbe27e } from '@/payload/admin/components/CustomerManagement'
 import { default as default_07d26b6b9815a6877bce414c052254a2 } from '@/payload/admin/components/CouponManagement'
+import { default as default_ca4716e0f82d4c315243e737deae1941 } from '@/payload/admin/components/SliderManagement'
 import { default as default_a1feac4e4ec723b618cfbbbab686085d } from '@/payload/admin/components/InquiryManager'
 import { default as default_283d12431b4d023bd158ed355ae0239e } from '@/payload/admin/components/AlertPage'
 import { default as default_95365609625e2cf26fa5f04732300aff } from '@/payload/admin/components/review'
@@ -43,9 +45,11 @@ export const importMap = {
   "@/payload/admin/components/DriverManagement#default": default_b1bc34af47783a9945f4c59f1a290f17,
   "@/payload/admin/components/TariffManagement#default": default_932c1deb66a369cd72929c624025293f,
   "@/payload/admin/components/VehicleManagement#default": default_30b69085f93a0fafc5fb3ce7e9d0c8ad,
+  "@/payload/admin/components/BookingLiveTracking#default": default_232020227703d46fd44ce00412f0ebf6,
   "@/payload/admin/components/booking#default": default_4af3b9f9bb9338539ab2e3c16fdd8843,
   "@/payload/admin/components/CustomerManagement#default": default_9c6baad56541108eb48b5e310cbbe27e,
   "@/payload/admin/components/CouponManagement#default": default_07d26b6b9815a6877bce414c052254a2,
+  "@/payload/admin/components/SliderManagement#default": default_ca4716e0f82d4c315243e737deae1941,
   "@/payload/admin/components/InquiryManager#default": default_a1feac4e4ec723b618cfbbbab686085d,
   "@/payload/admin/components/AlertPage#default": default_283d12431b4d023bd158ed355ae0239e,
   "@/payload/admin/components/review#default": default_95365609625e2cf26fa5f04732300aff,

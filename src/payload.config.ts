@@ -45,7 +45,7 @@ import { getCustomerReport } from './endpoints/getCustomerReport'
 import { DriverAllocation } from './collections/driver-allocation'
 import RidePreferences from './collections/ridePreferences'
 
-import MapComponent from '@/payload/admin/components/MapComponent'
+import MapComponent from './payload/admin/components/MapComponent'
 import AiChatConversations from './collections/AiChatConversations'
 import { VoiceBooking } from './collections/voicebooking'
 
@@ -73,6 +73,12 @@ export default buildConfig({
   admin: {
     user: Users.slug,
 
+   
+
+    meta: {
+    titleSuffix: 'Taxi Admin',
+  },
+
     // ✅ FIXED importMap resolution
   importMap: {
   baseDir: path.resolve(process.cwd(), 'src'),
@@ -83,7 +89,7 @@ export default buildConfig({
         Icon: '@/payload/admin/components/Logo#Logo',
       },
 
-      Nav: '@/payload/admin/components/CustomNav#CustomNav',
+       Nav: '@/payload/admin/components/CustomNav#CustomNav',
 
       views: {
         login: {
@@ -94,12 +100,15 @@ export default buildConfig({
         },
         'live-tracking': {
           Component: '@/payload/admin/components/MapComponent#LiveTrackingDashboard',
+          path: '/live-tracking'
         },
         'driver-allocation': {
           Component: '@/payload/admin/components/DriverAllocationManagement#default',
+          path: '/driver-allocation'
         },
         'voice-dispatch': {
           Component: '@/payload/admin/components/voicebooking#default',
+          path: '/voice-dispatch'
         },
       },
     },
@@ -146,7 +155,7 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
 
   typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    outputFile: path.resolve(dirname, 'payload-types'),
   },
 
   db: mongooseAdapter({

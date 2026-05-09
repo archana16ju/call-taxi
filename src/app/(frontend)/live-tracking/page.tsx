@@ -1,194 +1,262 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
-  Typography,
   Paper,
+  Typography,
   Stack,
   Avatar,
   Chip,
-  Divider,
-  Container,
   CircularProgress,
+  Divider,
+  Button,
+  Grid,
 } from '@mui/material'
 import dynamic from 'next/dynamic'
-
-const MapComponent = dynamic(
-  () => import('@/payload/admin/components/MapComponent'),
-  { ssr: false }
-)
-import PersonIcon from '@mui/icons-material/Person'
 import LocalTaxiIcon from '@mui/icons-material/LocalTaxi'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import NearMeIcon from '@mui/icons-material/NearMe'
+import PersonIcon from '@mui/icons-material/Person'
+import Link from 'next/link'
 
-function TrackingContent() {
-  const searchParams = useSearchParams()
-  const token = searchParams.get('token')
-  const [data, setData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!token) {
-      setError('Invalid sharing link.')
-      setLoading(false)
-      return
-    }
-
-    const fetchData = async () => {
-      try {
-        const shareRes = await fetch(`/api/trip-sharing?where[shareToken][equals]=${token}&limit=1`)
-        const shareData = await shareRes.json()
-
-        if (!shareData.docs || shareData.docs.length === 0) {
-          setError('This sharing link has expired or is invalid.')
-          setLoading(false)
-          return
-        }
-
-        const shareDoc = shareData.docs[0]
-        if (!shareDoc.active) {
-          setError('This trip has already ended.')
-          setLoading(false)
-          return
-        }
-
-        const bookingId = typeof shareDoc.booking === 'object' ? shareDoc.booking.id : shareDoc.booking
-        const bookingRes = await fetch(`/api/bookings/${bookingId}?depth=2`)
-        const booking = await bookingRes.json()
-
-        setData({ share: shareDoc, booking })
-        setLoading(false)
-      } catch (e) {
-        console.error(e)
-        setError('Failed to load tracking data.')
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-    const interval = setInterval(fetchData, 10000) // Refresh every 10s
-    return () => clearInterval(interval)
-  }, [token])
-
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: '#0f172a' }}>
-        <CircularProgress sx={{ color: '#fbbf24', mb: 2 }} />
-        <Typography color="#fff">Locating your ride...</Typography>
-      </Box>
-    )
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: '#0f172a' }}>
-        <Paper sx={{ p: 4, textAlign: 'center', maxWidth: 400, borderRadius: 3 }}>
-          <Typography variant="h5" gutterBottom>Oops!</Typography>
-          <Typography color="text.secondary">{error}</Typography>
-        </Paper>
-      </Box>
-    )
-  }
-
-  const { booking } = data
-  const driver = booking.driver
-  const vehicle = booking.vehicle
-  const driverLocation =
-  driver?.location?.length === 2
-    ? driver.location
-    : booking.pickupLocation
-
-  return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#0f172a' }}>
-      {/* HEADER */}
-      <Box sx={{ p: 2, bgcolor: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.1)', zIndex: '1000' }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Box>
-            <Typography variant="h6" fontWeight={800} color="#fbbf24">LIVE TRACKING</Typography>
-            <Typography variant="caption" color="rgba(255,255,255,0.6)">Ride ID: {booking.bookingCode}</Typography>
-          </Box>
-          <Chip label="IN TRANSIT" size="small" sx={{ bgcolor: '#fbbf24', color: '#000', fontWeight: 900 }} />
-        </Stack>
-      </Box>
-
-      {/* MAP */}
-      <Box sx={{ flexGrow: 1, position: 'relative' }}>
-        <MapComponent
-          center={[driverLocation[1], driverLocation[0]]}
-          zoom={15}
-          markers={[
-            {
-              id: 'driver',
-              position: [driverLocation[1], driverLocation[0]],
-              popup: <Typography fontWeight={700}>{driver?.name || 'Your Driver'}</Typography>
-            },
-            {
-              id: 'pickup',
-              position: [booking.pickupLocation[1], booking.pickupLocation[0]],
-              popup: <Typography>Pickup: {booking.pickupLocationName}</Typography>
-            },
-            {
-              id: 'dropoff',
-              position: [booking.dropoffLocation[1], booking.dropoffLocation[0]],
-              popup: <Typography>Destination: {booking.dropoffLocationName}</Typography>
-            }
-          ]}
-        />
-
-        {/* DRIVER CARD (FLOATING) */}
-        <Box sx={{ position: 'absolute', bottom: 24, left: 16, right: 16, zIndex: 1000 }}>
-          <Paper sx={{ p: 2, borderRadius: 4, boxShadow: '0 20px 40px rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', bgcolor: 'rgba(30, 41, 59, 0.95)', backdropFilter: 'blur(10px)', color: '#fff' }}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar sx={{ width: 60, height: 60, border: '3px solid #fbbf24' }} src={driver?.profileImage?.url}>
-                <PersonIcon />
-              </Avatar>
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" fontWeight={700}>{driver?.name || 'Driver'}</Typography>
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ opacity: 0.8 }}>
-                  <LocalTaxiIcon sx={{ fontSize: 16, color: '#fbbf24' }} />
-                  <Typography variant="body2">{vehicle?.name} • {vehicle?.number}</Typography>
-                </Stack>
-              </Box>
-              <Box sx={{ textAlign: 'right' }}>
-                <Typography variant="h5" fontWeight={900} color="#fbbf24">12</Typography>
-                <Typography variant="caption" sx={{ opacity: 0.7 }}>MIN AWAY</Typography>
-              </Box>
-            </Stack>
-            
-            <Divider sx={{ my: 2, bgcolor: 'rgba(255,255,255,0.1)' }} />
-            
-            <Stack direction="row" spacing={3}>
-              <Stack spacing={0.5}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <NearMeIcon sx={{ fontSize: 14, color: '#fbbf24' }} />
-                  <Typography variant="caption" sx={{ fontWeight: 700 }}>DESTINATION</Typography>
-                </Stack>
-                <Typography variant="body2" noWrap sx={{ maxWidth: 200 }}>{booking.dropoffLocationName}</Typography>
-              </Stack>
-              
-              <Stack spacing={0.5}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <AccessTimeIcon sx={{ fontSize: 14, color: '#fbbf24' }} />
-                  <Typography variant="caption" sx={{ fontWeight: 700 }}>EST. ARRIVAL</Typography>
-                </Stack>
-                <Typography variant="body2">{new Date(Date.now() + 12 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Typography>
-              </Stack>
-            </Stack>
-          </Paper>
-        </Box>
-      </Box>
-    </Box>
-  )
-}
+// Map (same as dashboard style)
+const MapComponent = dynamic(() => import('@/payload/admin/components/MapComponent'), {
+  ssr: false,
+})
 
 export default function LiveTrackingPage() {
+  const [loading, setLoading] = useState(true)
+  const [drivers, setDrivers] = useState<any[]>([])
+  const [activeRoutes, setActiveRoutes] = useState<Record<string, any>>({})
+
+  // ---------------- FETCH DATA ----------------
+  const fetchData = async () => {
+    try {
+      const driversRes = await fetch('/api/drivers?where[location][exists]=true&limit=100')
+      const driversData = await driversRes.json()
+
+      const bookingsRes = await fetch('/api/bookings?where[status][equals]=confirmed&limit=100')
+      const bookingsData = await bookingsRes.json()
+
+      setDrivers(driversData.docs || [])
+
+      // build routes
+      const routes: Record<string, any> = {}
+
+      for (const driver of driversData.docs || []) {
+        const booking = bookingsData.docs?.find((b: any) => {
+          const id = typeof b.driver === 'object' ? b.driver?.id : b.driver
+          return id === driver.id
+        })
+
+        if (
+          driver.location &&
+          Array.isArray(driver.location) &&
+          booking?.dropoffLocation
+        ) {
+          try {
+            const osrm = await fetch(
+              `https://router.project-osrm.org/route/v1/driving/${driver.location[0]},${driver.location[1]};${booking.dropoffLocation[0]},${booking.dropoffLocation[1]}?overview=full&geometries=geojson`
+            ).then(r => r.json())
+
+            if (osrm?.routes?.[0]) {
+              routes[driver.id] = osrm.routes[0].geometry.coordinates.map((c: any) => [
+                c[1],
+                c[0],
+              ])
+            }
+          } catch {}
+        }
+      }
+
+      setActiveRoutes(routes)
+      setLoading(false)
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+    const interval = setInterval(fetchData, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // ---------------- LOADING ----------------
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress sx={{ color: '#3b82f6' }} />
+      </Box>
+    )
+  }
+
   return (
-    <Suspense fallback={<CircularProgress />}>
-      <TrackingContent />
-    </Suspense>
+    <Box sx={{ p: 3, backgroundColor: 'var(--theme-bg-page)', minHeight: '100%' }}>
+
+      {/* HEADER (Dashboard style) */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+          mb: 3,
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          backgroundColor: '#ffffff',
+        }}
+      >
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 900, color: '#1e293b' }}>
+            Live GPS Tracking
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#64748b' }}>
+            Real-time driver movement monitoring
+          </Typography>
+        </Box>
+
+        <Stack direction="row" spacing={1}>
+          <Chip label="LIVE" sx={{ backgroundColor: '#10b981', color: '#fff', fontWeight: 800 }} />
+          <Button
+            component={Link}
+            href="/admin"
+            size="small"
+            sx={{ textTransform: 'none', fontWeight: 800 }}
+          >
+            Back to Dashboard
+          </Button>
+        </Stack>
+      </Paper>
+
+      <Grid container spacing={3}>
+
+        {/* LEFT: MAP */}
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Paper
+            sx={{
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+              overflow: 'hidden',
+              position: 'relative',
+            }}
+          >
+            <Box sx={{ height: 520 }}>
+              <MapComponent
+                center={[13.0827, 80.2707]}
+                zoom={12}
+                polylines={Object.entries(activeRoutes).map(([id, positions]) => ({
+                  id,
+                  positions: positions as [number, number][],
+                  color: '#3b82f6',
+                  weight: 3,
+                }))}
+                markers={drivers
+                  .filter(d => d.location && Array.isArray(d.location))
+                  .map(d => ({
+                    id: d.id,
+                    position: [d.location[1], d.location[0]],
+                  }))}
+              />
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* RIGHT: DRIVER LIST */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper
+            sx={{
+              p: 2,
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+              height: 520,
+              overflowY: 'auto',
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ fontWeight: 900, mb: 2 }}>
+              Active Drivers
+            </Typography>
+
+            <Stack spacing={2}>
+              {drivers.map((driver, i) => (
+                <Paper
+                  key={i}
+                  sx={{
+                    p: 1.5,
+                    borderRadius: '12px',
+                    border: '1px solid #f1f5f9',
+                    '&:hover': { backgroundColor: '#f8fafc' },
+                  }}
+                >
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Avatar sx={{ bgcolor: '#3b82f6' }}>
+                      <PersonIcon />
+                    </Avatar>
+
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography sx={{ fontWeight: 800 }}>
+                        {driver.name}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#64748b' }}>
+                        {driver.phone}
+                      </Typography>
+                    </Box>
+
+                    <Chip
+                      size="small"
+                      label={driver.status || 'active'}
+                      sx={{ fontWeight: 800 }}
+                    />
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+          </Paper>
+        </Grid>
+
+        {/* BOTTOM SUMMARY */}
+        <Grid size={{ xs: 12 }}>
+          <Paper
+            sx={{
+              p: 2,
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+              display: 'flex',
+              justifyContent: 'space-around',
+              backgroundColor: '#ffffff',
+            }}
+          >
+            <Box textAlign="center">
+              <Typography sx={{ fontWeight: 900, color: '#3b82f6' }}>
+                {drivers.length}
+              </Typography>
+              <Typography variant="caption">Active Drivers</Typography>
+            </Box>
+
+            <Divider orientation="vertical" flexItem />
+
+            <Box textAlign="center">
+              <Typography sx={{ fontWeight: 900, color: '#10b981' }}>
+                {Object.keys(activeRoutes).length}
+              </Typography>
+              <Typography variant="caption">On Trip</Typography>
+            </Box>
+
+            <Divider orientation="vertical" flexItem />
+
+            <Box textAlign="center">
+              <Typography sx={{ fontWeight: 900, color: '#f59e0b' }}>
+                Live
+              </Typography>
+              <Typography variant="caption">Tracking Status</Typography>
+            </Box>
+          </Paper>
+        </Grid>
+
+      </Grid>
+    </Box>
   )
 }

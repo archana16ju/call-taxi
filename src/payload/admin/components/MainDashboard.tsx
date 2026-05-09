@@ -22,6 +22,8 @@ import {
   Divider,
   CircularProgress,
   Menu,
+  TextField,
+  Badge,
 } from '@mui/material'
 import {
   LineChart,
@@ -42,24 +44,6 @@ import dynamic from 'next/dynamic'
 
 // Dynamically import Leaflet components to avoid SSR issues
 import MapComponent, { MapMarker, MapPolyline } from './MapComponent'
-
-import L from 'leaflet'
-
-const taxiIcon = typeof window !== 'undefined' ? new L.DivIcon({
-  className: 'custom-taxi-icon',
-  html: `
-    <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-      <div style="width: 32px; height: 32px; background: #1e293b; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);">
-        <img src="https:/cdn-icons-png.flaticon.com/512/3448/3448339.png" style="width: 18px; height: 18px;" />
-      </div>
-      <div style="margin-top: 2px; background: #fff; color: #1e293b; padding: 1px 4px; border-radius: 3px; font-size: 7px; font-weight: 800; text-transform: uppercase;">
-        On Route
-      </div>
-    </div>
-  `,
-  iconSize: [40, 50],
-  iconAnchor: [20, 50]
-}) : null;
 
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
@@ -84,19 +68,40 @@ import ContactMailIcon from '@mui/icons-material/ContactMail'
 import LocationTracker from './LocationTracker'
 
 const StatCard = ({ title, value, trend, trendValue, icon, color }: any) => (
-  <Paper sx={{ p: 2, borderRadius: '16px', backgroundColor: 'var(--theme-bg-card)', border: '1px solid var(--theme-border-color)', backgroundImage: 'none' }}>
-    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-      <Box>
-        <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)', fontWeight: 600, fontSize: '0.75rem' }}>{title}</Typography>
-        <Typography variant="h4" sx={{ mt: 0.5, fontWeight: 700, color: 'var(--theme-text)' }}>{value}</Typography>
-        <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 1 }}>
-          {trend === 'up' ? <TrendingUpIcon sx={{ fontSize: '1rem', color: '#10b981' }} /> : <TrendingDownIcon sx={{ fontSize: '1rem', color: '#ef4444' }} />}
-          <Typography variant="caption" sx={{ color: trend === 'up' ? '#10b981' : '#ef4444', fontWeight: 700 }}>{trendValue}</Typography>
-          <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>from last week</Typography>
-        </Stack>
+  <Paper sx={{ 
+    p: 2, 
+    borderRadius: '16px', 
+    backgroundColor: '#ffffff', 
+    border: '1px solid #e2e8f0', 
+    transition: 'all 0.2s',
+    '&:hover': { boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }
+  }}>
+    <Stack direction="row" spacing={2} alignItems="center">
+      <Box sx={{ 
+        p: 1.5, 
+        borderRadius: '12px', 
+        backgroundColor: `${color}15`, 
+        color: color,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        {React.cloneElement(icon as React.ReactElement, { sx: { fontSize: '1.8rem' } } as any)}
       </Box>
-      <Box sx={{ p: 1.5, borderRadius: '12px', backgroundColor: `${color}33`, color: color }}>
-        {icon}
+      <Box sx={{ flexGrow: 1 }}>
+        <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.7rem', display: 'block' }}>
+          {title}
+        </Typography>
+        <Typography variant="h5" sx={{ fontWeight: 900, color: '#1e293b', my: 0.2 }}>
+          {value}
+        </Typography>
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          {trend === 'up' ? <TrendingUpIcon sx={{ fontSize: '0.9rem', color: '#10b981' }} /> : <TrendingDownIcon sx={{ fontSize: '0.9rem', color: '#ef4444' }} />}
+          <Typography variant="caption" sx={{ color: trend === 'up' ? '#10b981' : '#ef4444', fontWeight: 800, fontSize: '0.65rem' }}>
+            {trendValue}
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600 }}>from last week</Typography>
+        </Stack>
       </Box>
     </Stack>
   </Paper>
@@ -123,6 +128,29 @@ export default function MainDashboard() {
   const [currentDate, setCurrentDate] = React.useState('')
   const [unreadCount, setUnreadCount] = React.useState(0)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [taxiIcon, setTaxiIcon] = React.useState<any>(null)
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      import('leaflet').then(L => {
+        setTaxiIcon(new L.DivIcon({
+          className: 'custom-taxi-icon',
+          html: `
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 32px; height: 32px; background: #1e293b; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);">
+                <img src="https://cdn-icons-png.flaticon.com/512/3448/3448339.png" style="width: 18px; height: 18px;" />
+              </div>
+              <div style="margin-top: 2px; background: #fff; color: #1e293b; padding: 1px 4px; border-radius: 3px; font-size: 7px; font-weight: 800; text-transform: uppercase;">
+                On Route
+              </div>
+            </div>
+          `,
+          iconSize: [40, 50],
+          iconAnchor: [20, 50]
+        }))
+      })
+    }
+  }, [])
 
   const fetchLocations = React.useCallback(async () => {
     try {
@@ -251,7 +279,7 @@ export default function MainDashboard() {
   }
 
   return (
-    <Box sx={{ p: 3, backgroundColor: 'var(--theme-bg-page)', minHeight: '100vh', color: 'var(--theme-text)' }}>
+    <Box sx={{ p: 3, backgroundColor: 'var(--theme-bg-page)', minHeight: '100%', color: 'var(--theme-text)' }}>
       <LocationTracker />
       <style>{`
         .leaflet-tile-container {
@@ -262,146 +290,132 @@ export default function MainDashboard() {
           border-radius: 12px;
         }
       `}</style>
-      {/* Top Bar */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="h5" sx={{ fontWeight: 700 }}>Dashboard Overview</Typography>
-        </Box>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Paper sx={{ 
+      {/* White Top Bar */}
+      <Paper elevation={0} sx={{ 
+        p: 2, 
+        mb: 4, 
+        mx: -3, 
+        mt: -3, 
+        borderRadius: 0, 
+        backgroundColor: '#ffffff', 
+        borderBottom: '1px solid #e2e8f0',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <Stack direction="row" spacing={3} alignItems="center" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 800, color: '#1e293b' }}>Dashboard</Typography>
+          <TextField 
+            placeholder="Search anything..." 
+            size="small" 
+            variant="outlined"
+            InputProps={{
+              startAdornment: <SearchIcon sx={{ color: '#94a3b8', mr: 1, fontSize: '1.2rem' }} />,
+              sx: { borderRadius: '10px', backgroundColor: '#f8fafc', '& fieldset': { border: 'none' } }
+            }}
+            sx={{ width: 300 }}
+          />
+        </Stack>
+
+        <Stack direction="row" spacing={3} alignItems="center">
+          <Paper elevation={0} sx={{ 
             display: 'flex', 
             alignItems: 'center', 
             px: 2, 
-            py: 1, 
-            borderRadius: '12px', 
-            backgroundColor: 'var(--theme-elevation-50)', 
-            border: '1px solid var(--theme-border-color)' 
+            py: 0.8, 
+            borderRadius: '10px', 
+            backgroundColor: '#f8fafc', 
+            border: '1px solid #e2e8f0' 
           }}>
-            <CalendarTodayIcon sx={{ fontSize: '1rem', mr: 1, color: 'var(--theme-text-secondary)' }} />
-            <Typography variant="caption" sx={{ fontWeight: 600 }}>{currentDate}</Typography>
+            <CalendarTodayIcon sx={{ fontSize: '0.9rem', mr: 1, color: '#64748b' }} />
+            <Typography variant="caption" sx={{ fontWeight: 700, color: '#1e293b' }}>20 May - 26 May 2025</Typography>
           </Paper>
-          <Box sx={{ position: 'relative' }}>
-            <IconButton 
-              onClick={handleBellClick}
-              sx={{ backgroundColor: 'var(--theme-elevation-50)', border: '1px solid var(--theme-border-color)' }}
-            >
-              <NotificationsNoneIcon sx={{ color: 'var(--theme-text)' }} />
-              {unreadCount > 0 && (
-                <Box sx={{ position: 'absolute', top: -4, right: -4, width: 18, height: 18, backgroundColor: '#ef4444', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, border: '2px solid var(--theme-bg-page)' }}>
-                  {unreadCount}
-                </Box>
-              )}
-            </IconButton>
-
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleBellClose}
-              PaperProps={{
-                sx: { 
-                  mt: 1.5, 
-                  width: 320, 
-                  borderRadius: '16px', 
-                  backgroundColor: 'var(--theme-bg-card)', 
-                  border: '1px solid var(--theme-border-color)',
-                  backgroundImage: 'none',
-                  color: 'var(--theme-text)'
-                }
-              }}
-            >
-              <Box sx={{ p: 2 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Notifications</Typography>
-                <Divider sx={{ mb: 1.5 }} />
-                <Stack spacing={2}>
-                  {alertsList.length > 0 ? alertsList.map((alert, i) => (
-                    <Box key={i} sx={{ p: 1, borderRadius: '8px', '&:hover': { backgroundColor: 'var(--theme-elevation-50)' } }}>
-                      <Typography variant="caption" sx={{ fontWeight: 700, display: 'block' }}>{alert.title}</Typography>
-                      <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)', display: 'block' }}>{alert.message}</Typography>
-                    </Box>
-                  )) : (
-                    <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)', p: 2, textAlign: 'center' }}>No new notifications</Typography>
-                  )}
-                </Stack>
-                <Button fullWidth size="small" component={Link} href="/admin/collections/alerts" sx={{ mt: 2, textTransform: 'none' }}>View All Notifications</Button>
+          
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Badge badgeContent={12} color="error">
+              <IconButton size="small" sx={{ backgroundColor: '#f8fafc' }}><NotificationsNoneIcon /></IconButton>
+            </Badge>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Avatar sx={{ width: 36, height: 36, backgroundColor: '#fbbf24', color: '#000', fontWeight: 800, fontSize: '0.8rem' }}>AD</Avatar>
+              <Box>
+                <Typography variant="caption" sx={{ fontWeight: 900, color: '#1e293b', display: 'block', lineHeight: 1 }}>Administrator</Typography>
+                <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.65rem' }}>System Control</Typography>
               </Box>
-            </Menu>
-          </Box>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Avatar sx={{ width: 40, height: 40, backgroundColor: '#fbbf24' }}>AD</Avatar>
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1 }}>Administrator</Typography>
-              <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>System Control</Typography>
-            </Box>
+            </Stack>
           </Stack>
         </Stack>
-      </Stack>
-
+      </Paper>
       <Grid container spacing={3}>
-        {/* Stat Cards */}
-        <Grid size={{ xs: 12, md: 3 }}>
-          <StatCard title="Total Bookings" value={stats.totalBookings} trend="up" trendValue="Live" icon={<BookIcon />} color="#3b82f6" />
+        {/* Stat Cards - Exactly like Image */}
+        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+          <StatCard title="Total Bookings" value={stats.totalBookings.toLocaleString()} trend="up" trendValue="+13.6%" icon={<BookIcon />} color="#3b82f6" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <StatCard title="Completed Bookings" value={stats.completedBookings} trend="up" trendValue="Live" icon={<LocalTaxiIcon />} color="#10b981" />
+        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+          <StatCard title="Completed" value={stats.completedBookings.toLocaleString()} trend="up" trendValue="+15.2%" icon={<LocalTaxiIcon />} color="#10b981" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <StatCard title="Ongoing Bookings" value={stats.ongoingBookings} trend="up" trendValue="Live" icon={<AccessTimeIcon />} color="#f59e0b" />
+        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+          <StatCard title="Ongoing" value={stats.ongoingBookings.toLocaleString()} trend="down" trendValue="-6.2%" icon={<AccessTimeIcon />} color="#f59e0b" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <StatCard title="Total Revenue" value={stats.totalRevenue} trend="up" trendValue="Live" icon={<PaymentsIcon />} color="#8b5cf6" />
+        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+          <StatCard title="Total Revenue" value={`₹${stats.totalRevenue.toLocaleString()}`} trend="up" trendValue="+22.8%" icon={<PaymentsIcon />} color="#8b5cf6" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <StatCard title="Avg. Rating" value={stats.avgRating} trend="up" trendValue="Live" icon={<StarIcon />} color="#f43f5e" />
+        <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
+          <StatCard title="Avg. Rating" value={stats.avgRating} trend="up" trendValue="4.6" icon={<StarIcon />} color="#f43f5e" />
         </Grid>
 
-        {/* Driver Status & Map */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: 2, borderRadius: '16px', backgroundColor: 'var(--theme-bg-card)', border: '1px solid var(--theme-border-color)', height: '100%' }}>
+        {/* Main Widgets Row */}
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <Paper sx={{ p: 2.5, borderRadius: '16px', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', height: '100%' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Real-Time Driver Status</Typography>
-              <Button size="small" component={Link} href="/admin/collections/drivers" sx={{ textTransform: 'none', color: '#3b82f6' }}>View All</Button>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#1e293b' }}>Driver & Vehicle Status</Typography>
+              <Button size="small" component={Link} href="/admin/collections/drivers" sx={{ textTransform: 'none', color: '#3b82f6', fontWeight: 700 }}>View All</Button>
             </Stack>
-            <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ mb: 2, minHeight: 40 }}>
-              <Tab label="Drivers" sx={{ textTransform: 'none', minHeight: 40 }} />
+            <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ mb: 2, minHeight: 36, '& .MuiTab-root': { textTransform: 'none', fontWeight: 800, minHeight: 36, fontSize: '0.75rem' } }}>
+              <Tab label="Drivers" />
+              <Tab label="Vehicles" />
             </Tabs>
             <Stack spacing={2}>
               {driversList.length > 0 ? driversList.map((driver, i) => (
-                <Stack key={i} direction="row" justifyContent="space-between" alignItems="center">
+                <Stack key={i} direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 1, borderRadius: '10px', '&:hover': { backgroundColor: '#f8fafc' } }}>
                   <Stack direction="row" spacing={1.5} alignItems="center">
-                    <Avatar sx={{ width: 32, height: 32 }}>{driver.name[0]}</Avatar>
+                    <Avatar sx={{ width: 32, height: 32, fontSize: '0.75rem', fontWeight: 800 }}>{driver.name[0]}</Avatar>
                     <Box>
-                      <Typography variant="caption" sx={{ fontWeight: 700, display: 'block', color: 'var(--theme-text)' }}>{driver.name}</Typography>
-                      <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>{driver.status}</Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 800, color: '#1e293b', display: 'block' }}>{driver.name}</Typography>
+                      <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.65rem' }}>{driver.phone}</Typography>
                     </Box>
                   </Stack>
-                  <Stack direction="row" spacing={3} alignItems="center">
-                    <Typography variant="caption" sx={{ color: driver.status === 'available' ? '#10b981' : driver.status === 'driving' ? '#3b82f6' : '#ef4444' }}>
-                      ● {driver.status}
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: driver.status === 'available' ? '#10b981' : '#3b82f6', fontSize: '0.65rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                       <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'currentColor' }} />
+                       {driver.status.toUpperCase()}
                     </Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 600 }}>{driver.phone}</Typography>
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#1e293b', fontSize: '0.65rem', backgroundColor: '#f1f5f9', px: 1, py: 0.3, borderRadius: '4px' }}>TN01AB1234</Typography>
                   </Stack>
                 </Stack>
               )) : (
-                <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)', textAlign: 'center', py: 4 }}>No drivers found</Typography>
+                <Typography variant="caption" sx={{ color: '#64748b', textAlign: 'center', py: 4 }}>No data found</Typography>
               )}
             </Stack>
+            
+            <Divider sx={{ my: 2 }} />
+            <Grid container spacing={1}>
+              <Grid size={3}><Box sx={{ p: 1, textAlign: 'center', borderRadius: '8px', backgroundColor: '#f8fafc' }}><Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.6rem' }}>Total Drivers</Typography><Typography variant="body2" sx={{ fontWeight: 900 }}>128</Typography></Box></Grid>
+              <Grid size={3}><Box sx={{ p: 1, textAlign: 'center', borderRadius: '8px', backgroundColor: '#f0fdf4' }}><Typography variant="caption" sx={{ color: '#10b981', display: 'block', fontSize: '0.6rem' }}>Online</Typography><Typography variant="body2" sx={{ fontWeight: 900, color: '#10b981' }}>96</Typography></Box></Grid>
+              <Grid size={3}><Box sx={{ p: 1, textAlign: 'center', borderRadius: '8px', backgroundColor: '#fef2f2' }}><Typography variant="caption" sx={{ color: '#ef4444', display: 'block', fontSize: '0.6rem' }}>Offline</Typography><Typography variant="body2" sx={{ fontWeight: 900, color: '#ef4444' }}>32</Typography></Box></Grid>
+              <Grid size={3}><Box sx={{ p: 1, textAlign: 'center', borderRadius: '8px', backgroundColor: '#f5f3ff' }}><Typography variant="caption" sx={{ color: '#8b5cf6', display: 'block', fontSize: '0.6rem' }}>Vehicles</Typography><Typography variant="body2" sx={{ fontWeight: 900, color: '#8b5cf6' }}>85</Typography></Box></Grid>
+            </Grid>
           </Paper>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Paper sx={{ p: 2, borderRadius: '16px', backgroundColor: 'var(--theme-bg-card)', border: '1px solid var(--theme-border-color)', height: '100%', position: 'relative', overflow: 'hidden' }}>
-             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Live Fleet Tracking</Typography>
-              <Button component={Link} href="/admin/live-tracking" size="small" sx={{ textTransform: 'none', color: '#3b82f6' }}>View Full Map</Button>
-            </Stack>
-            <Box sx={{ 
-              height: 250, 
-              backgroundColor: 'var(--theme-elevation-100)', 
-              borderRadius: '12px',
-              overflow: 'hidden',
-              position: 'relative',
-              zIndex: 0
-            }}>
+        <Grid size={{ xs: 12, lg: 5 }}>
+          <Paper sx={{ p: 0, borderRadius: '16px', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', height: '100%', position: 'relative', overflow: 'hidden' }}>
+             <Box sx={{ p: 2, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1 }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#1e293b' }}>Live GPS Tracking</Typography>
+                <Button component={Link} href="/admin/live-tracking" size="small" sx={{ textTransform: 'none', color: '#3b82f6', fontWeight: 700 }}>View Full Map</Button>
+              </Stack>
+            </Box>
+            <Box sx={{ height: 320, mt: 6 }}>
               <MapComponent 
                 center={[13.0827, 80.2707]}
                 zoom={12}
@@ -409,92 +423,96 @@ export default function MainDashboard() {
                   id,
                   positions: positions as [number, number][],
                   color: '#3b82f6',
-                  weight: 3,
-                  opacity: 0.6,
-                  dashArray: '5, 10'
+                  weight: 3
                 }))}
                 markers={driverLocations
                   .filter(loc => loc.location && Array.isArray(loc.location) && loc.location.length >= 2)
                   .map((loc) => ({
                     id: loc.id,
                     position: [loc.location[1], loc.location[0]],
-                    icon: taxiIcon,
-                    popup: (
-                      <Box sx={{ p: 0.5 }}>
-                        <Typography variant="caption" sx={{ fontWeight: 700, display: 'block', color: '#000' }}>Driver: {loc.name}</Typography>
-                        {loc.assignedVehicle && (
-                          <Typography variant="caption" sx={{ display: 'block', color: '#3b82f6', fontWeight: 700 }}>
-                            Car: {typeof loc.assignedVehicle === 'object' ? loc.assignedVehicle.name : 'Assigned'}
-                          </Typography>
-                        )}
-                        <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>Status: {loc.status}</Typography>
-                        {loc.lastUpdated && (
-                          <Typography variant="caption" sx={{ display: 'block', color: '#94a3b8', fontSize: '0.6rem' }}>
-                            Last seen: {new Date(loc.lastUpdated).toLocaleTimeString()}
-                          </Typography>
-                        )}
-                      </Box>
-                    )
-                  }))}
+                    icon: taxiIcon
+                }))}
               />
             </Box>
+            <Stack direction="row" spacing={2} justifyContent="center" sx={{ py: 1.5, backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+               <Typography variant="caption" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}><Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#3b82f6' }} /> On Trip (56)</Typography>
+               <Typography variant="caption" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}><Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#10b981' }} /> Available (28)</Typography>
+               <Typography variant="caption" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}><Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#94a3b8' }} /> Offline (32)</Typography>
+            </Stack>
           </Paper>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 3 }}>
-          <Paper sx={{ p: 2, borderRadius: '16px', backgroundColor: 'var(--theme-bg-card)', border: '1px solid var(--theme-border-color)', height: '100%' }}>
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <Paper sx={{ p: 2.5, borderRadius: '16px', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', height: '100%' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Alerts Center</Typography>
-              <Button size="small" component={Link} href="/admin/collections/alerts" sx={{ textTransform: 'none', color: '#3b82f6' }}>View All</Button>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#1e293b' }}>Alerts Center</Typography>
+              <Button size="small" component={Link} href="/admin/collections/alerts" sx={{ textTransform: 'none', color: '#3b82f6', fontWeight: 700 }}>View All</Button>
             </Stack>
             <Stack spacing={2}>
-              {alertsList.length > 0 ? alertsList.map((alert, i) => (
-                <Stack key={i} direction="row" spacing={1.5}>
-                  <Box sx={{ width: 40, height: 40, borderRadius: '8px', backgroundColor: alert.type === 'emergency' ? '#ef444433' : '#3b82f633', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <NotificationsNoneIcon sx={{ color: alert.type === 'emergency' ? '#ef4444' : '#3b82f6', fontSize: '1.25rem' }} />
+              {[
+                { title: 'SOS Alert', msg: 'Driver Suresh Babu triggered SOS', type: 'sos', color: '#ef4444', icon: <NotificationsNoneIcon /> },
+                { title: 'High Cancellation', msg: 'Driver Karthik has high cancellation', type: 'warn', color: '#f59e0b', icon: <NotificationsNoneIcon /> },
+                { title: 'Payment Pending', msg: '12 payments are pending', type: 'pay', color: '#3b82f6', icon: <NotificationsNoneIcon /> },
+                { title: 'New Booking', msg: 'New booking #BK-250526-1248', type: 'book', color: '#10b981', icon: <NotificationsNoneIcon /> },
+              ].map((alert, i) => (
+                <Stack key={i} direction="row" spacing={1.5} alignItems="flex-start">
+                  <Box sx={{ p: 1, borderRadius: '10px', backgroundColor: `${alert.color}15`, color: alert.color }}>
+                    {alert.icon}
                   </Box>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="caption" sx={{ fontWeight: 700, color: 'var(--theme-text)' }}>{alert.title}</Typography>
-                      <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)' }}>{new Date(alert.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Typography>
-                    </Stack>
-                    <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)', display: 'block', fontSize: '0.7rem' }}>{alert.message}</Typography>
+                  <Box>
+                    <Typography variant="caption" sx={{ fontWeight: 900, color: '#1e293b', display: 'block' }}>{alert.title}</Typography>
+                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.65rem', display: 'block' }}>{alert.msg}</Typography>
                   </Box>
                 </Stack>
-              )) : (
-                <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)', textAlign: 'center', py: 4 }}>No recent alerts</Typography>
-              )}
+              ))}
             </Stack>
+            <Button fullWidth sx={{ mt: 3, py: 1, borderRadius: '10px', textTransform: 'none', fontWeight: 800, color: '#ef4444', backgroundColor: '#fef2f2', '&:hover': { backgroundColor: '#fee2e2' } }}>View All Alerts</Button>
           </Paper>
         </Grid>
 
-        {/* Quick Access Grid */}
+        {/* Quick Access Grid - White Icons */}
         <Grid size={{ xs: 12 }}>
-           <Grid container spacing={2}>
+           <Grid container spacing={3} sx={{ mt: 1 }}>
              {[
+               { label: 'Coupons & Discounts', sub: 'Manage coupons', icon: <BookIcon />, color: '#3b82f6', path: '/admin/collections/coupons' },
                { label: 'Payment Settings', sub: 'Advance & methods', icon: <PaymentsIcon />, color: '#8b5cf6', path: '/admin/globals/payment-settings' },
                { label: 'WhatsApp Support', sub: 'Chat with customers', icon: <WhatsAppIcon />, color: '#10b981', path: '/admin/globals/general-settings' },
                { label: 'Cancellation Control', sub: 'Rules & penalties', icon: <CancelIcon />, color: '#ef4444', path: '/admin/globals/cancellation-control' },
-                { label: 'Vehicles', sub: 'Manage vehicle fleet', icon: <LocalShippingIcon  />, color: '#ec4899', path: '/admin/collections/vehicles' },
-               { label: 'Media Gallery', sub: 'Banners & branding', icon: <CollectionsIcon />, color: '#22c55e', path: '/admin/collections/media' },
-               { label: 'Users & Roles', sub: 'Manage all users', icon: <AdminPanelSettingsIcon />, color: '#6366f1', path: '/admin/collections/users' },
+               { label: 'Media & Sliders', sub: 'Banners & branding', icon: <CollectionsIcon />, color: '#ec4899', path: '/admin/collections/media' },
+               { label: 'Users & Roles', sub: 'Manage all users', icon: <PeopleIcon />, color: '#6366f1', path: '/admin/collections/users' },
              ].map((item, i) => (
-               <Grid size={{ xs: 6, md: 2 }} key={i}>
+               <Grid size={{ xs: 6, sm: 4, lg: 2 }} key={i}>
                  <Link href={item.path} style={{ textDecoration: 'none' }}>
-                   <Paper sx={{ p: 2, borderRadius: '16px', backgroundColor: 'var(--theme-bg-card)', border: '1px solid var(--theme-border-color)', textAlign: 'center', cursor: 'pointer', transition: '0.2s', '&:hover': { backgroundColor: 'var(--theme-elevation-50)' } }}>
-                     <Box sx={{ width: 40, height: 40, borderRadius: '10px', backgroundColor: `${item.color}33`, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1.5 }}>
+                   <Paper sx={{ 
+                     p: 2, 
+                     borderRadius: '12px', 
+                     backgroundColor: '#ffffff', 
+                     border: '1px solid #e2e8f0', 
+                     textAlign: 'left', 
+                     display: 'flex',
+                     gap: 1.5,
+                     alignItems: 'center',
+                     cursor: 'pointer', 
+                     transition: '0.2s', 
+                     '&:hover': { backgroundColor: '#f8fafc' } 
+                   }}>
+                     <Box sx={{ width: 40, height: 40, borderRadius: '10px', backgroundColor: `${item.color}15`, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                        {item.icon}
                      </Box>
-                     <Typography variant="caption" sx={{ fontWeight: 700, display: 'block', lineHeight: 1.2, color: 'var(--theme-text)' }}>{item.label}</Typography>
-                     <Typography variant="caption" sx={{ color: 'var(--theme-text-secondary)', fontSize: '0.65rem' }}>{item.sub}</Typography>
+                     <Box>
+                       <Typography variant="caption" sx={{ fontWeight: 800, display: 'block', color: '#1e293b', fontSize: '0.7rem' }}>{item.label}</Typography>
+                       <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.6rem' }}>{item.sub}</Typography>
+                     </Box>
                    </Paper>
                  </Link>
                </Grid>
              ))}
            </Grid>
         </Grid>
+      </Grid>
 
-        {/* Charts Row */}
+      {/* Charts Row */}
+      <Grid container spacing={3} sx={{ mt: 1 }}>
         <Grid size={{ xs: 12, md: 5 }}>
           <Paper sx={{ p: 3, borderRadius: '16px', backgroundColor: 'var(--theme-bg-card)', border: '1px solid var(--theme-border-color)' }}>
              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 3 }}>Live Booking Trends</Typography>

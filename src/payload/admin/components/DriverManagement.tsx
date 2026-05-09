@@ -506,7 +506,7 @@ const filteredDrivers = useMemo(() => {
 </Grid>
 
       {/* FILTERS */}
-      <Stack direction="row" spacing={2} mb={2}>
+      <Stack direction="row" spacing={5} mb={5}>
         <TextField
           id="search-drivers"
           size="small"
@@ -514,14 +514,6 @@ const filteredDrivers = useMemo(() => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
-        <Button onClick={(e) => setFilterAnchor(e.currentTarget)}>
-          <FilterListIcon />
-        </Button>
-
-        <Button onClick={(e) => setColumnAnchor(e.currentTarget)}>
-          <ViewColumnIcon />
-        </Button>
       </Stack>
 
       {/* DRIVER CARDS (REPLACE TABLE) */}

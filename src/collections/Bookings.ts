@@ -611,6 +611,15 @@ if (operation === 'create' && data.customer) {
         { name: 'reason', type: 'text' },
       ],
     },
+    {
+      name: 'liveTracking',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '@/payload/admin/components/BookingLiveTracking#default',
+        },
+      },
+    },
   ],
   access: { create: () => true, read: () => true, update: () => true, delete: () => true },
 }

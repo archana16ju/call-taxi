@@ -6,17 +6,21 @@ export const SliderImages: CollectionConfig = {
   admin: {
     group: 'Collection',
     useAsTitle: 'alt',
+    components: {
+      views: {
+        list: {
+          Component: '@/payload/admin/components/SliderManagement#default',
+        },
+      },
+    },
   },
   access: {
     read: () => true,
+    create: () => true,
+    update: () => true,
+    delete: () => true,
   },
   fields: [
-    {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
-      required: true,
-    },
     {
       name: 'alt',
       type: 'text',

@@ -197,14 +197,6 @@ export default function CustomerManagement() {
             <Typography variant="h5" fontWeight={800} color="#0f172a" mb={0.5}>Customer Directory</Typography>
             <Typography variant="body2" color="#64748b">Manage your fleet customer base and booking history.</Typography>
           </Box>
-          <Button 
-            variant="contained" 
-            startIcon={<AddIcon />}
-            onClick={handleCreate}
-            sx={{ bgcolor: '#0f172a', color: '#fff', textTransform: 'none', fontWeight: 600, px: 3, borderRadius: 1 }}
-          >
-            ADD CUSTOMER
-          </Button>
         </Stack>
 
         {/* TOOLBAR */}
@@ -219,14 +211,13 @@ export default function CustomerManagement() {
               startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment>,
             }}
           />
-          <Select size="small" value={statusFilter} onChange={e => setStatusFilter(e.target.value)} sx={{ minWidth: 140, bgcolor: '#f8fafc' }}>
-            <MenuItem value="All Statuses">All Statuses</MenuItem>
-          </Select>
-          <Select size="small" value={sortOrder} onChange={e => setSortOrder(e.target.value)} sx={{ minWidth: 180, bgcolor: '#f8fafc' }}>
-            <MenuItem value="Recent Activity">Sort: Recent Activity</MenuItem>
-          </Select>
-          <Button variant="outlined" sx={{ minWidth: 40, p: 0, borderColor: '#e2e8f0', bgcolor: '#f8fafc' }}>
-            <FilterListIcon fontSize="small" sx={{ color: '#475569' }} />
+         <Button 
+            variant="contained" 
+            startIcon={<AddIcon />}
+            onClick={handleCreate}
+            sx={{ bgcolor: '#0f172a', color: '#fff', textTransform: 'none', fontWeight: 600, px: 3, borderRadius: 1 }}
+          >
+            ADD CUSTOMER
           </Button>
         </Stack>
 
@@ -394,13 +385,6 @@ export default function CustomerManagement() {
                     sx={{ border: '1px solid #e2e8f0', borderRadius: 1, p: 1, mx: 0 }}
                   />
                 </RadioGroup>
-              </Paper>
-
-              <Paper sx={{ p: 3, borderRadius: 2, bgcolor: '#0f172a', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-                <Typography variant="subtitle1" fontWeight={700} mb={1} sx={{ position: 'relative', zIndex: 2 }}>Fleet Integration</Typography>
-                <Typography variant="body2" sx={{ color: '#94a3b8', position: 'relative', zIndex: 2, lineHeight: 1.4 }}>
-                  Assign this customer to specific delivery zones for optimized routing.
-                </Typography>
               </Paper>
 
             </Grid>

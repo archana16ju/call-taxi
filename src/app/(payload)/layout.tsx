@@ -6,7 +6,6 @@ import type { ServerFunctionClient } from 'payload'
 import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts'
 import React from 'react'
 
-import ThemeRegistry from '../../payload/admin/theme/ThemeRegistry'
 import { importMap } from './admin/importMap.js'
 
 import './custom.scss'
@@ -29,14 +28,12 @@ const serverFunction: ServerFunctionClient = async (args) => {
 
 export default function Layout({ children }: Args) {
   return (
-    <ThemeRegistry>
-      <RootLayout
-        config={config}
-        importMap={importMap}
-        serverFunction={serverFunction}
-      >
-        {children}
-      </RootLayout>
-    </ThemeRegistry>
+    <RootLayout
+      config={config}
+      importMap={importMap}
+      serverFunction={serverFunction}
+    >
+      {children}
+    </RootLayout>
   )
 }

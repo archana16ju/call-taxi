@@ -1,7 +1,7 @@
 /* Payload CMS Custom Admin Styles */
 
 :root {
-  --nav-width: 260px !important;
+  --nav-width: 260px;
 }
 
 /* Layout & Typography (WordPress-like structure, Native Theme Colors) */
@@ -17,12 +17,61 @@
   transition: color 0.1s ease;
 }
 
-/* Sidebar Layout */
+/* Sidebar Layout Reset */
 aside.nav,
 .template-default__nav {
+  position: relative !important;
+  flex-shrink: 0 !important;
   width: var(--nav-width) !important;
   min-width: var(--nav-width) !important;
   max-width: var(--nav-width) !important;
+  height: 100vh !important;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  z-index: 100;
+  border-right: 1px solid var(--theme-border-color);
+  background-color: #0f172a !important;
+  padding: 0 !important; /* Reset any default padding */
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Flexbox Layout Fix */
+.template-default {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  background-color: var(--theme-bg-page) !important;
+}
+
+.template-default__main {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  width: 0 !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Force content to top and full width of its container */
+.template-default__content {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+}
+
+/* Ensure the custom nav fills the sidebar fully and centers content */
+aside.nav > div,
+.template-default__nav > div {
+  height: 100% !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* Active State - Blue Text & Icon */
