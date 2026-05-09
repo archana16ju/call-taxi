@@ -1,6 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import {
+  Search,
+  Filter,
+  Play,
+  MapPin,
+  Car,
+  ShieldCheck,
+  Calendar,
+  Clock3,
+} from "lucide-react";
 
 interface VoiceBooking {
   _id: string;
@@ -18,6 +28,7 @@ interface VoiceBooking {
 export default function VoiceBookingPage() {
   const [data, setData] = useState<VoiceBooking[]>([]);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
 
   useEffect(() => {
     fetch("/api/voice-bookings")
@@ -25,150 +36,295 @@ export default function VoiceBookingPage() {
       .then(setData);
   }, []);
 
-  const filtered = data.filter((b) =>
-    b.bookingId.toLowerCase().includes(search.toLowerCase()) ||
-    b.driver.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = data.filter((b) => {
+    const matchesSearch =
+      b.bookingId.toLowerCase().includes(search.toLowerCase()) ||
+      b.driver.name.toLowerCase().includes(search.toLowerCase());
 
-  const statusColor = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return "bg-green-100 text-green-700";
-      case "pending":
-        return "bg-amber-100 text-amber-700";
-      case "flagged":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-600";
-    }
+    const matchesStatus =
+      activeTab === "all" || b.status === activeTab;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const statusStyles = {
+    confirmed:
+      "bg-emerald-100 text-emerald-700 border border-emerald-200",
+
+    pending:
+      "bg-amber-100 text-amber-700 border border-amber-200",
+
+    flagged:
+      "bg-red-100 text-red-700 border border-red-200",
+
+    archived:
+      "bg-slate-100 text-slate-600 border border-slate-200",
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-[#f5f7fb] text-slate-900 p-6">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center p-6 border-b bg-white">
-        <h1 className="text-xl font-bold">Voice Booking Data Store</h1>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
 
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by ID or driver..."
-          className="px-4 py-2 border rounded-lg w-72"
-        />
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+            Voice Booking Dashboard
+          </h1>
+
+          <p className="text-slate-500 mt-2">
+            AI-powered smart taxi booking system
+          </p>
+        </div>
+
+        {/* SEARCH */}
+        <div className="flex items-center gap-3">
+
+          <div className="relative">
+
+            <Search
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search bookings..."
+              className="w-[280px] bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 outline-none text-sm text-slate-700 shadow-sm focus:border-cyan-400"
+            />
+          </div>
+
+          <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white border border-slate-200 hover:border-cyan-400 transition shadow-sm">
+            <Filter size={16} />
+            Filter
+          </button>
+        </div>
       </div>
 
-      {/* CONTENT */}
-      <div className="p-6 space-y-4">
+      {/* FILTER TABS */}
+      <div className="flex gap-3 mb-8 flex-wrap">
+
+        {[
+          "all",
+          "confirmed",
+          "pending",
+          "flagged",
+          "archived",
+        ].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-5 py-2 rounded-xl capitalize transition-all ${
+              activeTab === tab
+                ? "bg-cyan-500 text-white font-semibold"
+                : "bg-white border border-slate-200 text-slate-600 hover:border-cyan-400"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* BOOKINGS */}
+      <div className="space-y-6">
 
         {filtered.map((b) => (
           <div
             key={b._id}
-            className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition"
+            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition"
           >
 
-            <div className="flex flex-col lg:flex-row gap-6">
+            {/* TOP */}
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-5">
 
               {/* LEFT */}
-              <div className="flex-1 space-y-2">
+              <div className="flex items-start gap-4">
 
-                <div className="flex items-center gap-3">
-                  <button className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">
-                    ▶
-                  </button>
-
-                  <span className="font-mono text-sm">{b.bookingId}</span>
-
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${statusColor(
-                      b.status
-                    )}`}
-                  >
-                    {b.status}
-                  </span>
-                </div>
-
-                <p className="text-sm text-slate-600 italic">
-                  {b.transcript}
-                </p>
-
-                <div className="text-xs text-slate-500 flex gap-4">
-                  <span>Driver: {b.driver.name}</span>
-                  <span>
-                    Confidence: {b.ai.confidence}%
-                  </span>
-                </div>
-              </div>
-
-              {/* ROUTE */}
-              <div className="flex-1 grid grid-cols-2 gap-4 border-l pl-6">
+                <button className="w-14 h-14 rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center hover:scale-105 transition">
+                  <Play
+                    size={20}
+                    className="text-cyan-600 fill-cyan-600"
+                  />
+                </button>
 
                 <div>
-                  <p className="text-xs text-slate-400">Pickup</p>
-                  <p className="font-medium">{b.pickup.address}</p>
-                </div>
 
-                <div>
-                  <p className="text-xs text-slate-400">Dropoff</p>
-                  <p className="font-medium">{b.dropoff.address}</p>
-                </div>
+                  <div className="flex items-center gap-3 flex-wrap">
 
-                <div>
-                  <p className="text-xs text-slate-400">Fare</p>
-                  <p className="font-bold">
-                    {b.fare.currency} {b.fare.amount}
+                    <h2 className="text-xl font-semibold text-slate-900">
+                      {b.bookingId}
+                    </h2>
+
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        statusStyles[b.status]
+                      }`}
+                    >
+                      {b.status}
+                    </span>
+
+                    <span className="px-3 py-1 rounded-full text-xs bg-cyan-100 text-cyan-700 border border-cyan-200">
+                      Premium
+                    </span>
+                  </div>
+
+                  <p className="text-slate-600 italic mt-3 text-lg">
+                    "{b.transcript}"
                   </p>
                 </div>
+              </div>
 
-                <div>
-                  <p className="text-xs text-slate-400">Driver ID</p>
-                  <p>{b.driver.id}</p>
+              {/* DATE */}
+              <div className="flex items-center gap-2 text-slate-500 text-sm">
+                <Calendar size={16} />
+                {new Date(b.createdAt).toLocaleString()}
+              </div>
+            </div>
+
+            {/* DETAILS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mt-6">
+
+              {/* PICKUP */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2 text-cyan-600 mb-2">
+                  <MapPin size={16} />
+                  Pickup
+                </div>
+
+                <p className="text-slate-700 text-sm">
+                  {b.pickup.address}
+                </p>
+              </div>
+
+              {/* DROPOFF */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2 text-cyan-600 mb-2">
+                  <MapPin size={16} />
+                  Dropoff
+                </div>
+
+                <p className="text-slate-700 text-sm">
+                  {b.dropoff.address}
+                </p>
+              </div>
+
+              {/* DRIVER */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2 text-cyan-600 mb-2">
+                  <Car size={16} />
+                  Driver
+                </div>
+
+                <p className="text-slate-700 text-sm">
+                  {b.driver.name}
+                </p>
+
+                <p className="text-slate-400 text-xs mt-1">
+                  {b.driver.id}
+                </p>
+              </div>
+
+              {/* TIME */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2 text-cyan-600 mb-2">
+                  <Clock3 size={16} />
+                  Allocated
+                </div>
+
+                <p className="text-slate-700 text-sm">
+                  {new Date(
+                    b.createdAt
+                  ).toLocaleTimeString()}
+                </p>
+
+                <p className="text-slate-400 text-xs mt-1">
+                  ETA: 10 mins
+                </p>
+              </div>
+            </div>
+
+            {/* FOOTER */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mt-6 border-t border-slate-200 pt-5">
+
+              {/* FARE */}
+              <div>
+                <p className="text-slate-500 text-sm mb-1">
+                  Fare
+                </p>
+
+                <div className="flex items-center gap-2">
+
+                  <span className="text-3xl font-bold text-cyan-600">
+                    {b.fare.currency}
+                    {b.fare.amount}
+                  </span>
+
+                  <span className="px-2 py-1 rounded-md bg-slate-100 text-xs text-slate-600">
+                    GBP
+                  </span>
                 </div>
               </div>
 
-              {/* AI SCORE CIRCLE */}
-              <div className="w-24 flex items-center justify-center border-l pl-6">
+              {/* AI SCORE */}
+              <div className="flex items-center gap-5">
 
-                <div className="relative w-16 h-16">
-                  <svg className="w-full h-full transform -rotate-90">
+                <div className="relative w-20 h-20">
+
+                  <svg
+                    className="w-full h-full -rotate-90"
+                    viewBox="0 0 100 100"
+                  >
                     <circle
-                      cx="32"
-                      cy="32"
-                      r="28"
-                      stroke="#e5e7eb"
-                      strokeWidth="4"
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      stroke="#e2e8f0"
+                      strokeWidth="8"
                       fill="none"
                     />
+
                     <circle
-                      cx="32"
-                      cy="32"
-                      r="28"
-                      stroke="#3b82f6"
-                      strokeWidth="4"
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      stroke="#06b6d4"
+                      strokeWidth="8"
                       fill="none"
-                      strokeDasharray="176"
+                      strokeLinecap="round"
+                      strokeDasharray="264"
                       strokeDashoffset={
-                        176 - (176 * b.ai.confidence) / 100
+                        264 -
+                        (264 * b.ai.confidence) / 100
                       }
                     />
                   </svg>
 
-                  <div className="absolute inset-0 flex items-center justify-center text-sm font-bold">
+                  <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-slate-800">
                     {b.ai.confidence}%
                   </div>
                 </div>
 
+                <div>
+                  <div className="flex items-center gap-2 text-cyan-600 font-semibold">
+                    <ShieldCheck size={18} />
+                    AI Verified
+                  </div>
+
+                  <p className="text-slate-500 text-sm mt-1">
+                    Voice booking confidence score
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         ))}
 
         {filtered.length === 0 && (
-          <p className="text-center text-slate-500">
+          <div className="text-center py-20 text-slate-500">
             No bookings found
-          </p>
+          </div>
         )}
-
       </div>
     </div>
   );

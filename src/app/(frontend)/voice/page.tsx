@@ -1,286 +1,229 @@
-'use client'
+"use client";
 
-import React, { useRef, useState } from 'react'
-import { Mic, Globe, Car, MessageCircle, Play, Volume2, ChevronDown } from 'lucide-react'
+import React, { useRef, useState } from "react";
+import {
+  Mic,
+  Globe,
+  Car,
+  MessageCircle,
+  Play,
+  Volume2,
+  ChevronDown,
+} from "lucide-react";
 
 export default function VoicePage() {
-  const recognitionRef = useRef<any>(null)
+  const recognitionRef = useRef<any>(null);
 
-  const [listening, setListening] = useState(false)
+  const [listening, setListening] = useState(false);
+  const [status, setStatus] = useState("Idle");
 
-  const [userText, setUserText] = useState('')
+  const [language, setLanguage] = useState("en-US");
 
-  const [aiReply, setAiReply] = useState('Your AI assistant is ready.')
+  const [userText, setUserText] = useState("");
+  const [aiReply, setAiReply] = useState(
+    "Your AI assistant is ready."
+  );
 
-  const [status, setStatus] = useState('Idle')
-
-  // LANGUAGE STATE
-  const [language, setLanguage] = useState('en-US')
-
-  // SUPPORTED LANGUAGES
   const languages = [
-    { label: 'English (US)', value: 'en-US' },
-    { label: 'Hindi', value: 'hi-IN' },
-    { label: 'Tamil', value: 'ta-IN' },
-    { label: 'Telugu', value: 'te-IN' },
-    { label: 'Malayalam', value: 'ml-IN' },
-    { label: 'Kannada', value: 'kn-IN' },
-    { label: 'Spanish', value: 'es-ES' },
-    { label: 'French', value: 'fr-FR' },
-  ]
+    { label: "English (US)", value: "en-US" },
+    { label: "Hindi", value: "hi-IN" },
+    { label: "Tamil", value: "ta-IN" },
+    { label: "Telugu", value: "te-IN" },
+    { label: "Malayalam", value: "ml-IN" },
+  ];
 
-  // TEXT TO SPEECH
   const speak = (msg: string) => {
-    const speech = new SpeechSynthesisUtterance(msg)
+    const speech = new SpeechSynthesisUtterance(msg);
+    speech.lang = language;
+    window.speechSynthesis.speak(speech);
+  };
 
-    speech.lang = language
-
-    window.speechSynthesis.speak(speech)
-  }
-
-  // START VOICE
   const startVoice = () => {
     const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      alert('Speech recognition not supported')
-      return
-    }
+    if (!SpeechRecognition) return;
 
-    const recognition = new SpeechRecognition()
-
-    recognition.lang = language
-
-    recognition.continuous = false
-    recognition.interimResults = false
+    const recognition = new SpeechRecognition();
+    recognition.lang = language;
 
     recognition.onstart = () => {
-      setListening(true)
-      setStatus('Listening...')
-    }
+      setListening(true);
+      setStatus("Listening...");
+    };
 
     recognition.onend = () => {
-      setListening(false)
-      setStatus('Idle')
-    }
+      setListening(false);
+      setStatus("Idle");
+    };
 
     recognition.onerror = () => {
-      setListening(false)
-      setStatus('Error')
-    }
+      setListening(false);
+      setStatus("Error");
+    };
 
-    // CONVERT VOICE TO TEXT
     recognition.onresult = async (e: any) => {
-      const transcript = e.results[0][0].transcript
+      const transcript = e.results[0][0].transcript;
 
-      // STORE TRANSCRIPT
-      setUserText(transcript)
-
-      setStatus('Processing...')
+      setUserText(transcript);
+      setStatus("Processing...");
 
       try {
-        // OPTIONAL AI API CALL
-        const res = await fetch('/api/ai-chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: transcript,
-            language,
-          }),
-        })
+        const res = await fetch("/api/ai-chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: transcript, language }),
+        });
 
-        const data = await res.json()
+        const data = await res.json();
 
-        setAiReply(data.reply || 'Booking confirmed')
+        setAiReply(data.reply || "Booking confirmed");
+        speak(data.reply);
 
-        speak(data.reply)
-
-        setStatus('Done')
+        setStatus("Completed");
       } catch {
-        setAiReply('Error processing request')
-        setStatus('Failed')
+        setAiReply("Error processing request");
+        setStatus("Failed");
       }
-    }
+    };
 
-    recognition.start()
+    recognition.start();
+    recognitionRef.current = recognition;
+  };
 
-    recognitionRef.current = recognition
-  }
-
-  // STOP LISTENING
   const stopVoice = () => {
-    recognitionRef.current?.stop()
-
-    setListening(false)
-
-    setStatus('Stopped')
-  }
+    recognitionRef.current?.stop();
+    setListening(false);
+    setStatus("Stopped");
+  };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6 text-white relative overflow-hidden">
-      {/* BACKGROUND GLOW */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,255,0.08),transparent_40%)]" />
+    <div className="min-h-screen bg-[#05060A] flex items-center justify-center px-4 relative overflow-hidden">
 
-      {/* MAIN CARD */}
-      <div className="relative w-full max-w-5xl rounded-[36px] border border-cyan-400/20 bg-[#071028]/90 backdrop-blur-2xl shadow-[0_0_60px_rgba(0,255,255,0.08)] p-8 md:p-10">
-        {/* HEADER */}
-        <div className="flex items-start justify-between mb-8">
-          <div className="flex items-center gap-5">
-            <div className="w-20 h-20 rounded-full border border-cyan-400/30 bg-cyan-400/10 flex items-center justify-center">
-              <Mic className="text-cyan-300" size={36} />
-            </div>
+      {/* BACKGROUND GLOW ORBS */}
+      <div className="absolute w-[600px] h-[600px] bg-cyan-500/10 blur-[150px] rounded-full top-[-200px] left-[-200px]" />
+      <div className="absolute w-[600px] h-[600px] bg-purple-500/10 blur-[150px] rounded-full bottom-[-200px] right-[-200px]" />
 
-            <div>
-              <h1 className="text-4xl font-bold">Voice Booking System</h1>
+      {/* FLOATING CENTER CARD */}
+      <div className="relative w-full max-w-3xl">
 
-              <p className="text-gray-400 text-lg mt-1">AI Powered Ride Assistant</p>
-            </div>
-          </div>
+        <div className="rounded-[32px] border border-cyan-400/20 bg-[#0B0F1A]/80 backdrop-blur-2xl shadow-[0_0_80px_rgba(0,255,255,0.08)] p-8 md:p-10 animate-float">
 
-          {/* ONLINE */}
-          <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-green-400/20 bg-green-400/10 text-green-300">
-            <span className="w-3 h-3 rounded-full bg-green-400 animate-pulse" />
-            Online
-          </div>
-        </div>
+          {/* HEADER */}
+          <div className="text-center mb-8">
 
-        {/* AI READY */}
-        <div className="rounded-3xl border border-cyan-400/10 bg-[#0b1733] px-6 py-5 flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-cyan-400/10 flex items-center justify-center">
-              <Car className="text-cyan-300" size={30} />
-            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-white">
+              Voice Booking AI
+            </h1>
 
-            <div>
-              <h2 className="text-2xl font-semibold text-cyan-300">Your AI Assistant is Ready</h2>
+            <p className="text-cyan-300 mt-2">
+              Futuristic Ride Assistant System
+            </p>
 
-              <p className="text-gray-400 mt-1">Speak naturally and book your ride easily.</p>
+            <div className="mt-3 inline-flex items-center gap-2 text-green-400 text-sm">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              Online
             </div>
           </div>
 
-          {/* WAVE */}
-          <div className="hidden md:flex items-end gap-2 h-16">
-            {[18, 28, 40, 60, 30, 50, 22, 38].map((h, i) => (
-              <div
-                key={i}
-                className="w-1 rounded-full bg-cyan-300 animate-pulse"
-                style={{
-                  height: `${h}px`,
-                }}
-              />
-            ))}
+          {/* STATUS */}
+          <div className="bg-[#0F172A] border border-cyan-400/10 rounded-2xl p-4 mb-6 flex justify-between items-center text-sm text-slate-300">
+
+            <span className="text-green-400">{status}</span>
+
+            <span className="text-slate-400">AI Connected</span>
           </div>
-        </div>
 
-        {/* LANGUAGE SELECT */}
-        <div className="mb-6">
-          <p className="text-2xl font-semibold mb-4">Language</p>
+          {/* LANGUAGE */}
+          <div className="mb-6 relative">
 
-          <div className="relative">
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="w-full h-20 rounded-2xl border border-cyan-400/15 bg-[#081329] px-6 text-xl text-white appearance-none outline-none"
+              className="w-full h-14 rounded-2xl bg-[#0F172A] border border-cyan-400/10 px-4 text-white outline-none"
             >
-              {languages.map((lang) => (
-                <option key={lang.value} value={lang.value} className="bg-[#081329]">
-                  {lang.label}
+              {languages.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
                 </option>
               ))}
             </select>
 
-            <div className="absolute left-5 top-1/2 -translate-y-1/2">
-              <Globe className="text-cyan-300" />
-            </div>
-
-            <div className="absolute right-5 top-1/2 -translate-y-1/2">
-              <ChevronDown className="text-gray-400" />
-            </div>
+            <Globe className="absolute right-4 top-4 text-cyan-400" />
           </div>
-        </div>
 
-        {/* STATUS */}
-        <div className="mb-6">
-          <p className="text-2xl font-semibold mb-4">Listening Status</p>
+          {/* COMMAND BOX */}
+          <div className="bg-[#0F172A] border border-cyan-400/10 rounded-2xl p-4 mb-6">
 
-          <div className="h-20 rounded-2xl border border-cyan-400/15 bg-[#081329] flex items-center justify-between px-6">
-            <div className="flex items-center gap-3 text-green-400 font-medium text-lg">
-              <span className="w-4 h-4 rounded-full border-4 border-green-400 animate-pulse" />
-              {status}
-            </div>
+            <p className="text-slate-400 text-sm">User Command</p>
 
-            <span className="text-gray-400">Click microphone to start</span>
+            <p className="text-white mt-2">
+              {userText || "Speak something..."}
+            </p>
+
+            <p className="text-cyan-300 text-sm mt-3">
+              AI: {aiReply}
+            </p>
           </div>
-        </div>
 
-        {/* TRANSCRIBED TEXT */}
-        <div className="mb-10">
-          <p className="text-2xl font-semibold mb-4">Voice Booking Text</p>
+          {/* MIC BUTTON CENTER */}
+          <div className="flex flex-col items-center justify-center relative">
 
-          <div className="min-h-[120px] rounded-2xl border border-cyan-400/15 bg-[#081329] p-6 flex gap-4">
-            <div className="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center">
-              <MessageCircle className="text-indigo-300" />
-            </div>
-
-            <div className="flex-1">
-              <p className="text-lg text-gray-200">
-                {userText || 'Your voice will appear here...'}
-              </p>
-
-              <p className="text-sm text-gray-500 mt-4">AI Response: {aiReply}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* MAIN MIC */}
-        <div className="flex flex-col items-center justify-center py-8 relative">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-3xl scale-125 animate-pulse" />
+            <div className="absolute w-40 h-40 bg-cyan-400/20 blur-3xl rounded-full animate-pulse" />
 
             <button
-              onClick={() => (listening ? stopVoice() : startVoice())}
-              className={`relative w-52 h-52 rounded-full flex items-center justify-center border-4 transition-all duration-300 shadow-2xl ${
+              onClick={() =>
+                listening ? stopVoice() : startVoice()
+              }
+              className={`relative w-40 h-40 rounded-full flex items-center justify-center border-4 transition-all ${
                 listening
-                  ? 'bg-red-500 border-red-300 scale-105'
-                  : 'bg-gradient-to-br from-cyan-300 to-blue-500 border-cyan-200 hover:scale-105'
+                  ? "bg-red-500 border-red-300 scale-110"
+                  : "bg-gradient-to-br from-cyan-400 to-purple-500 border-cyan-300 hover:scale-105"
               }`}
             >
-              <Mic size={70} className="text-white" />
+              <Mic size={60} className="text-white" />
+            </button>
+
+            <p className="text-slate-400 mt-4 text-center">
+              Tap to start voice assistant
+            </p>
+          </div>
+
+          {/* PLAY RESPONSE */}
+          <div className="mt-8 flex justify-between items-center bg-[#0F172A] border border-cyan-400/10 p-4 rounded-2xl">
+
+            <div className="flex items-center gap-3">
+
+              <Volume2 className="text-purple-400" />
+
+              <span className="text-white text-sm">
+                Play AI Response
+              </span>
+            </div>
+
+            <button
+              onClick={() => speak(aiReply)}
+              className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center"
+            >
+              <Play className="text-white" />
             </button>
           </div>
-
-          <h2 className="text-4xl font-bold mt-8">Tap to Start Listening</h2>
-
-          <p className="text-gray-400 text-xl mt-2">
-            Speech converts into booking text automatically
-          </p>
-        </div>
-
-        {/* PLAY RESPONSE */}
-        <div className="mt-10 rounded-3xl border border-cyan-400/10 bg-[#0b1733] p-5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center">
-              <Volume2 className="text-purple-300" />
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-semibold">Play AI Response</h3>
-
-              <p className="text-gray-400">Listen to AI assistant response</p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => speak(aiReply)}
-            className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center hover:scale-105 transition"
-          >
-            <Play className="text-white fill-white" size={30} />
-          </button>
         </div>
       </div>
+
+      {/* FLOAT ANIMATION */}
+      <style jsx>{`
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
+        }
+      `}</style>
     </div>
-  )
+  );
 }
