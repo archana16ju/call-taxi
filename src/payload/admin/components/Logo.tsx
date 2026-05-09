@@ -173,57 +173,61 @@ export default function Login() {
     ),
   }}
   sx={{
-    '& .MuiOutlinedInput-root': {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '14px !important',
+    background: 'rgba(15, 23, 42, 0.85) !important',
+    backdropFilter: 'blur(12px)',
+    color: '#fff !important',
+
+    '& input': {
+      color: '#fff !important',
+      WebkitTextFillColor: '#fff',
+    },
+
+    '& textarea': {
+      color: '#fff !important',
+      WebkitTextFillColor: '#fff',
+    },
+
+    // Autofill fix
+    '& input:-webkit-autofill': {
+      WebkitBoxShadow: '0 0 0 1000px rgba(15,23,42,0.95) inset !important',
+      WebkitTextFillColor: '#ffffff !important',
+      caretColor: '#ffffff',
       borderRadius: '14px',
-      color: '#ffffff',
-      background:
-        'linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.75))',
-      backdropFilter: 'blur(10px)',
-      transition: 'all 0.3s ease',
-
-      '& input': {
-        color: '#ffffff',
-      },
-
-      '& input::placeholder': {
-        color: '#94a3b8',
-        opacity: 1,
-      },
-
-      '& input:-webkit-autofill': {
-        WebkitBoxShadow: '0 0 0 100px rgba(15,23,42,0.95) inset',
-        WebkitTextFillColor: '#ffffff',
-        caretColor: '#ffffff',
-        borderRadius: '14px',
-        transition: 'background-color 5000s ease-in-out 0s',
-      },
-
-      '& fieldset': {
-        borderColor: 'rgba(255,255,255,0.08)',
-      },
-
-      '&:hover fieldset': {
-        borderColor: '#fbbf24',
-      },
-
-      '&.Mui-focused': {
-        boxShadow: '0 0 0 3px rgba(251,191,36,0.15)',
-      },
-
-      '&.Mui-focused fieldset': {
-        borderColor: '#fbbf24',
-        borderWidth: '1.5px',
-      },
+      transition: 'background-color 9999s ease-in-out 0s',
     },
 
-    '& .MuiInputLabel-root': {
-      color: '#94a3b8',
+    '& fieldset': {
+      borderColor: 'rgba(255,255,255,0.08) !important',
     },
 
-    '& .MuiInputLabel-root.Mui-focused': {
-      color: '#fbbf24',
+    '&:hover fieldset': {
+      borderColor: '#fbbf24 !important',
     },
-  }}
+
+    '&.Mui-focused fieldset': {
+      borderColor: '#fbbf24 !important',
+      boxShadow: '0 0 0 3px rgba(251,191,36,0.15)',
+    },
+  },
+
+  '& .MuiInputBase-input': {
+    color: '#fff !important',
+  },
+
+  '& .MuiInputLabel-root': {
+    color: '#94a3b8 !important',
+  },
+
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: '#fbbf24 !important',
+  },
+
+  '& .MuiSvgIcon-root': {
+    color: '#94a3b8',
+  },
+}}
 />
 
                 <TextField
@@ -253,57 +257,61 @@ export default function Login() {
     ),
   }}
   sx={{
-    '& .MuiOutlinedInput-root': {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '14px !important',
+    background: 'rgba(15, 23, 42, 0.85) !important',
+    backdropFilter: 'blur(12px)',
+    color: '#fff !important',
+
+    '& input': {
+      color: '#fff !important',
+      WebkitTextFillColor: '#fff',
+    },
+
+    '& textarea': {
+      color: '#fff !important',
+      WebkitTextFillColor: '#fff',
+    },
+
+    // Autofill fix
+    '& input:-webkit-autofill': {
+      WebkitBoxShadow: '0 0 0 1000px rgba(15,23,42,0.95) inset !important',
+      WebkitTextFillColor: '#ffffff !important',
+      caretColor: '#ffffff',
       borderRadius: '14px',
-      color: '#ffffff',
-      background:
-        'linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.75))',
-      backdropFilter: 'blur(10px)',
-      transition: 'all 0.3s ease',
-
-      '& input': {
-        color: '#ffffff',
-      },
-
-      '& input::placeholder': {
-        color: '#94a3b8',
-        opacity: 1,
-      },
-
-      '& input:-webkit-autofill': {
-        WebkitBoxShadow: '0 0 0 100px rgba(15,23,42,0.95) inset',
-        WebkitTextFillColor: '#ffffff',
-        caretColor: '#ffffff',
-        borderRadius: '14px',
-        transition: 'background-color 5000s ease-in-out 0s',
-      },
-
-      '& fieldset': {
-        borderColor: 'rgba(255,255,255,0.08)',
-      },
-
-      '&:hover fieldset': {
-        borderColor: '#fbbf24',
-      },
-
-      '&.Mui-focused': {
-        boxShadow: '0 0 0 3px rgba(251,191,36,0.15)',
-      },
-
-      '&.Mui-focused fieldset': {
-        borderColor: '#fbbf24',
-        borderWidth: '1.5px',
-      },
+      transition: 'background-color 9999s ease-in-out 0s',
     },
 
-    '& .MuiInputLabel-root': {
-      color: '#94a3b8',
+    '& fieldset': {
+      borderColor: 'rgba(255,255,255,0.08) !important',
     },
 
-    '& .MuiInputLabel-root.Mui-focused': {
-      color: '#fbbf24',
+    '&:hover fieldset': {
+      borderColor: '#fbbf24 !important',
     },
-  }}
+
+    '&.Mui-focused fieldset': {
+      borderColor: '#fbbf24 !important',
+      boxShadow: '0 0 0 3px rgba(251,191,36,0.15)',
+    },
+  },
+
+  '& .MuiInputBase-input': {
+    color: '#fff !important',
+  },
+
+  '& .MuiInputLabel-root': {
+    color: '#94a3b8 !important',
+  },
+
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: '#fbbf24 !important',
+  },
+
+  '& .MuiSvgIcon-root': {
+    color: '#94a3b8',
+  },
+}}
 />
 
                 <Button
