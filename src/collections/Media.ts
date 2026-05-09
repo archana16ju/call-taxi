@@ -82,8 +82,8 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: 'public/media',
-    adminThumbnail: 'thumbnail',
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+
     imageSizes: [
       {
         name: 'thumbnail',
@@ -92,5 +92,6 @@ export const Media: CollectionConfig = {
         position: 'center',
       },
     ],
+    adminThumbnail: 'thumbnail',
   },
 }

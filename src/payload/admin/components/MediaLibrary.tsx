@@ -9,7 +9,6 @@ import {
   Stack,
   TextField,
   InputAdornment,
-  Grid,
   Tabs,
   Tab,
   Card,
@@ -22,7 +21,14 @@ import {
   Avatar,
   Divider,
   MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material'
+
 
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
@@ -33,6 +39,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import InfoIcon from '@mui/icons-material/Info'
 import LinkIcon from '@mui/icons-material/Link'
+import Grid from '@mui/material/Grid'
+
 
 type MediaAsset = {
   id: string
@@ -54,6 +62,9 @@ export default function MediaLibrary() {
   const [searchTerm, setSearchTerm] = useState('')
   const [openDrawer, setOpenDrawer] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [bulkFiles, setBulkFiles] = useState<File[]>([])
+
 
   const [form, setForm] = useState({
     title: '',
@@ -86,41 +97,50 @@ export default function MediaLibrary() {
     })
   }, [assets, tabValue, searchTerm])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setForm({ ...form, file, preview: URL.createObjectURL(file) })
-    }
-  }
+ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]
+  if (!file) return
+
+  const previewUrl = URL.createObjectURL(file)
+
+  setForm(prev => ({
+    ...prev,
+    file,
+    preview: previewUrl,
+  }))
+}
 
   const handleUpload = async () => {
-    if (!form.file) return
-    setUploading(true)
-    
-    const formData = new FormData()
-    formData.append('file', form.file)
-    formData.append('title', form.title || form.file.name)
-    formData.append('alt', form.alt || form.title || form.file.name)
-    formData.append('category', form.category)
+  if (!form.file) return
 
-    try {
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      })
-      if (res.ok) {
-        setOpenDrawer(false)
-        setForm({ title: '', alt: '', category: 'other', file: null, preview: '' })
-        fetchAssets()
-      } else {
-        const err = await res.json()
-        alert('Upload failed: ' + (err.errors?.[0]?.message || 'Unknown error'))
-      }
-    } catch (e) { console.error(e) } finally {
-      setUploading(false)
+  setUploading(true)
+
+  const formData = new FormData()
+
+  const altValue =
+    form.alt && form.alt.trim() !== ''
+      ? form.alt
+      : form.file.name || 'image'
+
+  formData.append('file', form.file)
+  formData.append('title', form.title || form.file.name)
+  formData.append('alt', altValue)
+  formData.append('category', form.category)
+
+  try {
+    const res = await fetch('/api/media', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    })
+
+    if (!res.ok) {
+      console.error(await res.text())
     }
+  } finally {
+    setUploading(false)
   }
+}
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes'
@@ -129,6 +149,61 @@ export default function MediaLibrary() {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
   }
+
+  const handleDelete = async (id: string) => {
+  const confirm = window.confirm('Delete this asset?')
+  if (!confirm) return
+
+  try {
+    const res = await fetch(`/api/media/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    })
+
+    if (res.ok) {
+      setAssets(prev => prev.filter(a => a.id !== id))
+    } else {
+      console.error(await res.text())
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+const handleBulkFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = Array.from(e.target.files || [])
+  setBulkFiles(files)
+}
+const handleBulkUpload = async () => {
+  if (!bulkFiles.length) return
+
+  setUploading(true)
+
+  try {
+    for (const file of bulkFiles) {
+      const formData = new FormData()
+
+      formData.append('file', file)
+      formData.append('title', file.name)
+      formData.append('alt', file.name)
+      formData.append('category', 'other')
+
+      const res = await fetch('/api/media', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      })
+
+      if (!res.ok) {
+        console.error(await res.text())
+      }
+    }
+
+    await fetchAssets()
+    setBulkFiles([])
+  } finally {
+    setUploading(false)
+  }
+}
 
   return (
     <Box sx={{ p: 4, bgcolor: '#f8fafc', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
@@ -165,87 +240,189 @@ export default function MediaLibrary() {
               <Typography variant="h5" fontWeight={800} color="#0f172a" mb={1}>Fleet Asset Library</Typography>
               <Typography variant="body2" color="#64748b">Manage and optimize high-resolution vehicle and logistics media.</Typography>
             </Box>
-            <Button variant="contained" startIcon={<CloudUploadIcon />} sx={{ bgcolor: '#0f172a', textTransform: 'none', px: 4, py: 1.5, borderRadius: 2 }}>Bulk Upload</Button>
-          </Paper>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: 3, borderRadius: 3, bgcolor: '#eef2ff', border: '1px solid #e0e7ff', boxShadow: 'none' }}>
-            <Typography variant="caption" fontWeight={700} color="#4f46e5">OPTIMIZATION QUEUE</Typography>
-            <Typography variant="h3" fontWeight={800} color="#1e1b4b" my={1}>142</Typography>
-            <LinearProgress variant="determinate" value={60} sx={{ height: 6, borderRadius: 3, bgcolor: '#e0e7ff', '& .MuiLinearProgress-bar': { bgcolor: '#4f46e5' } }} />
+             <Button
+  variant="contained"
+  component="label"
+   sx={{ bgcolor: '#0f172a', color: '#fff', textTransform: 'none', fontWeight: 600, px: 3, borderRadius: 2 }}
+  startIcon={<CloudUploadIcon />}
+>
+  Bulk Upload
+  <input
+    type="file"
+    hidden
+    multiple
+    onChange={handleBulkFileChange}
+    accept="image/*"
+  />
+</Button>
+
+{/* 👇 THIS GOES HERE */}
+{bulkFiles.length > 0 && (
+  <Stack direction="row" spacing={1} mt={2} flexWrap="wrap">
+    {bulkFiles.map((file, i) => (
+      <img
+        key={i}
+        src={URL.createObjectURL(file)}
+        style={{
+          width: 60,
+          height: 60,
+          objectFit: 'cover',
+          borderRadius: 6,
+        }}
+      />
+    ))}
+  </Stack>
+)}
           </Paper>
         </Grid>
       </Grid>
 
       {/* TABS & SORT */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
-        <Tabs 
-          value={tabValue} 
-          onChange={(_, val) => setTabValue(val)}
-          sx={{ 
-            '& .MuiTabs-indicator': { display: 'none' },
-            '& .MuiTab-root': { 
-              textTransform: 'none', 
-              fontWeight: 700, 
-              color: '#64748b', 
-              minWidth: 'auto', 
-              px: 3,
-              borderRadius: 2,
-              mr: 1,
-              '&.Mui-selected': { bgcolor: '#0f172a', color: '#fff' }
-            } 
-          }}
-        >
-          <Tab label="All Assets" />
-          <Tab label="Vehicles" />
-          <Tab label="Drivers" />
-          <Tab label="Banners" />
-        </Tabs>
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Typography variant="caption" color="#64748b" fontWeight={600}>Sort:</Typography>
-          <Button endIcon={<FilterListIcon sx={{ transform: 'rotate(180deg)' }} />} sx={{ color: '#0f172a', textTransform: 'none', fontWeight: 600 }}>Recent First</Button>
-        </Stack>
-      </Stack>
+
+     <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
+
+  <Tabs
+    value={tabValue}
+    onChange={(_, val) => setTabValue(val)}
+    sx={{
+      '& .MuiTabs-indicator': { display: 'none' },
+      '& .MuiTab-root': {
+        textTransform: 'none',
+        fontWeight: 700,
+        color: '#64748b',
+        px: 3,
+        borderRadius: 2,
+        mr: 1,
+        '&.Mui-selected': { bgcolor: '#0f172a', color: '#fff' }
+      }
+    }}
+  >
+    <Tab label="All Assets" />
+    <Tab label="Vehicles" />
+    <Tab label="Drivers" />
+    <Tab label="Banners" />
+  </Tabs>
+
+  {/* VIEW TOGGLE */}
+  <Stack direction="row" spacing={1}>
+    <Button
+      variant={viewMode === 'grid' ? 'contained' : 'outlined'}
+      onClick={() => setViewMode('grid')}
+      sx={{ textTransform: 'none' }}
+    >
+      Grid
+    </Button>
+
+    <Button
+      variant={viewMode === 'list' ? 'contained' : 'outlined'}
+      onClick={() => setViewMode('list')}
+      sx={{ textTransform: 'none' }}
+    >
+      List
+    </Button>
+  </Stack>
+
+</Stack>
 
       {/* GRID */}
-      <Grid container spacing={3}>
-        {filteredAssets.map(asset => (
-          <Grid size={{ xs: 12, sm: 6, md: 2.4 }} key={asset.id}>
-            <Card sx={{ borderRadius: 3, border: '1px solid #e2e8f0', boxShadow: 'none', position: 'relative', overflow: 'hidden', '&:hover': { borderColor: '#3b82f6' } }}>
-              <Box sx={{ position: 'relative' }}>
-                <CardMedia
-                  component="img"
-                  height="160"
-                  image={asset.url}
-                  alt={asset.alt}
-                  sx={{ objectFit: 'cover' }}
-                />
-                <Chip 
-                  label="OPTIMIZED" 
-                  size="small" 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: 10, 
-                    right: 10, 
-                    bgcolor: 'rgba(220, 252, 231, 0.9)', 
-                    color: '#166534', 
-                    fontWeight: 700, 
-                    fontSize: 8,
-                    backdropFilter: 'blur(4px)'
-                  }} 
-                />
-              </Box>
-              <CardContent sx={{ p: 2 }}>
-                <Typography variant="caption" fontWeight={700} color="#0f172a" noWrap display="block" mb={0.5}>{asset.title || asset.filename.toUpperCase()}</Typography>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="caption" color="#64748b">{formatSize(asset.filesize)}</Typography>
-                  <Typography variant="caption" color="#64748b">{asset.width} × {asset.height}</Typography>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+      
+        {/* ASSETS VIEW */}
+{viewMode === 'grid' ? (
+  <Grid container spacing={3}>
+    {filteredAssets.map(asset => (
+       <Grid xs={12} sm={6} md={3} key={asset.id}>
+        <Card sx={{ borderRadius: 3, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
+          <CardMedia
+            component="img"
+            height="160"
+            image={asset.url}
+            alt={asset.alt}
+          />
+
+          <CardContent>
+            <Typography fontWeight={700} noWrap>
+              {asset.title || asset.filename}
+            </Typography>
+
+            <Stack direction="row" justifyContent="space-between" mt={1}>
+              <Typography variant="caption">
+                {formatSize(asset.filesize)}
+              </Typography>
+              <Typography variant="caption">
+                {asset.width} × {asset.height}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" spacing={1} mt={2}>
+              <Button size="small" variant="outlined">
+                Edit
+              </Button>
+
+              <Button
+                size="small"
+                color="error"
+                variant="outlined"
+                onClick={() => handleDelete(asset.id)}
+              >
+                Delete
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
       </Grid>
+    ))}
+  </Grid>
+) : (
+
+  <TableContainer component={Paper} sx={{ borderRadius: 3 }}>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>Preview</TableCell>
+        <TableCell>Title</TableCell>
+        <TableCell>Size</TableCell>
+        <TableCell>Dimensions</TableCell>
+        <TableCell>Actions</TableCell>
+      </TableRow>
+    </TableHead>
+
+    <TableBody>
+      {filteredAssets.map(asset => (
+        <TableRow key={asset.id}>
+          <TableCell>
+            <img
+              src={asset.url}
+              style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }}
+            />
+          </TableCell>
+
+          <TableCell>{asset.title || asset.filename}</TableCell>
+
+          <TableCell>{formatSize(asset.filesize)}</TableCell>
+
+          <TableCell>
+            {asset.width} × {asset.height}
+          </TableCell>
+
+          <TableCell>
+            <Stack direction="row" spacing={1}>
+              <Button size="small" variant="outlined">Edit</Button>
+              <Button
+                size="small"
+                color="error"
+                variant="outlined"
+                onClick={() => handleDelete(asset.id)}
+              >
+                Delete
+              </Button>
+            </Stack>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+)}
 
       {/* CREATE ASSET DRAWER */}
       <Drawer anchor="right" open={openDrawer} onClose={() => setOpenDrawer(false)} PaperProps={{ sx: { width: '85%', bgcolor: '#f8fafc' } }}>
@@ -282,7 +459,13 @@ export default function MediaLibrary() {
                   <Stack direction="row" spacing={2} justifyContent="center">
                     <Button variant="contained" component="label" sx={{ bgcolor: '#0f172a', textTransform: 'none', borderRadius: 2 }}>
                       Select file
-                      <input type="file" hidden onChange={handleFileChange} accept="image/*" />
+                      <input
+                       type="file"
+                      hidden
+                      multiple
+                      onChange={handleBulkFileChange}
+                      accept="image/*"
+                      />
                     </Button>
                     <Button variant="outlined" startIcon={<LinkIcon />} sx={{ borderColor: '#e2e8f0', color: '#0f172a', textTransform: 'none', borderRadius: 2 }}>Paste URL</Button>
                   </Stack>

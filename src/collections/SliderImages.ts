@@ -21,9 +21,19 @@ export const SliderImages: CollectionConfig = {
     delete: () => true,
   },
   upload: {
-  staticDir: 'slider-images',
-  mimeTypes: ['image/*'],
-},
+    staticDir: 'public/media',
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 300,
+        height: 300,
+        position: 'center',
+      },
+    ],
+    adminThumbnail: 'thumbnail',
+  },
   fields: [
     {
       name: 'alt',
