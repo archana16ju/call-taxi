@@ -40,11 +40,14 @@ const MapComponent = dynamic(() => import('@/payload/admin/components/MapCompone
 export default function LiveTrackingPage() {
   const [loading, setLoading] = useState(true)
   const [drivers, setDrivers] = useState<any[]>([])
-  const [routes, setRoutes] = useState<Record<string, any>>({})
 
   const fetchData = async () => {
     try {
       const driversRes = await fetch('/api/drivers?where[location][exists]=true&limit=100')
+
+if (!driversRes.ok) {
+  throw new Error('Failed to fetch drivers')
+}
 
       const driversData = await driversRes.json()
 
@@ -52,26 +55,6 @@ export default function LiveTrackingPage() {
 
       setDrivers(safeDrivers)
 
-      const activeRoutes: Record<string, any> = {}
-
-      for (const driver of safeDrivers) {
-        try {
-          if (!driver.location || !Array.isArray(driver.location) || driver.location.length < 2) {
-            continue
-          }
-
-          const lat = Number(driver.location[1])
-          const lng = Number(driver.location[0])
-
-          if (isNaN(lat) || isNaN(lng)) continue
-
-          activeRoutes[driver.id] = [[lat, lng]]
-        } catch (err) {
-          console.log(err)
-        }
-      }
-
-      setRoutes(activeRoutes)
     } catch (err) {
       console.error('Live tracking error:', err)
     } finally {
@@ -88,6 +71,8 @@ export default function LiveTrackingPage() {
 
     return () => clearInterval(interval)
   }, [])
+
+  
 
   if (loading) {
     return (
@@ -223,7 +208,7 @@ export default function LiveTrackingPage() {
             <Stack spacing={2}>
               {drivers.map((driver, i) => (
                 <Paper
-                  key={i}
+                  key={driver.id}
                   sx={{
                     p: 2,
                     borderRadius: '12px',
@@ -250,7 +235,7 @@ export default function LiveTrackingPage() {
                     <Chip
                       icon={<NearMeIcon />}
                       label={driver.status || 'active'}
-                      color="success"
+                     color={driver.status === 'active' ? 'success' : 'default'}
                       size="small"
                     />
                   </Stack>
