@@ -110,10 +110,12 @@ function DriverForm({
     try {
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('alt', form.name || 'Driver Photo')
-      formData.append('title', `Driver - ${form.name || 'Unknown'}`)
-      formData.append('category', 'drivers')
-      if (driverId) formData.append('sourceId', driverId)
+      formData.append('_payload', JSON.stringify({
+        alt: form.name || 'Driver Photo',
+        title: `Driver - ${form.name || 'Unknown'}`,
+        category: 'drivers',
+        ...(driverId ? { sourceId: driverId } : {}),
+      }))
 
       const res = await fetch('/api/media', {
         method: 'POST',

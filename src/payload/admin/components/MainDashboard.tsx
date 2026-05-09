@@ -109,7 +109,34 @@ const StatCard = ({ title, value, trend, trendValue, icon, color }: any) => (
 
 export default function MainDashboard() {
   const [tabValue, setTabValue] = React.useState(0)
+  const [searchTerm, setSearchTerm] = React.useState('')
+const [liveDateTime, setLiveDateTime] = React.useState('')
+
+React.useEffect(() => {
+  const updateClock = () => {
+    const now = new Date()
+
+    setLiveDateTime(
+      now.toLocaleString('en-IN', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }),
+    )
+  }
+
+  updateClock()
+
+  const timer = setInterval(updateClock, 1000)
+
+  return () => clearInterval(timer)
+}, [])
   const [stats, setStats] = React.useState({
+    
     totalBookings: '0',
     completedBookings: '0',
     ongoingBookings: '0',
@@ -290,65 +317,186 @@ export default function MainDashboard() {
           border-radius: 12px;
         }
       `}</style>
-      {/* White Top Bar */}
-      <Paper elevation={0} sx={{ 
-        px: 3,
-        py: 1.5, 
-        mb: 3, 
-        mx: 0,
-        mt: 0, 
-        borderRadius: 0, 
-        backgroundColor: '#ffffff', 
-        borderBottom: '1px solid #e2e8f0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-      }}>
-        <Stack direction="row" spacing={3} alignItems="center" sx={{ flexGrow: 1 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800, color: '#1e293b' }}>Dashboard</Typography>
-          <TextField 
-            placeholder="Search anything..." 
-            size="small" 
-            variant="outlined"
-            InputProps={{
-              startAdornment: <SearchIcon sx={{ color: '#94a3b8', mr: 1, fontSize: '1.2rem' }} />,
-              sx: { borderRadius: '10px', backgroundColor: '#f8fafc', '& fieldset': { border: 'none' } }
-            }}
-            sx={{ width: 300 }}
-          />
-        </Stack>
+      {/* Modern Top Navbar */}
+<Paper
+  elevation={0}
+  sx={{
+    px: 3,
+    py: 1.5,
+    mb: 3,
+    borderRadius: 0,
+    background: '#ffffff',
+    borderBottom: '1px solid #e2e8f0',
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+  }}
+>
+  <Stack
+    direction={{ xs: 'column', md: 'row' }}
+    spacing={2}
+    alignItems={{ xs: 'stretch', md: 'center' }}
+    justifyContent="space-between"
+  >
+    {/* Left Side */}
+    <Stack
+      direction={{ xs: 'column', md: 'row' }}
+      spacing={2}
+      alignItems={{ xs: 'stretch', md: 'center' }}
+      sx={{ flexGrow: 1 }}
+    >
+      <Typography
+        variant="h5"
+        sx={{
+          fontWeight: 900,
+          color: '#0f172a',
+          letterSpacing: '-0.5px',
+        }}
+      >
+        Main Dashboard
+      </Typography>
 
-        <Stack direction="row" spacing={3} alignItems="center">
-          <Paper elevation={0} sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            px: 2, 
-            py: 0.8, 
-            borderRadius: '10px', 
-            backgroundColor: '#f8fafc', 
-            border: '1px solid #e2e8f0' 
-          }}>
-            <CalendarTodayIcon sx={{ fontSize: '0.9rem', mr: 1, color: '#64748b' }} />
-            <Typography variant="caption" sx={{ fontWeight: 700, color: '#1e293b' }}>20 May - 26 May 2025</Typography>
-          </Paper>
-          
-          <Stack direction="row" spacing={1.5} alignItems="center">
-            <Badge badgeContent={12} color="error">
-              <IconButton size="small" sx={{ backgroundColor: '#f8fafc' }}><NotificationsNoneIcon /></IconButton>
-            </Badge>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Avatar sx={{ width: 36, height: 36, backgroundColor: '#fbbf24', color: '#000', fontWeight: 800, fontSize: '0.8rem' }}>AD</Avatar>
-              <Box>
-                <Typography variant="caption" sx={{ fontWeight: 900, color: '#1e293b', display: 'block', lineHeight: 1 }}>Administrator</Typography>
-                <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.65rem' }}>System Control</Typography>
-              </Box>
-            </Stack>
-          </Stack>
+      {/* Search */}
+      <TextField
+        fullWidth
+        size="small"
+        placeholder="Search bookings, drivers, users..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        sx={{
+          maxWidth: 420,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '14px',
+            backgroundColor: '#f8fafc',
+          },
+        }}
+        InputProps={{
+          startAdornment: (
+            <SearchIcon
+              sx={{
+                color: '#64748b',
+                mr: 1,
+              }}
+            />
+          ),
+        }}
+      />
+    </Stack>
+
+    {/* Right Side */}
+    <Stack direction="row" spacing={2} alignItems="center">
+      {/* Live Date */}
+      <Paper
+        elevation={0}
+        sx={{
+          px: 2,
+          py: 1,
+          borderRadius: '12px',
+          backgroundColor: '#f8fafc',
+          border: '1px solid #e2e8f0',
+        }}
+      >
+        <Stack direction="row" spacing={1} alignItems="center">
+          <CalendarTodayIcon
+            sx={{
+              fontSize: 18,
+              color: '#475569',
+            }}
+          />
+
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 800,
+              color: '#0f172a',
+              fontSize: '0.72rem',
+            }}
+          >
+            {liveDateTime}
+          </Typography>
         </Stack>
       </Paper>
+
+      {/* Notifications */}
+      <Link href="/admin/collections/alerts">
+        <IconButton
+          sx={{
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            '&:hover': {
+              backgroundColor: '#eff6ff',
+            },
+          }}
+        >
+          <Badge badgeContent={unreadCount} color="error">
+            <NotificationsNoneIcon />
+          </Badge>
+        </IconButton>
+      </Link>
+
+      {/* Administrator */}
+      <Link
+        href="/admin/collections/users"
+        style={{ textDecoration: 'none' }}
+      >
+        <Stack
+          direction="row"
+          spacing={1.2}
+          alignItems="center"
+          sx={{
+            px: 1.2,
+            py: 0.6,
+            borderRadius: '12px',
+            cursor: 'pointer',
+            transition: '0.2s',
+            '&:hover': {
+              backgroundColor: '#f8fafc',
+            },
+          }}
+        >
+          <Avatar
+            sx={{
+              width: 40,
+              height: 40,
+              background:
+                'linear-gradient(135deg,#3b82f6,#6366f1)',
+              fontWeight: 900,
+              fontSize: '0.8rem',
+            }}
+          >
+            AD
+          </Avatar>
+
+          <Box>
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: 900,
+                color: '#0f172a',
+                display: 'block',
+                lineHeight: 1.2,
+              }}
+            >
+              Administrator
+            </Typography>
+
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#64748b',
+                fontSize: '0.65rem',
+              }}
+            >
+              Manage Users
+            </Typography>
+          </Box>
+        </Stack>
+      </Link>
+    </Stack>
+  </Stack>
+</Paper>
+
+
       <Grid container spacing={3} sx={{ px: 3, pb: 3 }}>
         {/* Stat Cards - Exactly like Image */}
         <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
