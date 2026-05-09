@@ -2,7 +2,6 @@ import type { CollectionConfig } from 'payload'
 
 export const SliderImages: CollectionConfig = {
   slug: 'slider-images',
-  upload: true,
   admin: {
     group: 'Collection',
     useAsTitle: 'alt',
@@ -13,6 +12,7 @@ export const SliderImages: CollectionConfig = {
         },
       },
     },
+    
   },
   access: {
     read: () => true,
@@ -20,6 +20,10 @@ export const SliderImages: CollectionConfig = {
     update: () => true,
     delete: () => true,
   },
+  upload: {
+  staticDir: 'slider-images',
+  mimeTypes: ['image/*'],
+},
   fields: [
     {
       name: 'alt',

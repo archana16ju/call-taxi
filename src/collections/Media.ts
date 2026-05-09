@@ -72,7 +72,7 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    staticDir: 'public/media',
+    staticDir: 'media',
     adminThumbnail: 'thumbnail',
     mimeTypes: ['image/*'],
   },
