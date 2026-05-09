@@ -48,9 +48,8 @@ export default function VoiceUI() {
         });
 
         const data = await response.json();
-
         speak(data.reply || "Your booking is confirmed");
-      } catch (err) {
+      } catch {
         speak("Error processing booking. Please try again.");
       }
     };
@@ -58,7 +57,6 @@ export default function VoiceUI() {
     recognition.onend = () => setListening(false);
 
     recognition.start();
-
     recognitionRef.current = recognition;
   };
 
@@ -67,16 +65,25 @@ export default function VoiceUI() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white flex items-center justify-center">
-      <div className="w-[420px] p-6 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl">
+    <div className="min-h-screen flex items-center justify-center bg-[#050816] relative overflow-hidden text-white">
 
-        <h1 className="text-xl font-bold mb-4">
-          Voice AI Booking
+      {/* glowing background effects */}
+      <div className="absolute w-[400px] h-[400px] bg-cyan-500/30 blur-[120px] top-10 left-10 rounded-full"></div>
+      <div className="absolute w-[400px] h-[400px] bg-purple-500/30 blur-[120px] bottom-10 right-10 rounded-full"></div>
+
+      <div className="w-[420px] p-6 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-2xl z-10">
+
+        {/* TITLE */}
+        <h1 className="text-2xl font-bold text-center mb-2">
+          🎤 Voice AI Booking
         </h1>
+        <p className="text-center text-gray-400 text-sm mb-5">
+          Speak naturally — AI will handle your ride 🚖
+        </p>
 
         {/* LANGUAGE */}
         <select
-          className="w-full mb-4 bg-black/30 p-2 rounded-xl"
+          className="w-full mb-4 bg-black/40 p-3 rounded-xl outline-none border border-white/10"
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
         >
@@ -85,36 +92,47 @@ export default function VoiceUI() {
           <option value="hi-IN">Hindi</option>
         </select>
 
-        {/* TEXT */}
-        <div className="p-4 bg-black/30 rounded-xl mb-4 text-sm">
-          {text || "Speak something..."}
+        {/* TRANSCRIPT BOX */}
+        <div className="p-4 bg-black/40 rounded-xl mb-5 min-h-[80px] text-sm border border-white/10">
+          {text || "🎧 Waiting for your voice command..."}
         </div>
 
+        {/* STATUS */}
         {text && (
-          <div className="mt-4 p-3 bg-green-500/20 rounded-xl text-sm">
-            🚖 Processing booking: {text}
+          <div className="mb-4 p-3 bg-green-500/10 border border-green-400/20 rounded-xl text-sm">
+            🚖 AI Processing: <span className="text-green-300">{text}</span>
           </div>
         )}
 
-        {/* MIC BUTTON */}
-        <button
-          onClick={() => (listening ? stop() : start())}
-          className={`w-full h-24 rounded-full flex items-center justify-center transition ${
-            listening ? "bg-red-500 animate-pulse" : "bg-cyan-400"
-          }`}
-        >
-          <Mic size={36} />
-        </button>
+        {/* MIC BUTTON (GLOW ORB STYLE) */}
+        <div className="flex justify-center mb-5">
+          <button
+            onClick={() => (listening ? stop() : start())}
+            className={`relative w-28 h-28 rounded-full flex items-center justify-center transition-all duration-300 ${
+              listening
+                ? "bg-red-500 shadow-[0_0_40px_rgba(255,0,0,0.6)] animate-pulse"
+                : "bg-cyan-400 shadow-[0_0_40px_rgba(0,255,255,0.4)] hover:scale-110"
+            }`}
+          >
+            <Mic size={34} />
+
+            {/* pulse ring */}
+            <span
+              className={`absolute inset-0 rounded-full ${
+                listening ? "animate-ping bg-red-400/30" : ""
+              }`}
+            ></span>
+          </button>
+        </div>
 
         {/* SPEAK BUTTON */}
         <button
           onClick={() => speak(text)}
-          className="mt-4 w-full flex items-center justify-center gap-2 bg-white/10 py-3 rounded-xl"
+          className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 transition py-3 rounded-xl border border-white/10"
         >
           <Volume2 size={18} />
-          Play Response
+          Play AI Response
         </button>
-
       </div>
     </div>
   );
