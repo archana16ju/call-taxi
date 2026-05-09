@@ -15,11 +15,32 @@ export const Media: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      ({ data }) => {
-        // Auto-set title from alt if not provided
+      ({ data, req }) => {
+        // Auto title from alt
         if (!data.title && data.alt) {
           data.title = data.alt
         }
+
+        // 🧠 AUTO CATEGORY DETECTION
+        const text = `${data.title || ''} ${data.alt || ''}`.toLowerCase()
+
+        if (text.includes('driver') || text.includes('person') || text.includes('profile')) {
+          data.category = 'drivers'
+        } else if (
+          text.includes('car') ||
+          text.includes('vehicle') ||
+          text.includes('truck') ||
+          text.includes('bike')
+        ) {
+          data.category = 'vehicles'
+        } else if (text.includes('banner') || text.includes('ad')) {
+          data.category = 'banners'
+        } else if (text.includes('slider') || text.includes('carousel')) {
+          data.category = 'sliders'
+        } else {
+          data.category = 'other'
+        }
+
         return data
       },
     ],
@@ -41,18 +62,6 @@ export const Media: CollectionConfig = {
       required: true,
     },
     {
-      name: 'category',
-      type: 'select',
-      options: [
-        { label: 'Drivers', value: 'drivers' },
-        { label: 'Vehicles', value: 'vehicles' },
-        { label: 'Banners', value: 'banners' },
-        { label: 'Sliders', value: 'sliders' },
-        { label: 'Other', value: 'other' },
-      ],
-      defaultValue: 'other',
-    },
-    {
       name: 'sourceId',
       type: 'text',
       admin: {
@@ -72,8 +81,16 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    staticDir: 'media',
+    staticDir: 'public/media',
     adminThumbnail: 'thumbnail',
-    mimeTypes: ['image/*'],
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 300,
+        height: 300,
+        position: 'center',
+      },
+    ],
   },
 }

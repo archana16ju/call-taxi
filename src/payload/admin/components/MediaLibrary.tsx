@@ -38,7 +38,7 @@ type MediaAsset = {
   id: string
   title?: string
   alt: string
-  category: 'drivers' | 'vehicles' | 'banners' | 'other'
+  category: 'drivers' | 'vehicles' | 'sliders' | 'other'
   filename: string
   mimeType: string
   filesize: number
