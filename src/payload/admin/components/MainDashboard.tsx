@@ -366,7 +366,7 @@ export default function MainDashboard() {
                 letterSpacing: '-0.5px',
               }}
             >
-              Main Dashboard
+             Dashboard Overview
             </Typography>
 
             {/* Search */}
