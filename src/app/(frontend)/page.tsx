@@ -137,7 +137,6 @@ export default async function Page() {
           <TariffSection tariffs={tariffs} />
         </Box>
       </Box>
-      'use client'
     <div
       style={{
         minHeight: '100vh',
