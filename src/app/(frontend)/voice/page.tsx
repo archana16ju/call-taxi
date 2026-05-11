@@ -1,229 +1,233 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
-  Mic,
-  Globe,
-  Car,
-  MessageCircle,
-  Play,
-  Volume2,
-  ChevronDown,
-} from "lucide-react";
+  Box,
+  Typography,
+  Paper,
+  Stack,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  IconButton,
+  Chip,
+  Button,
+} from "@mui/material";
 
-export default function VoicePage() {
-  const recognitionRef = useRef<any>(null);
+import MicIcon from "@mui/icons-material/Mic";
+import KeyboardVoiceIcon from "@mui/icons-material/KeyboardVoice";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import LanguageIcon from "@mui/icons-material/Language";
 
-  const [listening, setListening] = useState(false);
-  const [status, setStatus] = useState("Idle");
-
+export default function VoiceBookingPage() {
   const [language, setLanguage] = useState("en-US");
-
-  const [userText, setUserText] = useState("");
-  const [aiReply, setAiReply] = useState(
-    "Your AI assistant is ready."
-  );
-
-  const languages = [
-    { label: "English (US)", value: "en-US" },
-    { label: "Hindi", value: "hi-IN" },
-    { label: "Tamil", value: "ta-IN" },
-    { label: "Telugu", value: "te-IN" },
-    { label: "Malayalam", value: "ml-IN" },
-  ];
-
-  const speak = (msg: string) => {
-    const speech = new SpeechSynthesisUtterance(msg);
-    speech.lang = language;
-    window.speechSynthesis.speak(speech);
-  };
-
-  const startVoice = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) return;
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = language;
-
-    recognition.onstart = () => {
-      setListening(true);
-      setStatus("Listening...");
-    };
-
-    recognition.onend = () => {
-      setListening(false);
-      setStatus("Idle");
-    };
-
-    recognition.onerror = () => {
-      setListening(false);
-      setStatus("Error");
-    };
-
-    recognition.onresult = async (e: any) => {
-      const transcript = e.results[0][0].transcript;
-
-      setUserText(transcript);
-      setStatus("Processing...");
-
-      try {
-        const res = await fetch("/api/ai-chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: transcript, language }),
-        });
-
-        const data = await res.json();
-
-        setAiReply(data.reply || "Booking confirmed");
-        speak(data.reply);
-
-        setStatus("Completed");
-      } catch {
-        setAiReply("Error processing request");
-        setStatus("Failed");
-      }
-    };
-
-    recognition.start();
-    recognitionRef.current = recognition;
-  };
-
-  const stopVoice = () => {
-    recognitionRef.current?.stop();
-    setListening(false);
-    setStatus("Stopped");
-  };
+  const [listening, setListening] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#05060A] flex items-center justify-center px-4 relative overflow-hidden">
-
-      {/* BACKGROUND GLOW ORBS */}
-      <div className="absolute w-[600px] h-[600px] bg-cyan-500/10 blur-[150px] rounded-full top-[-200px] left-[-200px]" />
-      <div className="absolute w-[600px] h-[600px] bg-purple-500/10 blur-[150px] rounded-full bottom-[-200px] right-[-200px]" />
-
-      {/* FLOATING CENTER CARD */}
-      <div className="relative w-full max-w-3xl">
-
-        <div className="rounded-[32px] border border-cyan-400/20 bg-[#0B0F1A]/80 backdrop-blur-2xl shadow-[0_0_80px_rgba(0,255,255,0.08)] p-8 md:p-10 animate-float">
-
-          {/* HEADER */}
-          <div className="text-center mb-8">
-
-            <h1 className="text-3xl md:text-4xl font-bold text-white">
-              Voice Booking AI
-            </h1>
-
-            <p className="text-cyan-300 mt-2">
-              Futuristic Ride Assistant System
-            </p>
-
-            <div className="mt-3 inline-flex items-center gap-2 text-green-400 text-sm">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              Online
-            </div>
-          </div>
-
-          {/* STATUS */}
-          <div className="bg-[#0F172A] border border-cyan-400/10 rounded-2xl p-4 mb-6 flex justify-between items-center text-sm text-slate-300">
-
-            <span className="text-green-400">{status}</span>
-
-            <span className="text-slate-400">AI Connected</span>
-          </div>
-
-          {/* LANGUAGE */}
-          <div className="mb-6 relative">
-
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="w-full h-14 rounded-2xl bg-[#0F172A] border border-cyan-400/10 px-4 text-white outline-none"
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "radial-gradient(circle at top, #0b1220, #050814)",
+        padding: 2,
+      }}
+    >
+      {/* FIXED SIZE CONTAINER */}
+      <Paper
+        elevation={10}
+        sx={{
+          width: 420,
+          height: 720,
+          borderRadius: 4,
+          p: 3,
+          background: "linear-gradient(180deg, #0f172a, #0b1220)",
+          color: "white",
+          overflow: "hidden",
+          position: "relative",
+        }}
+      >
+        {/* HEADER */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                background: "#0ea5e9",
+              }}
             >
-              {languages.map((l) => (
-                <option key={l.value} value={l.value}>
-                  {l.label}
-                </option>
-              ))}
-            </select>
+              <MicIcon />
+            </Box>
+            <Box>
+              <Typography fontWeight="bold" fontSize={18}>
+                Voice Booking System
+              </Typography>
+              <Typography fontSize={12} color="gray">
+                AI Powered Ride Assistant
+              </Typography>
+            </Box>
+          </Stack>
 
-            <Globe className="absolute right-4 top-4 text-cyan-400" />
-          </div>
+          <Chip
+            label="Online"
+            color="success"
+            size="small"
+            sx={{ fontWeight: "bold" }}
+          />
+        </Stack>
 
-          {/* COMMAND BOX */}
-          <div className="bg-[#0F172A] border border-cyan-400/10 rounded-2xl p-4 mb-6">
-
-            <p className="text-slate-400 text-sm">User Command</p>
-
-            <p className="text-white mt-2">
-              {userText || "Speak something..."}
-            </p>
-
-            <p className="text-cyan-300 text-sm mt-3">
-              AI: {aiReply}
-            </p>
-          </div>
-
-          {/* MIC BUTTON CENTER */}
-          <div className="flex flex-col items-center justify-center relative">
-
-            <div className="absolute w-40 h-40 bg-cyan-400/20 blur-3xl rounded-full animate-pulse" />
-
-            <button
-              onClick={() =>
-                listening ? stopVoice() : startVoice()
-              }
-              className={`relative w-40 h-40 rounded-full flex items-center justify-center border-4 transition-all ${
-                listening
-                  ? "bg-red-500 border-red-300 scale-110"
-                  : "bg-gradient-to-br from-cyan-400 to-purple-500 border-cyan-300 hover:scale-105"
-              }`}
+        {/* AI STATUS BOX */}
+        <Paper
+          sx={{
+            mt: 3,
+            p: 2,
+            borderRadius: 3,
+            background: "rgba(255,255,255,0.05)",
+          }}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                background: "#1e293b",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <Mic size={60} className="text-white" />
-            </button>
+              🚗
+            </Box>
 
-            <p className="text-slate-400 mt-4 text-center">
-              Tap to start voice assistant
-            </p>
-          </div>
+            <Box flex={1}>
+              <Typography fontWeight="bold" color="#38bdf8">
+                Your AI Assistant is ready
+              </Typography>
+              <Typography fontSize={12} color="white">
+                Speak naturally and book your ride easily.
+              </Typography>
+            </Box>
 
-          {/* PLAY RESPONSE */}
-          <div className="mt-8 flex justify-between items-center bg-[#0F172A] border border-cyan-400/10 p-4 rounded-2xl">
+            <Box sx={{ color: "#22c55e" }}>▂▃▅▇▆▃▂</Box>
+          </Stack>
+        </Paper>
 
-            <div className="flex items-center gap-3">
+        {/* LANGUAGE */}
+        <Typography mt={3} fontSize={13}  color="white">
+          Language
+        </Typography>
 
-              <Volume2 className="text-purple-400" />
+        <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+          <InputLabel sx={{  color:"white" }}>Language</InputLabel>
+          <Select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            sx={{ color: "white" }}
+          >
+            <MenuItem value="en-US">English (US)</MenuItem>
+            <MenuItem value="hi-IN">Hindi</MenuItem>
+            <MenuItem value="ta-IN">Tamil</MenuItem>
+          </Select>
+        </FormControl>
 
-              <span className="text-white text-sm">
-                Play AI Response
-              </span>
-            </div>
+        {/* STATUS */}
+        <Paper
+          sx={{
+            mt: 3,
+            p: 2,
+            borderRadius: 3,
+            background: "rgba(255,255,255,0.05)",
+          }}
+        >
+          <Stack direction="row" justifyContent="space-between">
+            <Typography fontSize={13}  color="white">
+              Listening Status
+            </Typography>
+            <Typography fontSize={13} color={listening ? "#22c55e" : "white"}>
+              {listening ? "Listening..." : "Idle"}
+            </Typography>
+          </Stack>
+        </Paper>
 
-            <button
-              onClick={() => speak(aiReply)}
-              className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center"
-            >
-              <Play className="text-white" />
-            </button>
-          </div>
-        </div>
-      </div>
+        {/* COMMAND */}
+        <Paper
+          sx={{
+            mt: 3,
+            p: 2,
+            borderRadius: 3,
+            background: "rgba(255,255,255,0.05)",
+          }}
+        >
+          <Typography fontSize={13}  color="white">
+            Your Command
+          </Typography>
+          <Typography mt={1} fontSize={12} color="#94a3b8">
+            Speak a command to start booking...
+          </Typography>
+        </Paper>
 
-      {/* FLOAT ANIMATION */}
-      <style jsx>{`
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
+        {/* MIC BUTTON */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 4,
+          }}
+        >
+          <Box
+            onClick={() => setListening(!listening)}
+            sx={{
+              width: 120,
+              height: 120,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #06b6d4, #6366f1)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+              boxShadow: "0 0 40px rgba(99,102,241,0.6)",
+            }}
+          >
+            <KeyboardVoiceIcon sx={{ fontSize: 50, color: "white" }} />
+          </Box>
+        </Box>
 
-        @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-          100% { transform: translateY(0px); }
-        }
-      `}</style>
-    </div>
+        <Typography align="center" mt={2} fontWeight="bold">
+          Tap to Start Listening
+        </Typography>
+        <Typography align="center" fontSize={12} color="white">
+          We will detect your voice
+        </Typography>
+
+        {/* AI RESPONSE */}
+        <Paper
+          sx={{
+            mt: 3,
+            p: 2,
+            borderRadius: 3,
+            background: "rgba(255,255,255,0.05)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <VolumeUpIcon />
+          <Typography fontSize={12} flex={1} ml={1}>
+            Play AI Response
+          </Typography>
+          <Button variant="contained" size="small">
+            ▶
+          </Button>
+        </Paper>
+      </Paper>
+    </Box>
   );
 }
