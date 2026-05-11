@@ -544,20 +544,20 @@ export default function UserManagement() {
           variant="contained"
           startIcon={<PersonAddIcon />}
           onClick={openCreate}
-          sx={{
-            textTransform: 'none',
-            backgroundColor: '#0ea5e9',
-            color: '#fff',
-            borderRadius: '10px',
-            px: 2,
-            py: 1,
-            fontWeight: 700,
-            boxShadow: 'none',
+          x={{
+              textTransform: 'none',
+              borderRadius: '12px',
+              px: 2,
+              py: 1,
+              fontWeight: 700,
+              background: 'linear-gradient(135deg,#0f172a 0%,#1e293b 100%)',
+              color: '#fff',
+              boxShadow: '0 6px 20px rgba(15,23,42,0.35)',
 
-            '&:hover': {
-              backgroundColor: '#0284c7',
-            },
-          }}
+              '&:hover': {
+                background: 'linear-gradient(135deg,#1e293b 0%,#334155 100%)',
+              },
+            }}
         >
           Create New User
         </Button>
