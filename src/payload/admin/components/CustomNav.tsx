@@ -117,7 +117,11 @@ export const CustomNav: React.FC = () => {
     <Box
       sx={{
         width: navWidth,
-        height: '100%',
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
+        left: 0,
+        flexShrink: 0, 
         backgroundColor: '#0a192f',
         color: '#ffffff',
         overflowY: 'auto',

@@ -24,7 +24,7 @@ import {
   TextField,
   Badge,
 } from '@mui/material'
-import Grid from '@mui/material/Grid'
+import Grid from '@mui/material/Grid2'
 import {
   LineChart,
   Line,
@@ -317,12 +317,14 @@ export default function MainDashboard() {
 
   return (
     <Box
-      sx={{
-        backgroundColor: 'var(--theme-bg-page)',
-        minHeight: '100%',
-        color: 'var(--theme-text)',
-      }}
-    >
+  sx={{
+    backgroundColor: '#f8fafc',
+    minHeight: '100vh',
+    color: '#0f172a',
+    overflowX: 'hidden',
+    width: '100%',
+  }}
+>
       <LocationTracker />
       <style>{`
         .leaflet-container {
@@ -337,7 +339,7 @@ export default function MainDashboard() {
           px: 3,
           py: 1.5,
           mb: 3,
-          borderRadius: 0,
+          borderRadius: '0 0 16px 16px',
           background: '#ffffff',
           borderBottom: '1px solid #e2e8f0',
           position: 'sticky',
@@ -505,7 +507,7 @@ export default function MainDashboard() {
         </Stack>
       </Paper>
 
-      <Grid container spacing={3} sx={{ px: 3, pb: 3 }}>
+      <Grid container spacing={2} sx={{ px: 3, pb: 3 }}>
         {/* Stat Cards - Exactly like Image */}
         <Grid size={{ xs: 12, sm: 6, lg: 2.4 }}>
           <StatCard
@@ -792,7 +794,15 @@ export default function MainDashboard() {
                 </Button>
               </Stack>
             </Box>
-            <Box sx={{ height: 320, mt: 6 }}>
+            <Box
+              sx={{
+             height: {
+             xs: 260,
+             md: 320,
+            },
+             mt: 6,
+           }}
+             >
               <MapComponent
                 center={[13.0827, 80.2707]}
                 zoom={12}
@@ -990,7 +1000,7 @@ export default function MainDashboard() {
 
         {/* Quick Access Grid - White Icons */}
         <Grid size={{ xs: 12 }}>
-          <Grid container spacing={3} sx={{ mt: 1 }}>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
             {[
               {
                 label: 'Coupons & Discounts',
@@ -1092,7 +1102,7 @@ export default function MainDashboard() {
       </Grid>
 
       {/* Charts Row */}
-      <Grid container spacing={3} sx={{ mt: 1 }}>
+      <Grid container spacing={2} sx={{ mt: 1 }}>
         <Grid size={{ xs: 12, md: 5 }}>
           <Paper
             sx={{
@@ -1152,7 +1162,7 @@ export default function MainDashboard() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 7 }}>
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 6 }}>
               <StatCard
                 title="Total Customers"
