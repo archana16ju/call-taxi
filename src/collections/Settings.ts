@@ -8,7 +8,7 @@ export const Settings: CollectionConfig = {
     components: {
       views: {
         list: {
-          Component: '@/payload/admin/components/Settings#default',
+          Component: '@/payload/admin/components/settings#default',
         },
       },
     },
