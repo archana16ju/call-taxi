@@ -164,21 +164,23 @@ export default buildConfig({
 
   sharp,
 
-  plugins: [
-    payloadCloudPlugin(),
 
-    ...(process.env.BLOB_READ_WRITE_TOKEN
-      ? [
-          vercelBlobStorage({
-            collections: {
-              media: { prefix: 'Call Taxi/Kani Taxi' },
-              'vehicle-images': { prefix: 'Call Taxi/Kani Taxi/Vehicles' },
-              'vehicle-icons': { prefix: 'Call Taxi/Kani Taxi/Icons' },
-              'slider-images': { prefix: 'Call Taxi/Kani Taxi/slider' },
-            },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-          }),
-        ]
-      : []),
-  ],
+  plugins: [
+  payloadCloudPlugin(),
+
+  ...(process.env.BLOB_READ_WRITE_TOKEN
+    ? [
+        vercelBlobStorage({
+          collections: {
+            media: { prefix: 'Call Taxi/Kani Taxi' },
+            'vehicle-images': { prefix: 'Call Taxi/Kani Taxi/Vehicles' },
+            'vehicle-icons': { prefix: 'Call Taxi/Kani Taxi/Icons' },
+            'slider-images': { prefix: 'Call Taxi/Kani Taxi/slider' },
+          },
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+        }),
+      ]
+    : []),
+],
+
 })
