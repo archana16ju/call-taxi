@@ -435,6 +435,7 @@ export default function MainDashboard() {
             {/* Notifications */}
             <Link href="/admin/collections/alerts">
               <IconButton
+              onClick={(e) => setAnchorEl(e.currentTarget)}
                 sx={{
                   backgroundColor: '#f8fafc',
                   border: '1px solid #e2e8f0',

@@ -19,6 +19,7 @@ import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined'
 import AccessTimeFilledOutlinedIcon from '@mui/icons-material/AccessTimeFilledOutlined'
 import LocalTaxiOutlinedIcon from '@mui/icons-material/LocalTaxiOutlined'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
+import Link from 'next/link'
 
 type Props = {
   booking?: any
@@ -133,9 +134,11 @@ const OTPDashboard: React.FC<Props> = ({ booking }) => {
                 >
                   <LocalTaxiOutlinedIcon fontSize="small" />
 
-                  <Typography fontWeight={600}>
-                    {booking?.bookingID || 'N/A'}
-                  </Typography>
+                  <Link href={`/bookings/${booking?.id || ''}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+  <Typography fontWeight={600} sx={{ cursor: 'pointer' }}>
+    {booking?.bookingID || 'N/A'}
+  </Typography>
+</Link>
                 </Paper>
               </Box>
 
@@ -164,9 +167,11 @@ const OTPDashboard: React.FC<Props> = ({ booking }) => {
                 >
                   <PersonOutlineOutlinedIcon fontSize="small" />
 
-                  <Typography fontWeight={600}>
-                    {booking?.customerName || 'Passenger'}
-                  </Typography>
+                  <Link href={`/bookings/${booking?.id || ''}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+  <Typography fontWeight={600} sx={{ cursor: 'pointer' }}>
+    {booking?.customerName || 'Passenger'}
+  </Typography>
+</Link>
                 </Paper>
               </Box>
 
