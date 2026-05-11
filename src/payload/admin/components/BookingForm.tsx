@@ -43,7 +43,7 @@ export type BookingFormData = {
   customer?: string
   driver?: string
   bookingCode?: string
-  ridePreference?: string
+ ridePreference?: string | any
 }
 
 type Props = {
@@ -302,11 +302,16 @@ export default function BookingForm({ initialData, onSave, onCancel, isEditing }
   >
     <MenuItem value="">Select Ride Preference</MenuItem>
 
-    {ridePreferences.map((pref: any) => (
-      <MenuItem key={pref.id} value={pref.id}>
-        {pref.title}
-      </MenuItem>
-    ))}
+   {ridePreferences.flatMap((pref: any) =>
+  (pref.ridePresets || []).map((preset: any, index: number) => (
+    <MenuItem
+      key={`${pref.id}-${index}`}
+      value={pref.id}
+    >
+      {preset.presetName}
+    </MenuItem>
+  ))
+)}
   </TextField>
 </Box>
             <Grid container spacing={2} mb={2}>

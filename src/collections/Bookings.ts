@@ -433,10 +433,10 @@ if (operation === 'create' && data.customer) {
       required: true,
     },
      {
-      name: "appliedPreferences",
-      type: "relationship",
-      relationTo: "ride-preferences",
-    },
+  name: 'ridePreference',
+  type: 'relationship',
+  relationTo: 'ride-preferences',
+},
     {
       name: 'driver',
       type: 'relationship',
@@ -561,33 +561,7 @@ if (operation === 'create' && data.customer) {
         position: 'sidebar',
       },
     },
-    {
-      name: 'razorpayOrderId',
-      type: 'text',
-      required: false,
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'razorpayPaymentId',
-      type: 'text',
-      required: false,
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'razorpaySignature',
-      type: 'text',
-      required: false,
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
-      },
-    },
+
     {
       name: 'bookingCode',
       type: 'text',
