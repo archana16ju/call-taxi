@@ -1,4 +1,5 @@
-/* FULL WIDTH ADMIN */
+/* FULL ADMIN LAYOUT FIX */
+
 html,
 body {
   margin: 0;
@@ -6,100 +7,62 @@ body {
   overflow-x: hidden;
 }
 
-/* Root payload app */
+/* Main Payload wrapper */
 .payload-admin {
   width: 100% !important;
   max-width: 100% !important;
-  min-height: 100vh !important;
-  background: #f8fafc !important;
 }
 
-/* Main app wrapper */
-.template-default {
+/* Main view area */
+.payload-admin .template-default {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Collection pages */
+.payload-admin .collection-list,
+.payload-admin .collection-edit,
+.payload-admin .doc-controls {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Form area */
+.payload-admin main {
   width: 100% !important;
   max-width: 100% !important;
-}
-
-/* Main content */
-#main-content {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-/* Payload internal containers */
-.collection-list,
-.collection-edit,
-.doc-controls,
-.list-controls,
-.render-document,
-.render-list {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-/* Remove payload centered layout */
-.base-layout {
-  max-width: 100% !important;
+  padding: 20px !important;
+  box-sizing: border-box;
 }
 
 /* Table wrapper */
-.table-wrap {
+.payload-admin table {
   width: 100% !important;
-  overflow-x: auto !important;
 }
 
-/* Tables */
-table {
-  width: 100% !important;
-  min-width: 1000px;
+/* Fix inner containers */
+.payload-admin .gutter--left,
+.payload-admin .gutter--right {
+  max-width: 100% !important;
 }
 
-/* Gutters */
-.gutter--left {
-  padding-left: 24px !important;
+/* Remove narrow centered layout */
+.payload-admin .render-fields {
+  max-width: 100% !important;
 }
 
-.gutter--right {
-  padding-right: 24px !important;
-}
-
-/* Fix form widths */
-.form {
+/* Collection content */
+.payload-admin .collection-list__wrap {
   width: 100% !important;
   max-width: 100% !important;
 }
 
-/* Fix document editor */
-.doc-field-rows {
-  width: 100% !important;
+/* Sidebar spacing */
+.nav {
+  height: 100vh;
 }
 
-/* Fix dashboard containers */
-.dashboard,
-.collection-list__wrap {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-/* Remove weird payload constraints */
-[class*='width--'] {
-  max-width: 100% !important;
-}
-
-/* Fix scroll areas */
-.render-document {
-  overflow-x: hidden !important;
-}
-
-/* Fix cards */
-.card {
-  max-width: 100% !important;
-}
-
-/* Fix admin content wrapper */
-.payload-admin .template-default__wrap {
-  max-width: 100% !important;
-  width: 100% !important;
+/* Prevent content cutoff */
+#app {
+  width: 100%;
 }

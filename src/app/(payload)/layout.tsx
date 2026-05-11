@@ -5,10 +5,10 @@ import config from '@payload-config'
 import type { ServerFunctionClient } from 'payload'
 import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts'
 import React from 'react'
-import './admin/admin.css'
 
 import { importMap } from './admin/importMap.js'
 
+import './admin/admin.css'
 import './custom.scss'
 import '../globals.css'
 import '@payloadcms/ui/styles.css'
