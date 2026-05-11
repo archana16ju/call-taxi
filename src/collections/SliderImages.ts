@@ -15,11 +15,20 @@ export const SliderImages: CollectionConfig = {
     
   },
   access: {
-    read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+  read: () => true,
+
+  create: ({ req }) => {
+    return ['superadmin', 'admin'].includes(req.user?.role || '')
   },
+
+  update: ({ req }) => {
+    return ['superadmin', 'admin'].includes(req.user?.role || '')
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   upload: {
     staticDir: 'public/media',
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],

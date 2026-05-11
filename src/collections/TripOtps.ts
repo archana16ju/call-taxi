@@ -12,6 +12,25 @@ export const TripOtps: CollectionConfig = {
       },
     },
   },
+  access: {
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin' || role === 'driver'
+  },
+
+  create: ({ req }) => {
+    return ['superadmin', 'admin'].includes(req.user?.role || '')
+  },
+
+  update: ({ req }) => {
+    return ['superadmin', 'admin'].includes(req.user?.role || '')
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: 'otpLength',

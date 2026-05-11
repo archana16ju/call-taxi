@@ -14,6 +14,29 @@ export const Coupons: CollectionConfig = {
       },
     },
   },
+  access: {
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin' || role === 'accounts'
+  },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: 'name',
@@ -105,10 +128,4 @@ export const Coupons: CollectionConfig = {
       defaultValue: true,
     },
   ],
-  access: {
-    read: () => true,
-    create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
-    update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
-    delete: ({ req: { user } }) => user?.role === 'superadmin',
-  },
 }

@@ -19,11 +19,28 @@ const PaymentMethods: CollectionConfig = {
     },
   },
   access: {
-    read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin' || role === 'accounts'
   },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: "name",

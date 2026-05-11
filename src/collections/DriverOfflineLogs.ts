@@ -46,9 +46,26 @@ export const DriverOfflineLogs: CollectionConfig = {
     },
   ],
   access: {
-    create: () => true,
-    read: () => true,
-    update: () => true,
-    delete: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return ['superadmin', 'admin', 'accounts', 'driver'].includes(role || '')
   },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'driver' || role === 'superadmin' || role === 'admin'
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
 }

@@ -15,9 +15,39 @@ export const Alerts: CollectionConfig = {
     defaultColumns: ['title', 'type', 'triggeredBy', 'createdAt'],
   },
   access: {
-    read: () => true,
-    create: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+    if (role === 'driver') return true
+
+    return false
   },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+
+    return false
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+
+    return false
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: 'title',

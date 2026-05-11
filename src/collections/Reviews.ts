@@ -15,9 +15,28 @@ export const Reviews: CollectionConfig = {
     defaultColumns: ['rating', 'booking', 'user', 'createdAt'],
   },
   access: {
-    read: () => true,
-    create: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin' || role === 'accounts' || role === 'driver'
   },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: 'booking',

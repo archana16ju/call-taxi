@@ -595,5 +595,36 @@ if (operation === 'create' && data.customer) {
       },
     },
   ],
-  access: { create: () => true, read: () => true, update: () => true, delete: () => true },
+  access: {
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+    if (role === 'driver') return true // later filter by driver id
+
+    return false
+  },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+
+    return false
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
 }

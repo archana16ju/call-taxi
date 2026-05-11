@@ -81,10 +81,19 @@ export const Tariffs: CollectionConfig = {
     },
   ],
 
-  access: {
-    read: () => true,
-    create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
-    update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
-    delete: ({ req: { user } }) => user?.role === 'superadmin',
+ access: {
+  read: () => true,
+
+  create: ({ req }) => {
+    return ['superadmin', 'admin'].includes(req.user?.role || '')
   },
+
+  update: ({ req }) => {
+    return ['superadmin', 'admin'].includes(req.user?.role || '')
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
 }

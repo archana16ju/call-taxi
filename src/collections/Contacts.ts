@@ -16,9 +16,27 @@ export const Contacts: CollectionConfig = {
     },
   },
   access: {
-    create: () => true,
-    read: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return ['superadmin', 'admin', 'accounts'].includes(role || '')
   },
+
+  create: ({ req }) => {
+    // public form submissions allowed (no auth required usually)
+    return true
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin' || role === 'accounts'
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: 'name',

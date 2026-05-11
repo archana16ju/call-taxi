@@ -157,9 +157,38 @@ export const Invoices: CollectionConfig = {
     },
   ],
   access: {
-    read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+
+    return false
   },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+
+    return false
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+
+    return false
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
 }

@@ -208,9 +208,26 @@ export const Vehicles: CollectionConfig = {
     },
   ],
   access: {
-    create: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
-    read: () => true, // Public access for read
-    update: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
-    delete: ({ req: { user } }) => user?.role === 'superadmin',
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return ['superadmin', 'admin', 'accounts', 'driver'].includes(role || '')
   },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin'
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
 }

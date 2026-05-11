@@ -12,12 +12,25 @@ const RidePreferences: CollectionConfig = {
       },
     },
   },
-  access: {
-    read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+ access: {
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return ['superadmin', 'admin', 'accounts', 'driver'].includes(role || '')
   },
+
+  create: ({ req }) => {
+    return ['superadmin', 'admin', 'driver'].includes(req.user?.role || '')
+  },
+
+  update: ({ req }) => {
+    return ['superadmin', 'admin', 'driver'].includes(req.user?.role || '')
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: "user",

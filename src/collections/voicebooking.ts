@@ -14,11 +14,24 @@ export const VoiceBooking: CollectionConfig = {
     },
   },
   access: {
-    read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin' || role === 'admin' || role === 'accounts'
   },
+
+  create: ({ req }) => {
+    return true // public voice booking allowed
+  },
+
+  update: ({ req }) => {
+    return req.user?.role === 'superadmin' || req.user?.role === 'admin'
+  },
+
+  delete: ({ req }) => {
+    return req.user?.role === 'superadmin'
+  },
+},
   fields: [
     {
       name: 'bookingId',

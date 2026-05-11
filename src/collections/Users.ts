@@ -23,9 +23,43 @@ export const Users: CollectionConfig = {
     loginWithUsername: true,
   },
 
-  access: {
-    update: () => true,
+ access: {
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+    if (role === 'driver') return true // later restrict to own record if needed
+
+    return false
   },
+
+  create: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+
+    return false
+  },
+
+  update: ({ req }) => {
+    const role = req.user?.role
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'driver') return true // own profile assumed
+
+    return false
+  },
+
+  delete: ({ req }) => {
+    const role = req.user?.role
+
+    return role === 'superadmin'
+  },
+},
 
   fields: [
     {
