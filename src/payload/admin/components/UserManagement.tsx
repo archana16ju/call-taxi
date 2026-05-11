@@ -544,7 +544,7 @@ export default function UserManagement() {
           variant="contained"
           startIcon={<PersonAddIcon />}
           onClick={openCreate}
-          x={{
+          sx={{
               textTransform: 'none',
               borderRadius: '12px',
               px: 2,
