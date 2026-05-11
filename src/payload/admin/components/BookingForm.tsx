@@ -84,11 +84,15 @@ export default function BookingForm({ initialData, onSave, onCancel, isEditing }
   const [vehicles, setVehicles] = useState<any[]>([])
   const [drivers, setDrivers] = useState<any[]>([])
   const [customers, setCustomers] = useState<any[]>([])
+  const [ridePreferences, setRidePreferences] = useState<any[]>([])
 
   useEffect(() => {
     fetch('/api/vehicles?limit=100').then(res => res.json()).then(data => setVehicles(data.docs || []))
     fetch('/api/drivers?limit=100').then(res => res.json()).then(data => setDrivers(data.docs || []))
     fetch('/api/customers?limit=100').then(res => res.json()).then(data => setCustomers(data.docs || []))
+    fetch('/api/ride-preferences?limit=100')
+  .then(res => res.json())
+  .then(data => setRidePreferences(data.docs || []))
   }, [])
 
   const handleChange = (field: keyof BookingFormData, value: any) => {
@@ -279,21 +283,30 @@ export default function BookingForm({ initialData, onSave, onCancel, isEditing }
             <Typography variant="subtitle1" fontWeight={700} color="#0f172a" mb={3}>Administration & Assignments</Typography>
             {/* RIDE PREFERENCES */}
 <Box sx={{ mb: 2 }}>
-  <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>
-    RIDE PREFERENCES
+  <Typography
+    variant="caption"
+    fontWeight={700}
+    color="#475569"
+    display="block"
+    mb={1}
+  >
+    RIDE PREFERENCE
   </Typography>
 
   <TextField
     select
     fullWidth
     size="small"
-    value={(formData as any).ridePreference || ''}
-    onChange={e => handleChange('ridePreference' as any, e.target.value)}
+    value={formData.ridePreference || ''}
+    onChange={e => handleChange('ridePreference', e.target.value)}
   >
-    <MenuItem value="">None</MenuItem>
-    <MenuItem value="auto">Auto Assign Driver</MenuItem>
-    <MenuItem value="female_only">Female Driver Only</MenuItem>
-    <MenuItem value="premium">Premium Priority</MenuItem>
+    <MenuItem value="">Select Ride Preference</MenuItem>
+
+    {ridePreferences.map((pref: any) => (
+      <MenuItem key={pref.id} value={pref.id}>
+        {pref.title}
+      </MenuItem>
+    ))}
   </TextField>
 </Box>
             <Grid container spacing={2} mb={2}>
