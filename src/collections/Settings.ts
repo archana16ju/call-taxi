@@ -5,6 +5,13 @@ export const Settings: CollectionConfig = {
 
   admin: {
     useAsTitle: 'siteName',
+    components: {
+      views: {
+        list: {
+          Component: '@/payload/admin/components/Settings#default',
+        },
+      },
+    },
     group: 'System',
   },
 
