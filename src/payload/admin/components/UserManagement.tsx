@@ -589,30 +589,6 @@ export default function UserManagement() {
 
         <Grid size={{ xs: 12, md: 4 }}>
           <StatCard
-            title="Role Distribution"
-            progress={roleStats}
-            icon={<AssessmentIcon />}
-            roleFilter={roleFilter}
-            setRoleFilter={setRoleFilter}
-            sx={{
-            textTransform: 'none',
-            borderRadius: '10px',
-            px: 2,
-            py: 1,
-            fontWeight: 700,
-            background: 'linear-gradient(135deg,#0f172a 0%,#1e293b 100%)',
-            color: '#fff',
-            boxShadow: '0 6px 20px rgba(15,23,42,0.35)',
-
-            '&:hover': {
-                background: 'linear-gradient(135deg,#1e293b 0%,#334155 100%)',
-            },
-          }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 4 }}>
-          <StatCard
             title="Total Entry"
             value={totalDocs.toString()}
             icon={<GroupIcon />}
@@ -902,128 +878,124 @@ export default function UserManagement() {
   open={Boolean(columnAnchorEl)}
   onClose={() => setColumnAnchorEl(null)}
   PaperProps={{
-    elevation: 0,
     sx: {
+      minWidth: 260,
+      borderRadius: '20px',
+      p: 1,
       mt: 1,
-      overflow: 'visible',
-      background: 'transparent',
-      boxShadow: 'none',
+      background:
+        'linear-gradient(145deg, rgba(15,23,42,0.96), rgba(30,41,59,0.96))',
+      backdropFilter: 'blur(18px)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      boxShadow:
+        '0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)',
     },
   }}
 >
-  <Paper
-    sx={{
-      p: 2,
-      borderRadius: '18px',
-      border: '1px solid #e2e8f0',
-      background: '#fff',
-      boxShadow: '0 12px 30px rgba(15,23,42,0.12)',
-      minWidth: 260,
-    }}
-  >
+  <Box sx={{ px: 1, py: 1 }}>
     <Typography
       sx={{
-        color: '#64748b',
+        color: '#94a3b8',
         fontSize: '0.72rem',
         fontWeight: 700,
-        letterSpacing: '0.08em',
+        letterSpacing: '0.12em',
         textTransform: 'uppercase',
-        mb: 2,
+        px: 1.5,
+        mb: 1.5,
       }}
     >
       Toggle Columns
     </Typography>
 
-    <Stack spacing={1.2}>
-      {[
-        'id',
-        'name',
-        'email',
-        'username',
-        'phoneNumber',
-        'role',
-        'status',
-        'actions',
-      ].map((col) => {
-        const active = visibleColumns.includes(col)
+    {[
+      'id',
+      'name',
+      'email',
+      'username',
+      'phoneNumber',
+      'role',
+      'status',
+      'actions',
+    ].map((col) => {
+      const active = visibleColumns.includes(col)
 
-        return (
-          <Box
-            key={col}
-            onClick={() => {
-              setVisibleColumns((prev) =>
-                prev.includes(col)
-                  ? prev.filter((c) => c !== col)
-                  : [...prev, col],
-              )
-            }}
-            sx={{
-              p: 1.5,
-              borderRadius: '12px',
-              cursor: 'pointer',
-              border: active
-                ? '1px solid #38bdf8'
-                : '1px solid transparent',
+      return (
+        <Box
+          key={col}
+          onClick={() => {
+            setVisibleColumns((prev) =>
+              prev.includes(col)
+                ? prev.filter((c) => c !== col)
+                : [...prev, col],
+            )
+          }}
+          sx={{
+            mb: 1,
+            borderRadius: '14px',
+            px: 1.5,
+            py: 1.2,
+            cursor: 'pointer',
+            transition: '0.25s',
+            backgroundColor: active
+              ? 'rgba(56,189,248,0.15)'
+              : 'transparent',
 
-              backgroundColor: active
-                ? 'rgba(56,189,248,0.15)'
-                : '#f8fafc',
+            border: active
+              ? '1px solid #38bdf8'
+              : '1px solid transparent',
 
-              transition: '0.2s ease',
-
-              '&:hover': {
-                backgroundColor: 'rgba(56,189,248,0.15)',
-              },
-            }}
+            '&:hover': {
+              backgroundColor: 'rgba(56,189,248,0.15)',
+              transform: 'translateX(4px)',
+            },
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
           >
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems="center"
-              >
-                <Box
-                  sx={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    backgroundColor: '#38bdf8',
-                  }}
-                />
-
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    color: '#0f172a',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {col}
-                </Typography>
-              </Stack>
-
-              <Checkbox
-                checked={active}
-                size="small"
+            <Stack direction="row" alignItems="center" spacing={1.2}>
+              <Box
                 sx={{
-                  p: 0,
-                  color: '#38bdf8',
-
-                  '&.Mui-checked': {
-                    color: '#38bdf8',
-                  },
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  backgroundColor: '#38bdf8',
+                  boxShadow: active
+                    ? '0 0 12px #38bdf8'
+                    : 'none',
                 }}
               />
+
+              <Typography
+                sx={{
+                  color: active ? '#fff' : '#cbd5e1',
+                  fontWeight: active ? 700 : 500,
+                  fontSize: '0.88rem',
+                  textTransform: 'capitalize',
+                }}
+              >
+                {col}
+              </Typography>
             </Stack>
-          </Box>
-        )
-      })}
-    </Stack>
-  </Paper>
+
+            <Checkbox
+              checked={active}
+              size="small"
+              sx={{
+                color: '#94a3b8',
+
+                '&.Mui-checked': {
+                  color: '#38bdf8',
+                },
+              }}
+            />
+          </Stack>
+        </Box>
+      )
+    })}
+  </Box>
 </Menu>
 
       {/* DRAWER */}
