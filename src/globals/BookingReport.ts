@@ -17,6 +17,16 @@ export const BookingReport: GlobalConfig = {
   },
   fields: [],
   access: {
-    read: () => true,
+  read: ({ req }) => {
+    const role = req.user?.role
+
+    if (!role) return false
+
+    if (role === 'superadmin') return true
+    if (role === 'admin') return true
+    if (role === 'accounts') return true
+
+    return false
   },
+},
 }

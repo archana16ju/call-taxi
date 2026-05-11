@@ -15,7 +15,17 @@ export const CancellationControl: GlobalConfig = {
     },
   },
   access: {
-    read: () => true,
+    read: ({ req }) => {
+      const role = req.user?.role
+
+      return role !== 'driver'
+    },
+
+    update: ({ req }) => {
+      const role = req.user?.role
+
+      return role === 'superadmin' || role === 'admin'
+    },
   },
   fields: [
     {

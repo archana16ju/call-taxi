@@ -49,6 +49,9 @@ import MapComponent from './payload/admin/components/MapComponent'
 import AiChatConversations from './collections/AiChatConversations'
 import { VoiceBooking } from './collections/voicebooking'
 
+import { Settings } from './collections/Settings'
+
+
 // Paths
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -138,7 +141,8 @@ export default buildConfig({
     DriverAllocation,
     RidePreferences,
     AiChatConversations,
-    VoiceBooking
+    VoiceBooking,
+    Settings
   ],
 
   globals: [

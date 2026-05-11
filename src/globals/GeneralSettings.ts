@@ -14,7 +14,17 @@ export const GeneralSettings: GlobalConfig = {
     },
   },
   access: {
-    read: () => true,
+    read: ({ req }) => {
+      const role = req.user?.role
+
+      return ['superadmin', 'admin', 'accounts'].includes(role || '')
+    },
+
+    update: ({ req }) => {
+      const role = req.user?.role
+
+      return ['superadmin', 'admin'].includes(role || '')
+    },
   },
   fields: [
     {

@@ -15,6 +15,7 @@ export const PaymentSettings: GlobalConfig = {
       },
     },
   },
+  
   fields: [
     {
       name: 'minimumPayment',
@@ -28,7 +29,16 @@ export const PaymentSettings: GlobalConfig = {
     },
   ],
   access: {
-    read: () => true,
-    update: () => true,
+    read: ({ req }) => {
+      const role = req.user?.role
+
+      return role === 'superadmin' || role === 'admin' || role === 'accounts'
+    },
+
+    update: ({ req }) => {
+      const role = req.user?.role
+
+      return role === 'superadmin' || role === 'admin'
+    },
   },
 }

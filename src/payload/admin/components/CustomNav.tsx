@@ -3,6 +3,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { getFilteredMenu } from '@/globals/access-controls'
+import { useAuth } from '@payloadcms/ui'
 import {
   Box,
   List,
@@ -39,6 +41,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import ShareIcon from '@mui/icons-material/Share'
 import StarIcon from '@mui/icons-material/Star'
+import SettingsIcon from '@mui/icons-material/Settings'
 
 const menuItems = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
@@ -97,6 +100,8 @@ const menuItems = [
   { label: 'Vehicle Reports', icon: <AssessmentIcon />, path: '/admin/globals/vehicle-report' },
   { type: 'header', label: 'FEEDBACKS' },
   { label: 'Ratings & Reviews', icon: <StarRateIcon />, path: '/admin/collections/reviews' },
+  { type: 'header', label: 'SETTINGS' },
+  { label: 'System Settingss', icon: <SettingsIcon  />, path: '/admin/collections/settings' },
 ]
 
 export const CustomNav: React.FC = () => {
