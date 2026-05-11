@@ -43,9 +43,6 @@ export type BookingFormData = {
   customer?: string
   driver?: string
   bookingCode?: string
-  razorpayOrderId?: string
-  razorpayPaymentId?: string
-  razorpaySignature?: string
   ridePreference?: string
 }
 
@@ -82,9 +79,6 @@ export default function BookingForm({ initialData, onSave, onCancel, isEditing }
     customer: initialData?.customer || '',
     driver: initialData?.driver || '',
     bookingCode: initialData?.bookingCode || '',
-    razorpayOrderId: initialData?.razorpayOrderId || '',
-    razorpayPaymentId: initialData?.razorpayPaymentId || '',
-    razorpaySignature: initialData?.razorpaySignature || '',
   })
 
   const [vehicles, setVehicles] = useState<any[]>([])
@@ -241,29 +235,36 @@ export default function BookingForm({ initialData, onSave, onCancel, isEditing }
                 <TextField fullWidth size="small" type="number" value={formData.paymentAmount} onChange={e => handleChange('paymentAmount', parseFloat(e.target.value) || 0)} />
               </Grid>
             </Grid>
-            <Grid container spacing={2} mb={2}>
-              <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>PAYMENT TYPE</Typography>
-                <TextField select fullWidth size="small" value={formData.paymentType} onChange={e => handleChange('paymentType', e.target.value)}>
-                  <MenuItem value="minimum">minimum</MenuItem>
-                  <MenuItem value="full">full</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>RAZORPAY ORDER ID</Typography>
-                <TextField fullWidth size="small" value={formData.razorpayOrderId} disabled />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} mb={3}>
-              <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>RAZORPAY PAYMENT ID</Typography>
-                <TextField fullWidth size="small" value={formData.razorpayPaymentId} disabled />
-              </Grid>
-              <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" fontWeight={700} color="#475569" display="block" mb={1}>RAZORPAY SIGNATURE</Typography>
-                <TextField fullWidth size="small" value={formData.razorpaySignature} disabled />
-              </Grid>
-            </Grid>
+           <Grid container spacing={2} mb={3}>
+  <Grid size={{ xs: 12 }}>
+    <Typography
+      variant="caption"
+      fontWeight={700}
+      color="#475569"
+      display="block"
+      mb={1}
+    >
+      PAYMENT TYPE
+    </Typography>
+
+    <TextField
+      select
+      fullWidth
+      size="small"
+      value={formData.paymentType}
+      onChange={e => handleChange('paymentType', e.target.value)}
+      sx={{
+        '& .MuiOutlinedInput-root': {
+          borderRadius: '12px',
+          bgcolor: '#fff',
+        },
+      }}
+    >
+      <MenuItem value="minimum">Minimum Payment</MenuItem>
+      <MenuItem value="full">Full Payment</MenuItem>
+    </TextField>
+  </Grid>
+</Grid>
             <Box sx={{ p: 2, borderRadius: 2, bgcolor: '#fff5f5', border: '1px solid #fed7d7' }}>
               <FormControlLabel
                 control={<Switch checked={formData.sosTriggered} onChange={e => handleChange('sosTriggered', e.target.checked)} color="error" />}

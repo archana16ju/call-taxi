@@ -31,7 +31,6 @@ import { useAuth } from '@payloadcms/ui'
 
 import SearchIcon from '@mui/icons-material/Search'
 import ViewColumnIcon from '@mui/icons-material/ViewColumn'
-import FilterListIcon from '@mui/icons-material/FilterList'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import GroupIcon from '@mui/icons-material/Group'
@@ -98,7 +97,7 @@ const StatCard = ({
           border: '1px solid #e2e8f0',
           background: '#fff',
           boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
-          height: '100%',
+          minHeight: 220,
         }}
       >
         <Stack
@@ -156,12 +155,14 @@ const StatCard = ({
   return (
     <Paper
       sx={{
+        position: 'relative',
+        overflow: 'visible',
         p: 3,
         borderRadius: '18px',
         border: '1px solid #e2e8f0',
         background: '#fff',
         boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
-        height: '100%',
+        minHeight: 220,
       }}
     >
       <Stack
@@ -258,8 +259,24 @@ const StatCard = ({
       </Box>
 
       {/* Dropdown Content */}
-      {openRoles && (
-        <Stack spacing={1.2} sx={{ mt: 2 }}>
+      {/* Dropdown Content */}
+{openRoles && (
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '100%',
+      left: 0,
+      right: 0,
+      mt: 1.2,
+      zIndex: 50,
+      background: '#fff',
+      border: '1px solid #e2e8f0',
+      borderRadius: '16px',
+      p: 1.2,
+      boxShadow: '0 12px 30px rgba(15,23,42,0.12)',
+    }}
+  >
+    <Stack spacing={1.2}>
           <Box
             onClick={() => {
               setRoleFilter('all')
@@ -350,8 +367,9 @@ const StatCard = ({
               </Stack>
             </Box>
           ))}
-        </Stack>
-      )}
+             </Stack>
+      </Box>
+    )}
     </Paper>
   )
 }
@@ -366,7 +384,6 @@ export default function UserManagement() {
   const [totalDocs, setTotalDocs] = useState(0)
 
   const [columnAnchorEl, setColumnAnchorEl] = useState<null | HTMLElement>(null)
-  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null)
 
   const [visibleColumns, setVisibleColumns] = useState([
     'id',
@@ -602,27 +619,6 @@ export default function UserManagement() {
         />
 
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="contained"
-            startIcon={<FilterListIcon />}
-            onClick={(e) => setFilterAnchorEl(e.currentTarget)}
-            sx={{
-              textTransform: 'none',
-              borderRadius: '12px',
-              px: 2,
-              py: 1,
-              fontWeight: 700,
-              background: 'linear-gradient(135deg,#0f172a 0%,#1e293b 100%)',
-              color: '#fff',
-              boxShadow: '0 6px 20px rgba(15,23,42,0.35)',
-
-              '&:hover': {
-                background: 'linear-gradient(135deg,#1e293b 0%,#334155 100%)',
-              },
-            }}
-          >
-            Filters
-          </Button>
 
           <Button
             variant="outlined"
@@ -858,224 +854,131 @@ export default function UserManagement() {
         </Stack>
       </TableContainer>
 
-      {/* FILTER MENU */}
-      <Menu
-        anchorEl={filterAnchorEl}
-        open={Boolean(filterAnchorEl)}
-        onClose={() => setFilterAnchorEl(null)}
-        PaperProps={{
-          sx: {
-            minWidth: 260,
-            borderRadius: '20px',
-            p: 1,
-            mt: 1,
-            background:
-              'linear-gradient(145deg, rgba(15,23,42,0.96), rgba(30,41,59,0.96))',
-            backdropFilter: 'blur(18px)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow:
-              '0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)',
-          },
-        }}
-      >
-        <Box sx={{ px: 1, py: 1 }}>
-          <Typography
-            sx={{
-              color: '#94a3b8',
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              px: 1.5,
-              mb: 1.5,
-            }}
-          >
-            Filter Users
-          </Typography>
-
-          {[
-            {
-              value: 'all',
-              label: 'All Users',
-              color: '#64748b',
-              bg: 'rgba(100,116,139,0.15)',
-            },
-            {
-              value: 'superadmin',
-              label: 'Super Admin',
-              color: '#a855f7',
-              bg: 'rgba(168,85,247,0.15)',
-            },
-            {
-              value: 'admin',
-              label: 'Admin',
-              color: '#facc15',
-              bg: 'rgba(250,204,21,0.15)',
-            },
-            {
-              value: 'accounts',
-              label: 'Accounts',
-              color: '#38bdf8',
-              bg: 'rgba(56,189,248,0.15)',
-            },
-            {
-              value: 'driver',
-              label: 'Drivers',
-              color: '#22c55e',
-              bg: 'rgba(34,197,94,0.15)',
-            },
-          ].map((role) => {
-            const active = roleFilter === role.value
-
-            return (
-              <Box
-                key={role.value}
-                onClick={() => {
-                  setRoleFilter(role.value)
-                  setPage(1)
-                  setFilterAnchorEl(null)
-                }}
-                sx={{
-                  mb: 1,
-                  borderRadius: '14px',
-                  px: 1.5,
-                  py: 1.2,
-                  cursor: 'pointer',
-                  transition: '0.25s',
-                  backgroundColor: active ? role.bg : 'transparent',
-                  border: active
-                    ? `1px solid ${role.color}`
-                    : '1px solid transparent',
-
-                  '&:hover': {
-                    backgroundColor: role.bg,
-                    transform: 'translateX(4px)',
-                  },
-                }}
-              >
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Stack direction="row" alignItems="center" spacing={1.2}>
-                    <Box
-                      sx={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: '50%',
-                        backgroundColor: role.color,
-                        boxShadow: active ? `0 0 12px ${role.color}` : 'none',
-                      }}
-                    />
-
-                    <Typography
-                      sx={{
-                        color: active ? '#fff' : '#cbd5e1',
-                        fontWeight: active ? 700 : 500,
-                        fontSize: '0.88rem',
-                      }}
-                    >
-                      {role.label}
-                    </Typography>
-                  </Stack>
-
-                  {active && (
-                    <Box
-                      sx={{
-                        px: 1,
-                        py: 0.3,
-                        borderRadius: '999px',
-                        fontSize: '0.65rem',
-                        fontWeight: 700,
-                        color: '#fff',
-                        background: role.color,
-                      }}
-                    >
-                      ACTIVE
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-            )
-          })}
-        </Box>
-      </Menu>
-
       {/* COLUMN MENU */}
-      <Menu
-        anchorEl={columnAnchorEl}
-        open={Boolean(columnAnchorEl)}
-        onClose={() => setColumnAnchorEl(null)}
-        PaperProps={{
-          sx: {
-            minWidth: 220,
+<Menu
+  anchorEl={columnAnchorEl}
+  open={Boolean(columnAnchorEl)}
+  onClose={() => setColumnAnchorEl(null)}
+  PaperProps={{
+    sx: {
+      minWidth: 260,
+      borderRadius: '20px',
+      p: 1,
+      mt: 1,
+      background:
+        'linear-gradient(145deg, rgba(15,23,42,0.96), rgba(30,41,59,0.96))',
+      backdropFilter: 'blur(18px)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      boxShadow:
+        '0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)',
+    },
+  }}
+>
+  <Box sx={{ px: 1, py: 1 }}>
+    <Typography
+      sx={{
+        color: '#94a3b8',
+        fontSize: '0.72rem',
+        fontWeight: 700,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        px: 1.5,
+        mb: 1.5,
+      }}
+    >
+      Toggle Columns
+    </Typography>
+
+    {[
+      'id',
+      'name',
+      'email',
+      'username',
+      'phoneNumber',
+      'role',
+      'status',
+      'actions',
+    ].map((col) => {
+      const active = visibleColumns.includes(col)
+
+      return (
+        <Box
+          key={col}
+          onClick={() => {
+            setVisibleColumns((prev) =>
+              prev.includes(col)
+                ? prev.filter((c) => c !== col)
+                : [...prev, col],
+            )
+          }}
+          sx={{
+            mb: 1,
             borderRadius: '14px',
-          },
-        }}
-      >
-        <Box sx={{ p: 1 }}>
-          <Typography
-            variant="caption"
-            sx={{
-              px: 2,
-              py: 1,
-              display: 'block',
-              color: '#64748b',
-              bg: 'rgba(100,116,139,0.15)',
-              fontWeight: 700,
-            }}
+            px: 1.5,
+            py: 1.2,
+            cursor: 'pointer',
+            transition: '0.25s',
+            backgroundColor: active
+              ? 'rgba(56,189,248,0.15)'
+              : 'transparent',
+
+            border: active
+              ? '1px solid #38bdf8'
+              : '1px solid transparent',
+
+            '&:hover': {
+              backgroundColor: 'rgba(56,189,248,0.15)',
+              transform: 'translateX(4px)',
+            },
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
           >
-            Toggle Columns
-          </Typography>
+            <Stack direction="row" alignItems="center" spacing={1.2}>
+              <Box
+                sx={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  backgroundColor: '#38bdf8',
+                  boxShadow: active
+                    ? '0 0 12px #38bdf8'
+                    : 'none',
+                }}
+              />
 
-          {[
-            'id',
-            'name',
-            'email',
-            'username',
-            'phoneNumber',
-            'role',
-            'status',
-            'actions',
-          ].map((col) => (
-            <Box
-              key={col}
-              onClick={() => {
-                setVisibleColumns((prev) =>
-                  prev.includes(col)
-                    ? prev.filter((c) => c !== col)
-                    : [...prev, col],
-                )
-              }}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                px: 2,
-                py: 1,
-                borderRadius: '10px',
-                cursor: 'pointer',
-
-                '&:hover': {
-                  backgroundColor: '#f1f5f9',
-                },
-              }}
-            >
               <Typography
                 sx={{
+                  color: active ? '#fff' : '#cbd5e1',
+                  fontWeight: active ? 700 : 500,
+                  fontSize: '0.88rem',
                   textTransform: 'capitalize',
-                  fontSize: '0.875rem',
                 }}
               >
                 {col}
               </Typography>
+            </Stack>
 
-              <Checkbox size="small" checked={visibleColumns.includes(col)} />
-            </Box>
-          ))}
+            <Checkbox
+              checked={active}
+              size="small"
+              sx={{
+                color: '#94a3b8',
+
+                '&.Mui-checked': {
+                  color: '#38bdf8',
+                },
+              }}
+            />
+          </Stack>
         </Box>
-      </Menu>
+      )
+    })}
+  </Box>
+</Menu>
 
       {/* DRAWER */}
       <Drawer
