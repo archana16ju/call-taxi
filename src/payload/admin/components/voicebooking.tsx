@@ -88,7 +88,7 @@ export default function VoiceBookings() {
           </Typography>
 
           {/* LINK TO ALERT PAGE */}
-          <Link href="/collections/Alerts">
+          <Link href="/collections/alerts">
             <Button variant="contained">Go to Alerts</Button>
           </Link>
         </Stack>
