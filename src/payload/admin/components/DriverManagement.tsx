@@ -439,84 +439,43 @@ const filteredDrivers = useMemo(() => {
       
 
       {/* HEADER */}
-<Stack
-  direction="row"
-  justifyContent="space-between"
-  alignItems="center"
-  mb={3}
-  flexWrap="wrap"
-  gap={2}
->
-  <Box>
-    <Typography variant="h5" fontWeight={600}>
-      Driver Management
-    </Typography>
+ <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+        sx={{ flexWrap: 'wrap', gap: 2 }}
+      >
+        <Box>
+          <Typography variant="h5" fontWeight={600}>
+            Driver Management
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {drivers.length} drivers
+          </Typography>
+        </Box>
 
-    <Typography variant="body2" color="text.secondary">
-      Managing {drivers.length} active drivers
-    </Typography>
-  </Box>
+        <Stack direction="row" spacing={2}>
+          <Button variant={filter === 'ALL' ? 'contained' : 'outlined'}
+            onClick={() => setFilter('ALL')}>
+            All
+          </Button>
 
-  <Stack direction="row" spacing={2} flexWrap="wrap">
-    <Button
-      variant={filter === 'ALL' ? 'contained' : 'outlined'}
-      onClick={() => setFilter('ALL')}
-      sx={{
-        minWidth: 140,
-        height: 42,
-        borderRadius: 2,
-        fontWeight: 700,
-        flexShrink: 0,
-      }}
-    >
-      All Drivers
-    </Button>
+          <Button variant={filter === 'AVAILABLE' ? 'contained' : 'outlined'}
+            onClick={() => setFilter('AVAILABLE')}>
+            Available
+          </Button>
 
-    <Button
-      variant={filter === 'AVAILABLE' ? 'contained' : 'outlined'}
-      color="success"
-      onClick={() => setFilter('AVAILABLE')}
-      sx={{
-        minWidth: 140,
-        height: 42,
-        borderRadius: 2,
-        fontWeight: 700,
-        flexShrink: 0,
-      }}
-    >
-      AVAILABLE
-    </Button>
+          <Button variant={filter === 'ONDUTY' ? 'contained' : 'outlined'}
+            onClick={() => setFilter('ONDUTY')}>
+            On Duty
+          </Button>
 
-    <Button
-      variant={filter === 'ONDUTY' ? 'contained' : 'outlined'}
-      color="warning"
-      onClick={() => setFilter('ONDUTY')}
-      sx={{
-        minWidth: 140,
-        height: 42,
-        borderRadius: 2,
-        fontWeight: 700,
-        flexShrink: 0,
-      }}
-    >
-      On Duty
-    </Button>
-
-    <Button
-      variant="contained"
-      onClick={openCreate}
-      sx={{
-        minWidth: 190,
-        height: 42,
-        borderRadius: 2,
-        fontWeight: 700,
-        flexShrink: 0,
-      }}
-    >
-      + Create New Driver
-    </Button>
-  </Stack>
-</Stack>
+          <Button variant="contained" onClick={openCreate}>
+            + Create
+          </Button>
+        </Stack>
+      </Stack>
       {/* STATS */}
      <Grid container spacing={2} mb={3}>
   <Grid size={4}>
@@ -605,11 +564,10 @@ const filteredDrivers = useMemo(() => {
         bgcolor: index % 2 === 0 ? '#fff' : '#f9fafb',
         transition: 'all 0.2s ease',
         borderBottom: '1px solid #eee',
-        '&:hover': {
-          transform: 'scale(1.01)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-          bgcolor: '#ffffff',
-        },
+       '&:hover': {
+  backgroundColor: '#ffffff',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+}
       }}
     >
       {/* DRIVER */}
