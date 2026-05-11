@@ -23,6 +23,7 @@ import {
   Drawer,
   TextField,
   InputAdornment,
+  
 } from '@mui/material'
 
 import { UserForm } from './UserCreate'
@@ -36,6 +37,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import GroupIcon from '@mui/icons-material/Group'
 import EditIcon from '@mui/icons-material/Edit'
 import AssessmentIcon from '@mui/icons-material/Assessment'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 type User = {
   id: string
@@ -57,80 +59,124 @@ const StatCard = ({
   roleFilter,
   setRoleFilter,
 }: any) => {
+  const [openRoles, setOpenRoles] = useState(false)
+
   const roleItems = [
     {
       key: 'superadmin',
       label: 'Super Admin',
       color: '#a855f7',
-      glow: 'rgba(168,85,247,0.45)',
       percent: progress?.superadmin || 0,
     },
     {
       key: 'admin',
       label: 'Admin',
       color: '#facc15',
-      glow: 'rgba(250,204,21,0.45)',
       percent: progress?.admin || 0,
     },
     {
       key: 'accounts',
       label: 'Accounts',
       color: '#38bdf8',
-      glow: 'rgba(56,189,248,0.45)',
       percent: progress?.accounts || 0,
     },
     {
       key: 'driver',
       label: 'Drivers',
       color: '#22c55e',
-      glow: 'rgba(34,197,94,0.45)',
       percent: progress?.driver || 0,
     },
   ]
 
+  // NORMAL NUMBER CARDS
+  if (!progress) {
+    return (
+      <Paper
+        sx={{
+          p: 3,
+          borderRadius: '18px',
+          border: '1px solid #e2e8f0',
+          background: '#fff',
+          boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
+          height: '100%',
+        }}
+      >
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+        >
+          <Box>
+            <Typography
+              sx={{
+                color: '#64748b',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                mb: 1,
+              }}
+            >
+              {title}
+            </Typography>
+
+            <Typography
+              sx={{
+                fontSize: '2.2rem',
+                fontWeight: 800,
+                color: '#0f172a',
+                lineHeight: 1,
+              }}
+            >
+              {value}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              width: 52,
+              height: 52,
+              borderRadius: '14px',
+              background:
+                'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#0284c7',
+            }}
+          >
+            {icon}
+          </Box>
+        </Stack>
+      </Paper>
+    )
+  }
+
+  // ROLE DISTRIBUTION DROPDOWN CARD
   return (
     <Paper
       sx={{
         p: 3,
-        borderRadius: '24px',
-        border: '1px solid rgba(255,255,255,0.08)',
-        background:
-          'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)',
-        boxShadow:
-          '0 15px 40px rgba(15,23,42,0.35)',
-        overflow: 'hidden',
-        position: 'relative',
+        borderRadius: '18px',
+        border: '1px solid #e2e8f0',
+        background: '#fff',
+        boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
         height: '100%',
       }}
     >
-      {/* Glow */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: -80,
-          right: -80,
-          width: 180,
-          height: 180,
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle, rgba(14,165,233,0.25) 0%, transparent 70%)',
-        }}
-      />
-
-      {/* Header */}
       <Stack
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ mb: 3, position: 'relative', zIndex: 2 }}
+        sx={{ mb: 2 }}
       >
         <Box>
           <Typography
             sx={{
-              color: '#94a3b8',
+              color: '#64748b',
               fontSize: '0.72rem',
               fontWeight: 700,
-              letterSpacing: '0.12em',
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
             }}
           >
@@ -139,176 +185,173 @@ const StatCard = ({
 
           <Typography
             sx={{
-              color: '#fff',
-              fontSize: '1.7rem',
+              fontSize: '1.3rem',
               fontWeight: 800,
+              color: '#0f172a',
               mt: 0.5,
             }}
           >
-            Team Roles
+            Role Filters
           </Typography>
         </Box>
 
         <Box
           sx={{
-            width: 52,
-            height: 52,
-            borderRadius: '16px',
+            width: 48,
+            height: 48,
+            borderRadius: '14px',
             background:
-              'linear-gradient(135deg, rgba(14,165,233,0.25), rgba(59,130,246,0.15))',
+              'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#38bdf8',
-            backdropFilter: 'blur(10px)',
+            color: '#0284c7',
           }}
         >
           {icon}
         </Box>
       </Stack>
 
-      {/* Distribution */}
-      <Stack spacing={1.5}>
-        {roleItems.map((item) => {
-          const active = roleFilter === item.key
+      {/* Dropdown Trigger */}
+      <Box
+        onClick={() => setOpenRoles(!openRoles)}
+        sx={{
+          border: '1px solid #e2e8f0',
+          borderRadius: '14px',
+          px: 2,
+          py: 1.5,
+          cursor: 'pointer',
+          transition: '0.2s ease',
+          backgroundColor: '#f8fafc',
 
-          return (
+          '&:hover': {
+            backgroundColor: '#f1f5f9',
+          },
+        }}
+      >
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography
+            sx={{
+              fontWeight: 700,
+              color: '#0f172a',
+              fontSize: '0.92rem',
+            }}
+          >
+            {roleFilter === 'all'
+              ? 'All Roles'
+              : roleItems.find(r => r.key === roleFilter)?.label}
+          </Typography>
+
+          <KeyboardArrowDownIcon
+            sx={{
+              transition: '0.25s ease',
+              transform: openRoles
+                ? 'rotate(180deg)'
+                : 'rotate(0deg)',
+            }}
+          />
+        </Stack>
+      </Box>
+
+      {/* Dropdown Content */}
+      {openRoles && (
+        <Stack spacing={1.2} sx={{ mt: 2 }}>
+          <Box
+            onClick={() => {
+              setRoleFilter('all')
+              setOpenRoles(false)
+            }}
+            sx={{
+              p: 1.5,
+              borderRadius: '12px',
+              cursor: 'pointer',
+              backgroundColor:
+                roleFilter === 'all'
+                  ? '#e0f2fe'
+                  : '#f8fafc',
+
+              '&:hover': {
+                backgroundColor: '#f1f5f9',
+              },
+            }}
+          >
+            <Typography sx={{ fontWeight: 700 }}>
+              All Users
+            </Typography>
+          </Box>
+
+          {roleItems.map((item) => (
             <Box
               key={item.key}
-              onClick={() =>
-                setRoleFilter(active ? 'all' : item.key)
-              }
+              onClick={() => {
+                setRoleFilter(item.key)
+                setOpenRoles(false)
+              }}
               sx={{
+                p: 1.5,
+                borderRadius: '12px',
                 cursor: 'pointer',
-                borderRadius: '18px',
-                px: 2,
-                py: 1.6,
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'all 0.25s ease',
+                border:
+                  roleFilter === item.key
+                    ? `1px solid ${item.color}`
+                    : '1px solid transparent',
 
-                background: active
-                  ? `linear-gradient(135deg, ${item.glow}, rgba(255,255,255,0.03))`
-                  : 'rgba(255,255,255,0.03)',
-
-                border: active
-                  ? `1px solid ${item.color}`
-                  : '1px solid rgba(255,255,255,0.05)',
-
-                transform: active
-                  ? 'scale(1.02)'
-                  : 'scale(1)',
+                backgroundColor:
+                  roleFilter === item.key
+                    ? `${item.color}15`
+                    : '#f8fafc',
 
                 '&:hover': {
-                  transform: 'translateY(-2px)',
-                  background:
-                    `linear-gradient(135deg, ${item.glow}, rgba(255,255,255,0.03))`,
+                  backgroundColor: `${item.color}15`,
                 },
               }}
             >
-              {/* Background Progress */}
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  bottom: 0,
-                  width: `${item.percent}%`,
-                  background: item.color,
-                  opacity: 0.08,
-                }}
-              />
-
               <Stack
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
-                sx={{ position: 'relative', zIndex: 2 }}
               >
                 <Stack
                   direction="row"
-                  spacing={1.2}
+                  spacing={1}
                   alignItems="center"
                 >
                   <Box
                     sx={{
-                      width: 12,
-                      height: 12,
+                      width: 10,
+                      height: 10,
                       borderRadius: '50%',
-                      background: item.color,
-                      boxShadow: `0 0 14px ${item.color}`,
+                      backgroundColor: item.color,
                     }}
                   />
 
                   <Typography
                     sx={{
-                      color: '#fff',
                       fontWeight: 700,
-                      fontSize: '0.92rem',
+                      color: '#0f172a',
                     }}
                   >
                     {item.label}
                   </Typography>
                 </Stack>
 
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  alignItems="center"
+                <Typography
+                  sx={{
+                    fontWeight: 800,
+                    color: item.color,
+                  }}
                 >
-                  <Typography
-                    sx={{
-                      color: item.color,
-                      fontWeight: 800,
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    {item.percent.toFixed(0)}%
-                  </Typography>
-
-                  {active && (
-                    <Box
-                      sx={{
-                        px: 1,
-                        py: 0.3,
-                        borderRadius: '999px',
-                        fontSize: '0.62rem',
-                        fontWeight: 800,
-                        color: '#fff',
-                        background: item.color,
-                        boxShadow: `0 0 14px ${item.color}`,
-                      }}
-                    >
-                      LIVE
-                    </Box>
-                  )}
-                </Stack>
+                  {item.percent.toFixed(0)}%
+                </Typography>
               </Stack>
             </Box>
-          )
-        })}
-      </Stack>
-
-      {/* Reset */}
-      <Button
-        fullWidth
-        onClick={() => setRoleFilter('all')}
-        sx={{
-          mt: 2.5,
-          borderRadius: '16px',
-          py: 1.2,
-          textTransform: 'none',
-          color: '#cbd5e1',
-          fontWeight: 700,
-          background: 'rgba(255,255,255,0.04)',
-
-          '&:hover': {
-            background: 'rgba(255,255,255,0.08)',
-          },
-        }}
-      >
-        Show All Users
-      </Button>
+          ))}
+        </Stack>
+      )}
     </Paper>
   )
 }
@@ -341,8 +384,6 @@ export default function UserManagement() {
   const [openDrawer, setOpenDrawer] = useState(false)
   const [drawerUserId, setDrawerUserId] = useState<string | null>(null)
 
-  const { user: currentUser } = useAuth()
-  const isSuperAdmin = currentUser?.role === 'superadmin'
 
   const openCreate = () => {
     setDrawerUserId(null)
