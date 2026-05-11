@@ -3,7 +3,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAuth } from '@payloadcms/ui'
 import {
   Box,
   List,
@@ -40,235 +39,68 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import ShareIcon from '@mui/icons-material/Share'
 import StarIcon from '@mui/icons-material/Star'
-import SettingsIcon from '@mui/icons-material/Settings'
 
 const menuItems = [
-  {
-    label: 'Dashboard',
-    icon: <DashboardIcon />,
-    path: '/admin',
-    roles: ['superadmin', 'admin', 'accounts', 'driver'],
-  },
-
+  { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
   { type: 'header', label: 'MANAGEMENT' },
-
-  {
-    label: 'Users & Roles',
-    icon: <AdminPanelSettingsIcon />,
-    path: '/admin/collections/users',
-    roles: ['superadmin'],
-  },
-  {
-    label: 'Drivers',
-    icon: <PeopleIcon />,
-    path: '/admin/collections/drivers',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Customers',
-    icon: <PeopleIcon />,
-    path: '/admin/collections/customers',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-  {
-    label: 'Sliders',
-    icon: <CollectionsIcon />,
-    path: '/admin/collections/slider-images',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Media Gallery',
-    icon: <CollectionsIcon />,
-    path: '/admin/collections/media',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Vehicles',
-    icon: <LocalTaxiIcon />,
-    path: '/admin/collections/vehicles',
-    roles: ['superadmin', 'admin'],
-  },
-
+  { label: 'Users & Roles', icon: <AdminPanelSettingsIcon />, path: '/admin/collections/users' },
+  { label: 'Drivers', icon: <PeopleIcon />, path: '/admin/collections/drivers' },
+  { label: 'Customers', icon: <PeopleIcon />, path: '/admin/collections/customers' },
+  { label: 'Sliders', icon: <CollectionsIcon />, path: '/admin/collections/slider-images' },
+  { label: 'Media Gallery', icon: <CollectionsIcon />, path: '/admin/collections/media' },
+  { label: 'Vehicles', icon: <LocalTaxiIcon />, path: '/admin/collections/vehicles' },
   { type: 'header', label: 'SMART BOOKING' },
-
-  {
-    label: 'Bookings',
-    icon: <BookIcon />,
-    path: '/admin/collections/bookings',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-  {
-    label: 'Driver Allocation',
-    icon: <HubIcon />,
-    path: '/admin/driver-allocation',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Voice Dispatch',
-    icon: <MicIcon />,
-    path: '/admin/voice-dispatch',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Smart Ride',
-    icon: <AutoAwesomeIcon />,
-    path: '/admin/collections/ride-preferences',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-
+  { label: 'Bookings', icon: <BookIcon />, path: '/admin/collections/bookings' },
+  { label: 'Driver Allocation', icon: <HubIcon />, path: '/admin/driver-allocation' },
+  { label: 'Voice Dispatch', icon: <MicIcon />, path: '/admin/voice-dispatch' },
+  { label: 'Smart Ride', icon: <AutoAwesomeIcon />, path: '/admin/collections/ride-preferences' },
   { type: 'header', label: 'LIVE TRACKING SYSTEM' },
-
-  {
-    label: 'Live GPS Tracking',
-    icon: <GpsFixedIcon />,
-    path: '/live-tracking',
-    roles: ['superadmin', 'admin', 'driver'],
-  },
+  { label: 'Live GPS Tracking', icon: <GpsFixedIcon />, path: '/live-tracking' },
   {
     label: 'Offline Sync Logs',
     icon: <HistoryIcon />,
     path: '/admin/collections/driver-offline-logs',
-    roles: ['superadmin', 'admin'],
   },
-
   { type: 'header', label: 'SMART COMMUNICATION' },
-
-  {
-    label: 'Support (WhatsApp)',
-    icon: <WhatsAppIcon />,
-    path: '/admin/globals/general-settings',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
+  { label: 'Support (WhatsApp)', icon: <WhatsAppIcon />, path: '/admin/globals/general-settings' },
   {
     label: 'AI Chat Support',
     icon: <WhatsAppIcon />,
     path: '/admin/collections/ai-chat-conversations',
-    roles: ['superadmin', 'admin'],
   },
-
   { type: 'header', label: 'SECURITY SYSTEM' },
-
   {
     label: 'Cancellation Control',
     icon: <CancelIcon />,
     path: '/admin/globals/cancellation-control',
-    roles: ['superadmin', 'admin'],
   },
-  {
-    label: 'Trip OTPs',
-    icon: <SecurityIcon />,
-    path: '/admin/collections/trip-otps',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Trip Sharing',
-    icon: <ShareIcon />,
-    path: '/admin/collections/trip-sharing',
-    roles: ['superadmin', 'admin'],
-  },
-
+  { label: 'Trip OTPs', icon: <SecurityIcon />, path: '/admin/collections/trip-otps' },
+  { label: 'Trip Sharing', icon: <ShareIcon />, path: '/admin/collections/trip-sharing' },
   { type: 'header', label: 'FINANCIAL SETTLEMENTS' },
-
   {
     label: 'Revenue & Settlements',
     icon: <AccountBalanceWalletIcon />,
     path: '/admin/collections/revenue-settlements',
-    roles: ['superadmin', 'admin', 'accounts'],
   },
-
   { type: 'header', label: 'ACCOUNTS' },
-
-  {
-    label: 'Invoices',
-    icon: <ReceiptIcon />,
-    path: '/admin/collections/invoices',
-    roles: ['superadmin', 'accounts'],
-  },
-  {
-    label: 'Payment Settings',
-    icon: <PaymentsIcon />,
-    path: '/admin/globals/payment-settings',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Payment Methods',
-    icon: <PaymentsIcon />,
-    path: '/admin/collections/payment-methods',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Tariffs',
-    icon: <MonetizationOnIcon />,
-    path: '/admin/collections/tariffs',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-  {
-    label: 'Coupons & Discounts',
-    icon: <LocalActivityIcon />,
-    path: '/admin/collections/coupons',
-    roles: ['superadmin', 'admin'],
-  },
-
+  { label: 'Invoices', icon: <ReceiptIcon />, path: '/admin/collections/invoices' },
+  { label: 'Payment Settings', icon: <PaymentsIcon />, path: '/admin/globals/payment-settings' },
+  { label: 'Payment Methods', icon: <PaymentsIcon />, path: '/admin/collections/payment-methods' },
+  { label: 'Tariffs', icon: <MonetizationOnIcon />, path: '/admin/collections/tariffs' },
+  { label: 'Coupons & Discounts', icon: <LocalActivityIcon />, path: '/admin/collections/coupons' },
   { type: 'header', label: 'NOTIFICATIONS' },
-
-  {
-    label: 'Alerts Center',
-    icon: <NotificationsIcon />,
-    path: '/admin/collections/alerts',
-    roles: ['superadmin', 'admin'],
-  },
-  {
-    label: 'Contact Inquiries',
-    icon: <ContactMailIcon />,
-    path: '/admin/collections/contacts',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-
+  { label: 'Alerts Center', icon: <NotificationsIcon />, path: '/admin/collections/alerts' },
+  { label: 'Contact Inquiries', icon: <ContactMailIcon />, path: '/admin/collections/contacts' },
   { type: 'header', label: 'REPORTS' },
-
-  {
-    label: 'Customer Reports',
-    icon: <AssessmentIcon />,
-    path: '/admin/globals/customer-report',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-  {
-    label: 'Booking Reports',
-    icon: <AssessmentIcon />,
-    path: '/admin/globals/booking-report',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-  {
-    label: 'Vehicle Reports',
-    icon: <AssessmentIcon />,
-    path: '/admin/globals/vehicle-report',
-    roles: ['superadmin', 'admin'],
-  },
-
+  { label: 'Customer Reports', icon: <AssessmentIcon />, path: '/admin/globals/customer-report' },
+  { label: 'Booking Reports', icon: <AssessmentIcon />, path: '/admin/globals/booking-report' },
+  { label: 'Vehicle Reports', icon: <AssessmentIcon />, path: '/admin/globals/vehicle-report' },
   { type: 'header', label: 'FEEDBACKS' },
-
-  {
-    label: 'Ratings & Reviews',
-    icon: <StarRateIcon />,
-    path: '/admin/collections/reviews',
-    roles: ['superadmin', 'admin', 'accounts'],
-  },
-
-  { type: 'header', label: 'SETTINGS' },
-
-  {
-    label: 'System Settings',
-    icon: <SettingsIcon />,
-    path: '/admin/collections/settings',
-    roles: ['superadmin', 'admin'],
-  },
+  { label: 'Ratings & Reviews', icon: <StarRateIcon />, path: '/admin/collections/reviews' },
 ]
 
 export const CustomNav: React.FC = () => {
   const pathname = usePathname()
-  const { user } = useAuth() as any   // 👈 get logged-in user
-  const role = user?.roles?.[0]           // 👈 adjust if your field name differs
-
   const [isCollapsed, setIsCollapsed] = React.useState(false)
 
   const toggleCollapse = () => {
@@ -281,28 +113,11 @@ export const CustomNav: React.FC = () => {
 
   const navWidth = isCollapsed ? 70 : 280
 
-  // ✅ FILTER MENU BASED ON ROLE (INSIDE SAME FILE)
-  const filteredMenu = React.useMemo(() => {
-  if (!role) {
-    // fallback: show minimal safe menu (or all locked)
-    return menuItems.filter((item) => item.type === 'header' || item.label === 'Dashboard')
-  }
-
-  return menuItems.filter((item) => {
-    if (item.type === 'header') return true
-    return item.roles?.includes(role)
-  })
-}, [role])
-
   return (
     <Box
       sx={{
         width: navWidth,
-        height: '100vh',
-        position: 'sticky',
-        top: 0,
-        left: 0,
-        flexShrink: 0, 
+        height: '100%',
         backgroundColor: '#0a192f',
         color: '#ffffff',
         overflowY: 'auto',
@@ -371,7 +186,7 @@ export const CustomNav: React.FC = () => {
       </Box>
 
       <List sx={{ px: isCollapsed ? 1 : 2, pb: 4, pt: 0 }}>
-        {filteredMenu.map((item, index) => {
+        {menuItems.map((item, index) => {
           if (item.type === 'header') {
             if (isCollapsed)
               return (
