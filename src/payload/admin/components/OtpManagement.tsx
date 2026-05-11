@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react'
 import {
-  Box,
   Paper,
   Typography,
   Grid,
@@ -20,7 +19,7 @@ import AccessTimeFilledOutlinedIcon from '@mui/icons-material/AccessTimeFilledOu
 import LocalTaxiOutlinedIcon from '@mui/icons-material/LocalTaxiOutlined'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import Link from 'next/link'
-
+import { Box } from '@mui/material'
 type Props = {
   booking?: any
 }
@@ -31,7 +30,7 @@ const OTPDashboard: React.FC<Props> = ({ booking }) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [method, setMethod] = useState<'sms' | 'whatsapp' | 'email'>('sms')
 
-  useEffect(() => {
+ useEffect(() => {
     if (booking) {
       generateOTP()
     }
@@ -76,103 +75,81 @@ const OTPDashboard: React.FC<Props> = ({ booking }) => {
   const formatTime = (value: number) => {
     const mins = Math.floor(value / 60)
     const secs = value % 60
-
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  const bookingLink = `/admin/collections/bookings/${booking?.id || ''}`
+
   return (
     <Box p={3}>
-      <Typography
-        variant="h5"
-        fontWeight={700}
-        mb={1}
-      >
+      <Typography variant="h5" fontWeight={700} mb={1}>
         Generate Ride OTP
       </Typography>
 
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        mb={3}
-      >
+      <Typography variant="body2" color="text.secondary" mb={3}>
         Authenticate secure trip session using auto generated booking OTP.
       </Typography>
 
       <Grid container spacing={3}>
+        {/* LEFT SIDE */}
         <Grid size={{ xs: 12, md: 7 }}>
-          <Paper
-            elevation={0}
-            sx={{
-              border: '1px solid #E5E7EB',
-              borderRadius: 3,
-              p: 3,
-            }}
-          >
+          <Paper sx={{ border: '1px solid #E5E7EB', borderRadius: 3, p: 3 }}>
             <Stack spacing={3}>
+
+              {/* BOOKING ID */}
               <Box>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: '#6B7280',
-                    fontWeight: 600,
-                    letterSpacing: 1,
-                  }}
-                >
+                <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600 }}>
                   BOOKING ID
                 </Typography>
 
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    mt: 1,
-                    p: 2,
-                    borderRadius: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                  }}
-                >
-                  <LocalTaxiOutlinedIcon fontSize="small" />
-
-                  <Link href={`/bookings/${booking?.id || ''}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-  <Typography fontWeight={600} sx={{ cursor: 'pointer' }}>
-    {booking?.bookingID || 'N/A'}
-  </Typography>
-</Link>
-                </Paper>
+                <Link href={bookingLink} style={{ textDecoration: 'none' }}>
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      mt: 1,
+                      p: 2,
+                      borderRadius: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      cursor: 'pointer',
+                      '&:hover': { backgroundColor: '#f5f5f5' },
+                    }}
+                  >
+                    <LocalTaxiOutlinedIcon fontSize="small" />
+                    <Typography fontWeight={600}>
+                      {booking?.bookingID || 'N/A'}
+                    </Typography>
+                  </Paper>
+                </Link>
               </Box>
 
+              {/* PASSENGER */}
               <Box>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: '#6B7280',
-                    fontWeight: 600,
-                    letterSpacing: 1,
-                  }}
-                >
+                <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600 }}>
                   PASSENGER NAME
                 </Typography>
 
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    mt: 1,
-                    p: 2,
-                    borderRadius: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                  }}
-                >
-                  <PersonOutlineOutlinedIcon fontSize="small" />
-
-                  <Link href={`/bookings/${booking?.id || ''}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-  <Typography fontWeight={600} sx={{ cursor: 'pointer' }}>
-    {booking?.customerName || 'Passenger'}
-  </Typography>
-</Link>
-                </Paper>
+                <Link href={bookingLink} style={{ textDecoration: 'none' }}>
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      mt: 1,
+                      p: 2,
+                      borderRadius: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      cursor: 'pointer',
+                      '&:hover': { backgroundColor: '#f5f5f5' },
+                    }}
+                  >
+                    <PersonOutlineOutlinedIcon fontSize="small" />
+                    <Typography fontWeight={600}>
+                      {booking?.customerName || 'Passenger'}
+                    </Typography>
+                  </Paper>
+                </Link>
               </Box>
 
               <Box>
