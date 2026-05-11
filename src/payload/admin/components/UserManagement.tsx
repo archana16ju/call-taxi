@@ -56,111 +56,262 @@ const StatCard = ({
   progress,
   roleFilter,
   setRoleFilter,
-}: any) => (
-  <Paper
-    sx={{
-      p: 3,
-      borderRadius: '12px',
-      border: '1px solid #e2e8f0',
-      boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)',
-      height: '100%',
-      backgroundColor: '#fff',
-    }}
-  >
-    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2 }}>
-      <Typography
-        variant="caption"
+}: any) => {
+  const roleItems = [
+    {
+      key: 'superadmin',
+      label: 'Super Admin',
+      color: '#a855f7',
+      glow: 'rgba(168,85,247,0.45)',
+      percent: progress?.superadmin || 0,
+    },
+    {
+      key: 'admin',
+      label: 'Admin',
+      color: '#facc15',
+      glow: 'rgba(250,204,21,0.45)',
+      percent: progress?.admin || 0,
+    },
+    {
+      key: 'accounts',
+      label: 'Accounts',
+      color: '#38bdf8',
+      glow: 'rgba(56,189,248,0.45)',
+      percent: progress?.accounts || 0,
+    },
+    {
+      key: 'driver',
+      label: 'Drivers',
+      color: '#22c55e',
+      glow: 'rgba(34,197,94,0.45)',
+      percent: progress?.driver || 0,
+    },
+  ]
+
+  return (
+    <Paper
+      sx={{
+        p: 3,
+        borderRadius: '24px',
+        border: '1px solid rgba(255,255,255,0.08)',
+        background:
+          'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)',
+        boxShadow:
+          '0 15px 40px rgba(15,23,42,0.35)',
+        overflow: 'hidden',
+        position: 'relative',
+        height: '100%',
+      }}
+    >
+      {/* Glow */}
+      <Box
         sx={{
-          color: '#64748b',
-          fontWeight: 700,
-          letterSpacing: '0.05em',
-          textTransform: 'uppercase',
+          position: 'absolute',
+          top: -80,
+          right: -80,
+          width: 180,
+          height: 180,
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(14,165,233,0.25) 0%, transparent 70%)',
         }}
+      />
+
+      {/* Header */}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mb: 3, position: 'relative', zIndex: 2 }}
       >
-        {title}
-      </Typography>
+        <Box>
+          <Typography
+            sx={{
+              color: '#94a3b8',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}
+          >
+            {title}
+          </Typography>
 
-      <Box sx={{ color: '#0369a1' }}>{icon}</Box>
-    </Stack>
-
-    {progress !== undefined ? (
-      <Box sx={{ mt: 1 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            height: 8,
-            borderRadius: 999,
-            overflow: 'hidden',
-            backgroundColor: '#e2e8f0',
-          }}
-        >
-          <Box sx={{ width: `${progress.superadmin || 0}%`, backgroundColor: '#7c3aed' }} />
-          <Box sx={{ width: `${progress.admin || 0}%`, backgroundColor: '#eab308' }} />
-          <Box sx={{ width: `${progress.accounts || 0}%`, backgroundColor: '#0ea5e9' }} />
-          <Box sx={{ width: `${progress.driver || 0}%`, backgroundColor: '#22c55e' }} />
+          <Typography
+            sx={{
+              color: '#fff',
+              fontSize: '1.7rem',
+              fontWeight: 800,
+              mt: 0.5,
+            }}
+          >
+            Team Roles
+          </Typography>
         </Box>
 
-        <Stack direction="row" justifyContent="space-between" sx={{ mt: 1.5, flexWrap: 'wrap' }}>
-          {[
-            {
-              label: 'Super Admin',
-              value: 'superadmin',
-              color: '#7c3aed',
-            },
-            {
-              label: 'Admin',
-              value: 'admin',
-              color: '#eab308',
-            },
-            {
-              label: 'Accounts',
-              value: 'accounts',
-              color: '#0ea5e9',
-            },
-            {
-              label: 'Driver',
-              value: 'driver',
-              color: '#22c55e',
-            },
-            {
-              label: 'All',
-              value: 'all',
-              color: '#64748b',
-            },
-          ].map((item) => (
-            <Typography
-              key={item.value}
-              onClick={() => setRoleFilter(item.value)}
+        <Box
+          sx={{
+            width: 52,
+            height: 52,
+            borderRadius: '16px',
+            background:
+              'linear-gradient(135deg, rgba(14,165,233,0.25), rgba(59,130,246,0.15))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#38bdf8',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          {icon}
+        </Box>
+      </Stack>
+
+      {/* Distribution */}
+      <Stack spacing={1.5}>
+        {roleItems.map((item) => {
+          const active = roleFilter === item.key
+
+          return (
+            <Box
+              key={item.key}
+              onClick={() =>
+                setRoleFilter(active ? 'all' : item.key)
+              }
               sx={{
-                color: item.color,
-                fontSize: '0.7rem',
-                fontWeight: 700,
                 cursor: 'pointer',
-                opacity: roleFilter === item.value ? 1 : 0.5,
-                transition: '0.2s',
+                borderRadius: '18px',
+                px: 2,
+                py: 1.6,
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.25s ease',
+
+                background: active
+                  ? `linear-gradient(135deg, ${item.glow}, rgba(255,255,255,0.03))`
+                  : 'rgba(255,255,255,0.03)',
+
+                border: active
+                  ? `1px solid ${item.color}`
+                  : '1px solid rgba(255,255,255,0.05)',
+
+                transform: active
+                  ? 'scale(1.02)'
+                  : 'scale(1)',
+
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  background:
+                    `linear-gradient(135deg, ${item.glow}, rgba(255,255,255,0.03))`,
+                },
               }}
             >
-              {item.label}
-            </Typography>
-          ))}
-        </Stack>
-      </Box>
-    ) : (
-      <Stack direction="row" alignItems="baseline" spacing={1}>
-        <Typography variant="h5" sx={{ fontWeight: 800, color: '#1e293b' }}>
-          {value}
-        </Typography>
+              {/* Background Progress */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  width: `${item.percent}%`,
+                  background: item.color,
+                  opacity: 0.08,
+                }}
+              />
 
-        {subValue && (
-          <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 700 }}>
-            {subValue}
-          </Typography>
-        )}
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ position: 'relative', zIndex: 2 }}
+              >
+                <Stack
+                  direction="row"
+                  spacing={1.2}
+                  alignItems="center"
+                >
+                  <Box
+                    sx={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: '50%',
+                      background: item.color,
+                      boxShadow: `0 0 14px ${item.color}`,
+                    }}
+                  />
+
+                  <Typography
+                    sx={{
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: '0.92rem',
+                    }}
+                  >
+                    {item.label}
+                  </Typography>
+                </Stack>
+
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  alignItems="center"
+                >
+                  <Typography
+                    sx={{
+                      color: item.color,
+                      fontWeight: 800,
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    {item.percent.toFixed(0)}%
+                  </Typography>
+
+                  {active && (
+                    <Box
+                      sx={{
+                        px: 1,
+                        py: 0.3,
+                        borderRadius: '999px',
+                        fontSize: '0.62rem',
+                        fontWeight: 800,
+                        color: '#fff',
+                        background: item.color,
+                        boxShadow: `0 0 14px ${item.color}`,
+                      }}
+                    >
+                      LIVE
+                    </Box>
+                  )}
+                </Stack>
+              </Stack>
+            </Box>
+          )
+        })}
       </Stack>
-    )}
-  </Paper>
-)
 
+      {/* Reset */}
+      <Button
+        fullWidth
+        onClick={() => setRoleFilter('all')}
+        sx={{
+          mt: 2.5,
+          borderRadius: '16px',
+          py: 1.2,
+          textTransform: 'none',
+          color: '#cbd5e1',
+          fontWeight: 700,
+          background: 'rgba(255,255,255,0.04)',
+
+          '&:hover': {
+            background: 'rgba(255,255,255,0.08)',
+          },
+        }}
+      >
+        Show All Users
+      </Button>
+    </Paper>
+  )
+}
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -431,24 +582,6 @@ export default function UserManagement() {
           >
             Filters
           </Button>
-          <TextField
-  size="small"
-  placeholder="Search users..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  sx={{
-    minWidth: 260,
-    backgroundColor: '#fff',
-    borderRadius: '10px',
-  }}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <SearchIcon sx={{ color: '#94a3b8' }} />
-      </InputAdornment>
-    ),
-  }}
-/>
 
           <Button
             variant="outlined"
@@ -456,13 +589,16 @@ export default function UserManagement() {
             onClick={(e) => setColumnAnchorEl(e.currentTarget)}
             sx={{
               textTransform: 'none',
-              borderColor: '#e2e8f0',
-              color: '#475569',
-              backgroundColor: '#fff',
+              borderRadius: '12px',
+              px: 2,
+              py: 1,
               fontWeight: 700,
+              background: 'linear-gradient(135deg,#0f172a 0%,#1e293b 100%)',
+              color: '#fff',
+              boxShadow: '0 6px 20px rgba(15,23,42,0.35)',
 
               '&:hover': {
-                backgroundColor: '#f1f5f9',
+                background: 'linear-gradient(135deg,#1e293b 0%,#334155 100%)',
               },
             }}
           >
@@ -845,6 +981,7 @@ export default function UserManagement() {
               py: 1,
               display: 'block',
               color: '#64748b',
+              bg: 'rgba(100,116,139,0.15)',
               fontWeight: 700,
             }}
           >
