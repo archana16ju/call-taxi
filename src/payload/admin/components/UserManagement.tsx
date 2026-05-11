@@ -5,9 +5,6 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import {
   Box,
   Typography,
-  Select,
-  MenuItem,
-  TextField,
   Button,
   Table,
   TableBody,
@@ -21,30 +18,24 @@ import {
   Stack,
   Checkbox,
   Pagination,
-  InputAdornment,
-  Avatar,
   Menu,
   Grid,
-  LinearProgress,
   Drawer,
-  Divider,
+  TextField,
+  InputAdornment,
 } from '@mui/material'
+
 import { UserForm } from './UserCreate'
 import { useAuth } from '@payloadcms/ui'
+
 import SearchIcon from '@mui/icons-material/Search'
 import ViewColumnIcon from '@mui/icons-material/ViewColumn'
 import FilterListIcon from '@mui/icons-material/FilterList'
-import AddIcon from '@mui/icons-material/Add'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import GroupIcon from '@mui/icons-material/Group'
-import PeopleIcon from '@mui/icons-material/People'
-import InfoIcon from '@mui/icons-material/Info'
 import EditIcon from '@mui/icons-material/Edit'
 import AssessmentIcon from '@mui/icons-material/Assessment'
-import dayjs from 'dayjs'
 
 type User = {
   id: string
@@ -52,27 +43,26 @@ type User = {
   role: string
   username?: string
   phoneNumber?: string
-  fullName?: string   
+  fullName?: string
   active?: boolean
-  driverProfile?:
-    | {
-        id: string
-        name: string
-        photo?: {
-          url?: string
-        }
-      }
-    | string
   updatedAt: string
 }
 
-const StatCard = ({ title, value, subValue, icon, progress, roleFilter, setRoleFilter }: any) => (
+const StatCard = ({
+  title,
+  value,
+  subValue,
+  icon,
+  progress,
+  roleFilter,
+  setRoleFilter,
+}: any) => (
   <Paper
     sx={{
       p: 3,
       borderRadius: '12px',
       border: '1px solid #e2e8f0',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)',
       height: '100%',
       backgroundColor: '#fff',
     }}
@@ -82,131 +72,108 @@ const StatCard = ({ title, value, subValue, icon, progress, roleFilter, setRoleF
         variant="caption"
         sx={{
           color: '#64748b',
-          fontWeight: 600,
+          fontWeight: 700,
           letterSpacing: '0.05em',
           textTransform: 'uppercase',
         }}
       >
         {title}
       </Typography>
+
       <Box sx={{ color: '#0369a1' }}>{icon}</Box>
     </Stack>
 
     {progress !== undefined ? (
-  <Box sx={{ mt: 1 }}>
-    <Box
-      sx={{
-        display: 'flex',
-        height: 8,
-        borderRadius: 4,
-        overflow: 'hidden',
-        backgroundColor: '#e2e8f0',
-      }}
-    >
-      <Box sx={{ width: `${progress.superadmin || 0}%`, backgroundColor: '#7c3aed' }} />
-      <Box sx={{ width: `${progress.admin || 0}%`, backgroundColor: '#eab308' }} />
-      <Box sx={{ width: `${progress.accounts || 0}%`, backgroundColor: '#0ea5e9' }} />
-      <Box sx={{ width: `${progress.driver || 0}%`, backgroundColor: '#22c55e' }} />
-    </Box>
+      <Box sx={{ mt: 1 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            height: 8,
+            borderRadius: 999,
+            overflow: 'hidden',
+            backgroundColor: '#e2e8f0',
+          }}
+        >
+          <Box sx={{ width: `${progress.superadmin || 0}%`, backgroundColor: '#7c3aed' }} />
+          <Box sx={{ width: `${progress.admin || 0}%`, backgroundColor: '#eab308' }} />
+          <Box sx={{ width: `${progress.accounts || 0}%`, backgroundColor: '#0ea5e9' }} />
+          <Box sx={{ width: `${progress.driver || 0}%`, backgroundColor: '#22c55e' }} />
+        </Box>
 
-   <Stack direction="row" justifyContent="space-between" sx={{ mt: 1.5 }}>
-  
-  <Typography
-    onClick={() => setRoleFilter('superadmin')}
-    sx={{
-      color: '#7c3aed',
-      fontSize: '0.7rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      opacity: roleFilter === 'superadmin' ? 1 : 0.6,
-    }}
-  >
-    Super Admin
-  </Typography>
+        <Stack direction="row" justifyContent="space-between" sx={{ mt: 1.5, flexWrap: 'wrap' }}>
+          {[
+            {
+              label: 'Super Admin',
+              value: 'superadmin',
+              color: '#7c3aed',
+            },
+            {
+              label: 'Admin',
+              value: 'admin',
+              color: '#eab308',
+            },
+            {
+              label: 'Accounts',
+              value: 'accounts',
+              color: '#0ea5e9',
+            },
+            {
+              label: 'Driver',
+              value: 'driver',
+              color: '#22c55e',
+            },
+            {
+              label: 'All',
+              value: 'all',
+              color: '#64748b',
+            },
+          ].map((item) => (
+            <Typography
+              key={item.value}
+              onClick={() => setRoleFilter(item.value)}
+              sx={{
+                color: item.color,
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                opacity: roleFilter === item.value ? 1 : 0.5,
+                transition: '0.2s',
+              }}
+            >
+              {item.label}
+            </Typography>
+          ))}
+        </Stack>
+      </Box>
+    ) : (
+      <Stack direction="row" alignItems="baseline" spacing={1}>
+        <Typography variant="h5" sx={{ fontWeight: 800, color: '#1e293b' }}>
+          {value}
+        </Typography>
 
-  <Typography
-    onClick={() => setRoleFilter('admin')}
-    sx={{
-      color: '#eab308',
-      fontSize: '0.7rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      opacity: roleFilter === 'admin' ? 1 : 0.6,
-    }}
-  >
-    Admin
-  </Typography>
-
-  <Typography
-    onClick={() => setRoleFilter('accounts')}
-    sx={{
-      color: '#0ea5e9',
-      fontSize: '0.7rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      opacity: roleFilter === 'accounts' ? 1 : 0.6,
-    }}
-  >
-    Accounts
-  </Typography>
-
-  <Typography
-    onClick={() => setRoleFilter('driver')}
-    sx={{
-      color: '#22c55e',
-      fontSize: '0.7rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      opacity: roleFilter === 'driver' ? 1 : 0.6,
-    }}
-  >
-    Driver
-  </Typography>
- <Typography
-  onClick={() => setRoleFilter('all')}
-  sx={{
-    color: '#64748b',
-    fontSize: '0.7rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    opacity: roleFilter === 'all' ? 1 : 0.6,
-  }}
->
-  All
-</Typography>
-</Stack>
-  </Box>
-) : (
-  <Stack direction="row" alignItems="baseline" spacing={1}>
-    <Typography variant="h5" sx={{ fontWeight: 700, color: '#1e293b' }}>
-      {value}
-    </Typography>
-    {subValue && (
-      <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 700 }}>
-        {subValue}
-      </Typography>
+        {subValue && (
+          <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 700 }}>
+            {subValue}
+          </Typography>
+        )}
+      </Stack>
     )}
-  </Stack>
-)}
   </Paper>
 )
 
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
+
   const [search, setSearch] = useState('')
+
   const [page, setPage] = useState(1)
-  const [perPage, setPerPage] = useState(10)
+  const [perPage] = useState(10)
   const [totalDocs, setTotalDocs] = useState(0)
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
-  const { user: currentUser } = useAuth()
-  const isSuperAdmin = currentUser?.role === 'superadmin'
-
-  // Columns & Filters State
   const [columnAnchorEl, setColumnAnchorEl] = useState<null | HTMLElement>(null)
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null)
+
   const [visibleColumns, setVisibleColumns] = useState([
     'id',
     'name',
@@ -217,43 +184,55 @@ export default function UserManagement() {
     'status',
     'actions',
   ])
+
   const [roleFilter, setRoleFilter] = useState('all')
 
   const [openDrawer, setOpenDrawer] = useState(false)
   const [drawerUserId, setDrawerUserId] = useState<string | null>(null)
 
+  const { user: currentUser } = useAuth()
+  const isSuperAdmin = currentUser?.role === 'superadmin'
+
   const openCreate = () => {
     setDrawerUserId(null)
     setOpenDrawer(true)
   }
+
   const openEdit = (id: string) => {
     setDrawerUserId(id)
     setOpenDrawer(true)
   }
+
   const closeDrawer = async () => {
-  setOpenDrawer(false)
-  setDrawerUserId(null)
-  await fetchUsers()
-}
+    setOpenDrawer(false)
+    setDrawerUserId(null)
+    await fetchUsers()
+  }
 
   const fetchUsers = useCallback(async () => {
     setLoading(true)
+
     try {
       const query = new URLSearchParams({
         limit: perPage.toString(),
         page: page.toString(),
         depth: '1',
       })
+
       if (search) {
         query.append('where[email][contains]', search)
       }
+
       if (roleFilter !== 'all') {
         query.append('where[role][equals]', roleFilter)
       }
+
       const res = await fetch(`/api/users?${query.toString()}`, {
         credentials: 'include',
       })
+
       const data = await res.json()
+
       setUsers(data.docs || [])
       setTotalDocs(data.totalDocs || 0)
     } catch (err) {
@@ -267,98 +246,115 @@ export default function UserManagement() {
     fetchUsers()
   }, [fetchUsers])
 
-  const handleActionClick = (event: React.MouseEvent<HTMLButtonElement>, userId: string) => {
-    setAnchorEl(event.currentTarget)
-    setSelectedUserId(userId)
-  }
-
-  const handleActionClose = () => {
-    setAnchorEl(null)
-    setSelectedUserId(null)
-  }
-
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'superadmin':
-        return { bg: '#7c3aed', text: '#7c3aed' }
+        return {
+          bg: '#ede9fe',
+          text: '#6d28d9',
+        }
+
       case 'admin':
-        return { bg: '#fef9c3', text: '#854d0e' }
+        return {
+          bg: '#fef9c3',
+          text: '#854d0e',
+        }
+
       case 'accounts':
-        return { bg: '#e0f2fe', text: '#075985' }
+        return {
+          bg: '#e0f2fe',
+          text: '#075985',
+        }
+
       case 'driver':
-        return { bg: '#dcfce7', text: '#166534' }
+        return {
+          bg: '#dcfce7',
+          text: '#166534',
+        }
+
       default:
-        return { bg: '#f1f5f9', text: '#475569' }
+        return {
+          bg: '#f1f5f9',
+          text: '#475569',
+        }
     }
   }
 
   const activeDrivers = useMemo(() => {
-  return users.filter(
-    (u) => u.role === 'driver' && u.active !== false
-  ).length
-}, [users])
+    return users.filter((u) => u.role === 'driver' && u.active !== false).length
+  }, [users])
 
-const roleStats = useMemo(() => {
-  const total = users.length || 1
+  const roleStats = useMemo(() => {
+    const total = users.length || 1
 
-  const counts = {
-    superadmin: users.filter(u => u.role === 'superadmin').length,
-    admin: users.filter(u => u.role === 'admin').length,
-    accounts: users.filter(u => u.role === 'accounts').length,
-    driver: users.filter(u => u.role === 'driver').length,
-  }
+    const counts = {
+      superadmin: users.filter((u) => u.role === 'superadmin').length,
+      admin: users.filter((u) => u.role === 'admin').length,
+      accounts: users.filter((u) => u.role === 'accounts').length,
+      driver: users.filter((u) => u.role === 'driver').length,
+    }
 
-  return {
-    superadmin: (counts.superadmin / total) * 100,
-    admin: (counts.admin / total) * 100,
-    accounts: (counts.accounts / total) * 100,
-    driver: (counts.driver / total) * 100,
-  }
-}, [users])
+    return {
+      superadmin: (counts.superadmin / total) * 100,
+      admin: (counts.admin / total) * 100,
+      accounts: (counts.accounts / total) * 100,
+      driver: (counts.driver / total) * 100,
+    }
+  }, [users])
 
   return (
-    <Box sx={{ p: 4, backgroundColor: '#f8fafc', minHeight: '100vh', color: '#1e293b' , fontFamily:
-      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',}}>
-
-      {/* Top Header */}
+    <Box
+      sx={{
+        p: 4,
+        backgroundColor: '#f8fafc',
+        minHeight: '100vh',
+        color: '#1e293b',
+        fontFamily:
+          'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+      }}
+    >
+      {/* HEADER */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 4 }}>
         <IconButton size="small">
           <MoreVertIcon sx={{ transform: 'rotate(90deg)' }} />
         </IconButton>
-        <Typography variant="h6" sx={{ fontWeight: 800, color: '#1e293b',fontFamily:
-      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif' }}>
+
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 800,
+            color: '#1e293b',
+          }}
+        >
           User Management
         </Typography>
+
         <Box sx={{ flexGrow: 1 }} />
+
         <Button
-  variant="contained"
-  startIcon={<PersonAddIcon />}
-  onClick={openCreate}
-  sx={{
-    textTransform: 'none',
-    backgroundColor: '#0ea5e9',
-    color: '#fff',
-    borderRadius: '8px',
-    px: 2,
-    py: 1,
-    fontWeight: 600,
-    fontSize: '0.8rem',
-    minWidth: 'auto',
-    boxShadow: 'none',
+          variant="contained"
+          startIcon={<PersonAddIcon />}
+          onClick={openCreate}
+          sx={{
+            textTransform: 'none',
+            backgroundColor: '#0ea5e9',
+            color: '#fff',
+            borderRadius: '10px',
+            px: 2,
+            py: 1,
+            fontWeight: 700,
+            boxShadow: 'none',
 
-    fontFamily:
-      'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
-
-    '&:hover': {
-      backgroundColor: '#0284c7',
-    },
-  }}
->
-  Create New User
-</Button>
+            '&:hover': {
+              backgroundColor: '#0284c7',
+            },
+          }}
+        >
+          Create New User
+        </Button>
       </Stack>
 
-      {/* Stats Row */}
+      {/* STATS */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, md: 4 }}>
           <StatCard
@@ -367,156 +363,162 @@ const roleStats = useMemo(() => {
             icon={<LocalShippingIcon />}
           />
         </Grid>
+
         <Grid size={{ xs: 12, md: 4 }}>
           <StatCard
-  title="Role Distribution"
-  progress={roleStats}
-  icon={<AssessmentIcon />}
-  roleFilter={roleFilter}
-  setRoleFilter={setRoleFilter}
-/>
+            title="Role Distribution"
+            progress={roleStats}
+            icon={<AssessmentIcon />}
+            roleFilter={roleFilter}
+            setRoleFilter={setRoleFilter}
+          />
         </Grid>
+
         <Grid size={{ xs: 12, md: 4 }}>
-          <StatCard title="Total Entry" value={totalDocs.toString()} icon={<GroupIcon />} />
+          <StatCard
+            title="Total Entry"
+            value={totalDocs.toString()}
+            icon={<GroupIcon />}
+          />
         </Grid>
       </Grid>
 
-      {/* Actions Toolbar */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+      {/* TOOLBAR */}
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        justifyContent="space-between"
+        spacing={2}
+        sx={{ mb: 3 }}
+      >
+        <TextField
+          placeholder="Search email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          size="small"
+          sx={{
+            width: { xs: '100%', md: 320 },
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: '#64748b' }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+
         <Stack direction="row" spacing={2}>
           <Button
-  variant="contained"
-  startIcon={<FilterListIcon />}
-  sx={{
-    textTransform: 'none',
-    borderRadius: '12px',
-    px: 2,
-    py: 1,
-    fontWeight: 700,
-    background:
-      'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-    color: '#fff',
-    boxShadow: '0 6px 20px rgba(15,23,42,0.35)',
+            variant="contained"
+            startIcon={<FilterListIcon />}
+            onClick={(e) => setFilterAnchorEl(e.currentTarget)}
+            sx={{
+              textTransform: 'none',
+              borderRadius: '12px',
+              px: 2,
+              py: 1,
+              fontWeight: 700,
+              background: 'linear-gradient(135deg,#0f172a 0%,#1e293b 100%)',
+              color: '#fff',
+              boxShadow: '0 6px 20px rgba(15,23,42,0.35)',
 
-    '&:hover': {
-      background:
-        'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-      transform: 'translateY(-1px)',
-    },
+              '&:hover': {
+                background: 'linear-gradient(135deg,#1e293b 0%,#334155 100%)',
+              },
+            }}
+          >
+            Filters
+          </Button>
+          <TextField
+  size="small"
+  placeholder="Search users..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  sx={{
+    minWidth: 260,
+    backgroundColor: '#fff',
+    borderRadius: '10px',
   }}
-  onClick={(e) => setFilterAnchorEl(e.currentTarget)}
->
-  Filters
-</Button>
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon sx={{ color: '#94a3b8' }} />
+      </InputAdornment>
+    ),
+  }}
+/>
+
           <Button
             variant="outlined"
             startIcon={<ViewColumnIcon />}
+            onClick={(e) => setColumnAnchorEl(e.currentTarget)}
             sx={{
               textTransform: 'none',
               borderColor: '#e2e8f0',
               color: '#475569',
               backgroundColor: '#fff',
-              fontWeight: 600,
-              '&:hover': { backgroundColor: '#f1f5f9' },
+              fontWeight: 700,
+
+              '&:hover': {
+                backgroundColor: '#f1f5f9',
+              },
             }}
-            onClick={(e) => setColumnAnchorEl(e.currentTarget)}
           >
             Columns
           </Button>
         </Stack>
       </Stack>
 
-      {/* Table Section */}
+      {/* TABLE */}
       <TableContainer
         component={Paper}
-        sx={{ borderRadius: '8px', boxShadow: 'none', border: '1px solid #e2e8f0' }}
+        sx={{
+          borderRadius: '12px',
+          boxShadow: 'none',
+          border: '1px solid #e2e8f0',
+        }}
       >
-        <Table sx={{ minWidth: 650 }}>
+        <Table sx={{ minWidth: 850 }}>
           <TableHead sx={{ backgroundColor: '#f8fafc' }}>
             <TableRow>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                ID
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Name
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Email
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Username
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Phone Number
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Role
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Status
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{
-                  fontWeight: 700,
-                  color: '#475569',
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Actions
-              </TableCell>
+              {visibleColumns.includes('id') && (
+                <TableCell sx={tableHeadStyle}>ID</TableCell>
+              )}
+
+              {visibleColumns.includes('name') && (
+                <TableCell sx={tableHeadStyle}>Name</TableCell>
+              )}
+
+              {visibleColumns.includes('email') && (
+                <TableCell sx={tableHeadStyle}>Email</TableCell>
+              )}
+
+              {visibleColumns.includes('username') && (
+                <TableCell sx={tableHeadStyle}>Username</TableCell>
+              )}
+
+              {visibleColumns.includes('phoneNumber') && (
+                <TableCell sx={tableHeadStyle}>Phone Number</TableCell>
+              )}
+
+              {visibleColumns.includes('role') && (
+                <TableCell sx={tableHeadStyle}>Role</TableCell>
+              )}
+
+              {visibleColumns.includes('status') && (
+                <TableCell sx={tableHeadStyle}>Status</TableCell>
+              )}
+
+              {visibleColumns.includes('actions') && (
+                <TableCell align="right" sx={tableHeadStyle}>
+                  Actions
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {loading ? (
               <TableRow>
@@ -533,65 +535,110 @@ const roleStats = useMemo(() => {
             ) : (
               users.map((user, index) => {
                 const roleStyle = getRoleColor(user.role)
-                return (
-                  <TableRow key={user.id} sx={{ '&:hover': { backgroundColor: '#f8fafc' } }}>
-                    <TableCell sx={{ color: '#64748b', fontSize: '0.875rem' }}>
-                      {(page - 1) * perPage + index + 1}
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#1e293b' }}>
-                      {user.fullName || user.username || user.email.split('@')[0]}
-                    </TableCell>
 
-                    <TableCell sx={{ color: '#64748b' }}>{user.email}</TableCell>
-                    <TableCell sx={{ color: '#64748b' }}>
-                      {user.username || user.email.split('@')[0]}
-                    </TableCell>
-                    <TableCell sx={{ color: '#64748b' }}>
-                      {user.phoneNumber || '+91 98765 43210'}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={user.role === 'superadmin' ? 'SUPER ADMIN' : user.role.toUpperCase()}
-                        size="small"
+                return (
+                  <TableRow
+                    key={user.id}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: '#f8fafc',
+                      },
+                    }}
+                  >
+                    {visibleColumns.includes('id') && (
+                      <TableCell sx={tableCellStyle}>
+                        {(page - 1) * perPage + index + 1}
+                      </TableCell>
+                    )}
+
+                    {visibleColumns.includes('name') && (
+                      <TableCell
                         sx={{
-                          backgroundColor: roleStyle.bg,
-                          color: roleStyle.text,
                           fontWeight: 700,
-                          fontSize: '0.65rem',
-                          borderRadius: '6px',
+                          color: '#1e293b',
                         }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <Box
-  sx={{
-    width: 8,
-    height: 8,
-    borderRadius: '50%',
-    backgroundColor: user.active ? '#10b981' : '#ef4444',
-  }}
-/>
-<Typography
-  variant="caption"
-  sx={{
-    fontWeight: 700,
-    color: user.active ? '#166534' : '#991b1b',
-    backgroundColor: user.active ? '#dcfce7' : '#fee2e2',
-    px: 1,
-    py: 0.25,
-    borderRadius: '12px',
-  }}
->
-  {user.active ? 'ACTIVE' : 'INACTIVE'}
-</Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton size="small" onClick={() => openEdit(user.id)}>
-                        <EditIcon sx={{ fontSize: '1.25rem', color: '#64748b' }} />
-                      </IconButton>
-                    </TableCell>
+                      >
+                        {user.fullName || user.username || user.email.split('@')[0]}
+                      </TableCell>
+                    )}
+
+                    {visibleColumns.includes('email') && (
+                      <TableCell sx={tableCellStyle}>{user.email}</TableCell>
+                    )}
+
+                    {visibleColumns.includes('username') && (
+                      <TableCell sx={tableCellStyle}>
+                        {user.username || user.email.split('@')[0]}
+                      </TableCell>
+                    )}
+
+                    {visibleColumns.includes('phoneNumber') && (
+                      <TableCell sx={tableCellStyle}>
+                        {user.phoneNumber || '+91 98765 43210'}
+                      </TableCell>
+                    )}
+
+                    {visibleColumns.includes('role') && (
+                      <TableCell>
+                        <Chip
+                          label={
+                            user.role === 'superadmin'
+                              ? 'SUPER ADMIN'
+                              : user.role.toUpperCase()
+                          }
+                          size="small"
+                          sx={{
+                            backgroundColor: roleStyle.bg,
+                            color: roleStyle.text,
+                            fontWeight: 700,
+                            fontSize: '0.7rem',
+                            borderRadius: '6px',
+                          }}
+                        />
+                      </TableCell>
+                    )}
+
+                    {visibleColumns.includes('status') && (
+                      <TableCell>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              backgroundColor: user.active ? '#10b981' : '#ef4444',
+                            }}
+                          />
+
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              fontWeight: 700,
+                              color: user.active ? '#166534' : '#991b1b',
+                              backgroundColor: user.active ? '#dcfce7' : '#fee2e2',
+                              px: 1,
+                              py: 0.25,
+                              borderRadius: '999px',
+                            }}
+                          >
+                            {user.active ? 'ACTIVE' : 'INACTIVE'}
+                          </Typography>
+                        </Stack>
+                      </TableCell>
+                    )}
+
+                    {visibleColumns.includes('actions') && (
+                      <TableCell align="right">
+                        <IconButton size="small" onClick={() => openEdit(user.id)}>
+                          <EditIcon
+                            sx={{
+                              fontSize: '1.25rem',
+                              color: '#64748b',
+                            }}
+                          />
+                        </IconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
                 )
               })
@@ -599,17 +646,21 @@ const roleStats = useMemo(() => {
           </TableBody>
         </Table>
 
-        {/* Footer */}
+        {/* FOOTER */}
         <Stack
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}
+          sx={{
+            p: 2,
+            borderTop: '1px solid #e2e8f0',
+          }}
         >
           <Typography variant="caption" sx={{ color: '#64748b' }}>
             Showing {Math.min((page - 1) * perPage + 1, totalDocs)}-
             {Math.min(page * perPage, totalDocs)} of {totalDocs} entries
           </Typography>
+
           <Pagination
             count={Math.ceil(totalDocs / perPage)}
             page={page}
@@ -617,201 +668,256 @@ const roleStats = useMemo(() => {
             shape="rounded"
             size="small"
             sx={{
-              '& .MuiPaginationItem-root': { fontWeight: 700 },
-              '& .Mui-selected': { backgroundColor: '#1e293b !important', color: '#fff' },
+              '& .MuiPaginationItem-root': {
+                fontWeight: 700,
+              },
+
+              '& .Mui-selected': {
+                backgroundColor: '#1e293b !important',
+                color: '#fff',
+              },
             }}
           />
         </Stack>
       </TableContainer>
 
-      {/* Filters Menu */}
-<Menu
-  anchorEl={filterAnchorEl}
-  open={Boolean(filterAnchorEl)}
-  onClose={() => setFilterAnchorEl(null)}
-  PaperProps={{
-    sx: {
-      minWidth: 260,
-      borderRadius: '20px',
-      p: 1,
-      mt: 1,
-      background:
-        'linear-gradient(145deg, rgba(15,23,42,0.95), rgba(30,41,59,0.95))',
-      backdropFilter: 'blur(18px)',
-      border: '1px solid rgba(255,255,255,0.08)',
-      boxShadow:
-        '0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)',
-      overflow: 'hidden',
-    },
-  }}
->
-  <Box sx={{ px: 1, py: 1 }}>
-    <Typography
-      sx={{
-        color: '#94a3b8',
-        fontSize: '0.72rem',
-        fontWeight: 700,
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        px: 1.5,
-        mb: 1.5,
-      }}
-    >
-      Filter Users
-    </Typography>
-
-    {[
-      {
-        value: 'all',
-        label: 'All Users',
-        color: '#64748b',
-        bg: 'rgba(100,116,139,0.15)',
-      },
-      {
-        value: 'superadmin',
-        label: 'Super Admin',
-        color: '#a855f7',
-        bg: 'rgba(168,85,247,0.15)',
-      },
-      {
-        value: 'admin',
-        label: 'Admin',
-        color: '#facc15',
-        bg: 'rgba(250,204,21,0.15)',
-      },
-      {
-        value: 'accounts',
-        label: 'Accounts',
-        color: '#38bdf8',
-        bg: 'rgba(56,189,248,0.15)',
-      },
-      {
-        value: 'driver',
-        label: 'Drivers',
-        color: '#22c55e',
-        bg: 'rgba(34,197,94,0.15)',
-      },
-    ].map((role) => {
-      const active = roleFilter === role.value
-
-      return (
-        <MenuItem
-          key={role.value}
-          onClick={() => {
-            setRoleFilter(role.value)
-            setFilterAnchorEl(null)
-          }}
-          sx={{
-            mb: 1,
-            borderRadius: '14px',
-            px: 1.5,
-            py: 1.2,
-            transition: 'all 0.25s ease',
-            backgroundColor: active ? role.bg : 'transparent',
-            border: active
-              ? `1px solid ${role.color}`
-              : '1px solid transparent',
-
-            '&:hover': {
-              backgroundColor: role.bg,
-              transform: 'translateX(4px)',
-            },
-          }}
-        >
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            width="100%"
+      {/* FILTER MENU */}
+      <Menu
+        anchorEl={filterAnchorEl}
+        open={Boolean(filterAnchorEl)}
+        onClose={() => setFilterAnchorEl(null)}
+        PaperProps={{
+          sx: {
+            minWidth: 260,
+            borderRadius: '20px',
+            p: 1,
+            mt: 1,
+            background:
+              'linear-gradient(145deg, rgba(15,23,42,0.96), rgba(30,41,59,0.96))',
+            backdropFilter: 'blur(18px)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow:
+              '0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)',
+          },
+        }}
+      >
+        <Box sx={{ px: 1, py: 1 }}>
+          <Typography
+            sx={{
+              color: '#94a3b8',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              px: 1.5,
+              mb: 1.5,
+            }}
           >
-            <Stack direction="row" alignItems="center" spacing={1.2}>
-              <Box
-                sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: '50%',
-                  backgroundColor: role.color,
-                  boxShadow: active
-                    ? `0 0 12px ${role.color}`
-                    : 'none',
-                }}
-              />
+            Filter Users
+          </Typography>
 
-              <Typography
+          {[
+            {
+              value: 'all',
+              label: 'All Users',
+              color: '#64748b',
+              bg: 'rgba(100,116,139,0.15)',
+            },
+            {
+              value: 'superadmin',
+              label: 'Super Admin',
+              color: '#a855f7',
+              bg: 'rgba(168,85,247,0.15)',
+            },
+            {
+              value: 'admin',
+              label: 'Admin',
+              color: '#facc15',
+              bg: 'rgba(250,204,21,0.15)',
+            },
+            {
+              value: 'accounts',
+              label: 'Accounts',
+              color: '#38bdf8',
+              bg: 'rgba(56,189,248,0.15)',
+            },
+            {
+              value: 'driver',
+              label: 'Drivers',
+              color: '#22c55e',
+              bg: 'rgba(34,197,94,0.15)',
+            },
+          ].map((role) => {
+            const active = roleFilter === role.value
+
+            return (
+              <Box
+                key={role.value}
+                onClick={() => {
+                  setRoleFilter(role.value)
+                  setPage(1)
+                  setFilterAnchorEl(null)
+                }}
                 sx={{
-                  color: active ? '#fff' : '#cbd5e1',
-                  fontWeight: active ? 700 : 500,
-                  fontSize: '0.88rem',
+                  mb: 1,
+                  borderRadius: '14px',
+                  px: 1.5,
+                  py: 1.2,
+                  cursor: 'pointer',
+                  transition: '0.25s',
+                  backgroundColor: active ? role.bg : 'transparent',
+                  border: active
+                    ? `1px solid ${role.color}`
+                    : '1px solid transparent',
+
+                  '&:hover': {
+                    backgroundColor: role.bg,
+                    transform: 'translateX(4px)',
+                  },
                 }}
               >
-                {role.label}
-              </Typography>
-            </Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Stack direction="row" alignItems="center" spacing={1.2}>
+                    <Box
+                      sx={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        backgroundColor: role.color,
+                        boxShadow: active ? `0 0 12px ${role.color}` : 'none',
+                      }}
+                    />
 
-            {active && (
-              <Box
-                sx={{
-                  px: 1,
-                  py: 0.3,
-                  borderRadius: '999px',
-                  fontSize: '0.65rem',
-                  fontWeight: 700,
-                  color: '#fff',
-                  background: role.color,
-                  boxShadow: `0 0 14px ${role.color}`,
-                }}
-              >
-                ACTIVE
+                    <Typography
+                      sx={{
+                        color: active ? '#fff' : '#cbd5e1',
+                        fontWeight: active ? 700 : 500,
+                        fontSize: '0.88rem',
+                      }}
+                    >
+                      {role.label}
+                    </Typography>
+                  </Stack>
+
+                  {active && (
+                    <Box
+                      sx={{
+                        px: 1,
+                        py: 0.3,
+                        borderRadius: '999px',
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        color: '#fff',
+                        background: role.color,
+                      }}
+                    >
+                      ACTIVE
+                    </Box>
+                  )}
+                </Stack>
               </Box>
-            )}
-          </Stack>
-        </MenuItem>
-      )
-    })}
-  </Box>
-</Menu>
+            )
+          })}
+        </Box>
+      </Menu>
 
-      {/* Columns Menu */}
+      {/* COLUMN MENU */}
       <Menu
         anchorEl={columnAnchorEl}
         open={Boolean(columnAnchorEl)}
         onClose={() => setColumnAnchorEl(null)}
-        PaperProps={{ sx: { minWidth: 180 } }}
+        PaperProps={{
+          sx: {
+            minWidth: 220,
+            borderRadius: '14px',
+          },
+        }}
       >
         <Box sx={{ p: 1 }}>
           <Typography
             variant="caption"
-            sx={{ px: 2, py: 1, display: 'block', color: '#64748b', fontWeight: 700 }}
+            sx={{
+              px: 2,
+              py: 1,
+              display: 'block',
+              color: '#64748b',
+              fontWeight: 700,
+            }}
           >
             Toggle Columns
           </Typography>
-          {['id', 'name', 'email', 'username', 'phoneNumber', 'role', 'status', 'actions'].map(
-            (col) => (
-              <MenuItem
-                key={col}
-                onClick={() => {
-                  setVisibleColumns((prev) =>
-                    prev.includes(col) ? prev.filter((c) => c !== col) : [...prev, col],
-                  )
+
+          {[
+            'id',
+            'name',
+            'email',
+            'username',
+            'phoneNumber',
+            'role',
+            'status',
+            'actions',
+          ].map((col) => (
+            <Box
+              key={col}
+              onClick={() => {
+                setVisibleColumns((prev) =>
+                  prev.includes(col)
+                    ? prev.filter((c) => c !== col)
+                    : [...prev, col],
+                )
+              }}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                px: 2,
+                py: 1,
+                borderRadius: '10px',
+                cursor: 'pointer',
+
+                '&:hover': {
+                  backgroundColor: '#f1f5f9',
+                },
+              }}
+            >
+              <Typography
+                sx={{
+                  textTransform: 'capitalize',
+                  fontSize: '0.875rem',
                 }}
-                sx={{ display: 'flex', justifyContent: 'space-between' }}
               >
-                <Typography sx={{ textTransform: 'capitalize', fontSize: '0.875rem' }}>
-                  {col}
-                </Typography>
-                <Checkbox size="small" checked={visibleColumns.includes(col)} />
-              </MenuItem>
-            ),
-          )}
+                {col}
+              </Typography>
+
+              <Checkbox size="small" checked={visibleColumns.includes(col)} />
+            </Box>
+          ))}
         </Box>
       </Menu>
+
+      {/* DRAWER */}
       <Drawer
         anchor="right"
         open={openDrawer}
         onClose={closeDrawer}
-        PaperProps={{ sx: { width: 400, p: 2 } }}
+        PaperProps={{
+          sx: {
+            width: 400,
+            p: 3,
+          },
+        }}
       >
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            mb: 2,
+            fontWeight: 800,
+          }}
+        >
           {drawerUserId ? 'Edit User' : 'Create User'}
         </Typography>
 
@@ -819,4 +925,16 @@ const roleStats = useMemo(() => {
       </Drawer>
     </Box>
   )
+}
+
+const tableHeadStyle = {
+  fontWeight: 700,
+  color: '#475569',
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+}
+
+const tableCellStyle = {
+  color: '#64748b',
+  fontSize: '0.875rem',
 }
