@@ -320,9 +320,9 @@ export default function MainDashboard() {
   sx={{
     backgroundColor: '#f8fafc',
     minHeight: '100vh',
-    color: '#0f172a',
-    overflowX: 'hidden',
     width: '100%',
+    overflowX: 'hidden',
+    color: '#0f172a',
   }}
 >
       <LocationTracker />
