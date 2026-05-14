@@ -86,12 +86,16 @@ const ALL_PERMISSIONS = [
 ]
 
 export default function RolesPage() {
-  const [roles, setRoles] = useState<RoleType[]>([])
-  const [loading, setLoading] = useState(true)
 
-  const [openEdit, setOpenEdit] = useState(false)
+    const [showOnlyActive, setShowOnlyActive] = useState(false)
 
-const [selectedRole, setSelectedRole] = useState<any>(null)
+    const [search, setSearch] = useState('')
+    const [roles, setRoles] = useState<RoleType[]>([])
+    const [loading, setLoading] = useState(true)
+
+    const [openEdit, setOpenEdit] = useState(false)
+
+   const [selectedRole, setSelectedRole] = useState<any>(null)
 
 const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
 
@@ -247,6 +251,18 @@ const handleDelete = (roleName: string) => {
     )
   }
 
+  const filteredRoles = roles.filter((role) => {
+  const matchesSearch = role.name
+    .toLowerCase()
+    .includes(search.toLowerCase())
+
+  const matchesActive = showOnlyActive
+    ? role.users > 0
+    : true
+
+  return matchesSearch && matchesActive
+})
+
   return (
     <Box
       sx={{
@@ -303,29 +319,31 @@ const handleDelete = (roleName: string) => {
           alignItems="center"
           mb={4}
         >
-          <TextField
-            placeholder="Search roles..."
-            sx={{
-              width: 350,
+         <TextField
+  placeholder="Search roles..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  sx={{
+    width: 350,
 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '14px',
-                color: '#fff',
-                background: 'rgba(255,255,255,0.03)',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '14px',
+      color: '#fff',
+      background: 'rgba(255,255,255,0.03)',
 
-                '& fieldset': {
-                  borderColor: 'rgba(255,255,255,0.06)',
-                },
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: '#94a3b8' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
+      '& fieldset': {
+        borderColor: 'rgba(255,255,255,0.06)',
+      },
+    },
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon sx={{ color: '#94a3b8' }} />
+      </InputAdornment>
+    ),
+  }}
+/>
 
           <Stack direction="row" spacing={2}>
             <IconButton
@@ -370,7 +388,7 @@ const handleDelete = (roleName: string) => {
 
         {/* Roles */}
         <Stack spacing={2}>
-          {roles.map((role) => (
+          {filteredRoles.map((role) => (
             <Paper
               key={role.id}
               sx={{
