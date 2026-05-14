@@ -25,7 +25,6 @@ import {
 } from '@mui/material'
 
 import SearchIcon from '@mui/icons-material/Search'
-import FilterListIcon from '@mui/icons-material/FilterList'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -40,49 +39,64 @@ type RoleType = {
   users: number
 }
 
-const ALL_PERMISSIONS = [
-  '/admin',
+type PermissionGroup = {
+  label: string
+  color: string
+  permissions: string[]
+}
 
-  '/admin/collections/users',
-  '/admin/collections/drivers',
-  '/admin/collections/customers',
-  '/admin/collections/slider-images',
-  '/admin/collections/media',
-  '/admin/collections/vehicles',
+const PERMISSION_GROUPS: PermissionGroup[] = [
+  {
+     label: 'Super Admin',
+    color: '#fbbf24',
+    permissions: ['*'],
+  },
 
-  '/admin/collections/bookings',
-  '/admin/driver-allocation',
-  '/admin/voice-dispatch',
-  '/admin/collections/ride-preferences',
+  {
+    label: 'Admin',
+    color: '#3b82f6',
+    permissions: [
+    '/admin',
+    '/admin/collections/users',
+    '/admin/collections/drivers',
+    '/admin/collections/customers',
+    '/admin/collections/slider-images',
+    '/admin/collections/media',
+    '/admin/collections/vehicles',
+    '/admin/collections/bookings',
+    '/admin/driver-allocation',
+    '/admin/voice-dispatch',
+    '/admin/collections/ride-preferences',
+    '/live-tracking',
+    '/admin/collections/driver-offline-logs',
+    '/admin/globals/general-settings',
+    '/admin/collections/ai-chat-conversations',
+    '/admin/globals/cancellation-control',
+    '/admin/collections/trip-otps',
+    '/admin/collections/trip-sharing',
+    '/admin/collections/revenue-settlements',
+    '/admin/collections/alerts',
+    '/admin/collections/contacts',
+    '/admin/globals/customer-report',
+    '/admin/globals/booking-report',
+    '/admin/globals/vehicle-report',
+    '/admin/collections/reviews',
+  ],
+},
 
-  '/live-tracking',
-  '/admin/collections/driver-offline-logs',
-
-  '/admin/globals/general-settings',
-  '/admin/collections/ai-chat-conversations',
-
-  '/admin/globals/cancellation-control',
-  '/admin/collections/trip-otps',
-  '/admin/collections/trip-sharing',
-
-  '/admin/collections/revenue-settlements',
-
-  '/admin/collections/invoices',
-  '/admin/globals/payment-settings',
-  '/admin/collections/payment-methods',
-  '/admin/collections/tariffs',
-  '/admin/collections/coupons',
-
-  '/admin/collections/alerts',
-  '/admin/collections/contacts',
-
-  '/admin/globals/customer-report',
-  '/admin/globals/booking-report',
-  '/admin/globals/vehicle-report',
-
-  '/admin/collections/reviews',
-
-  '/admin/collections/roles',
+ {
+    label: 'Accounts',
+    color: '#22c55e',
+    permissions: [
+    '/admin',
+    '/admin/collections/invoices',
+    '/admin/globals/payment-settings',
+    '/admin/collections/payment-methods',
+    '/admin/collections/tariffs',
+    '/admin/collections/coupons',
+    '/admin/collections/alerts',
+  ],
+},
 ]
 
 export default function RolesPage() {
@@ -192,14 +206,17 @@ setRoles(roleData)
     }
   }
 
-  const handleEdit = (role: any) => {
-  const roleConfig = ROLE_PERMISSIONS[role.name]
-
+ const handleEdit = (role: any) => {
   setSelectedRole(role)
 
-  setSelectedPermissions(roleConfig.permissions)
+  // 🔥 REAL permissions from backend role object
+  const rolePermissions = role.permissions || []
 
-  setRoleActive(roleConfig.active)
+  setSelectedPermissions(rolePermissions)
+
+  setRoleActive(
+    ROLE_PERMISSIONS[role.name]?.active ?? true
+  )
 
   setOpenEdit(true)
 }
@@ -212,23 +229,33 @@ const handlePermissionToggle = (permission: string) => {
   )
 }
 
-const handleSaveRole = () => {
+const handleSaveRole = async () => {
   if (!selectedRole) return
 
-  ROLE_PERMISSIONS[selectedRole.name] = {
-    permissions: selectedPermissions,
-    active: roleActive,
-  }
+  await fetch('/api/roles/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      role: selectedRole.name,
+      permissions: selectedPermissions,
+      active: roleActive,
+    }),
+  })
 
-  fetchRoles()
-
+  await fetchRoles()
   setOpenEdit(false)
 }
 
-const handleDelete = (roleName: string) => {
+const handleDelete = async (roleName: string) => {
   if (roleName === 'superadmin') return
 
-  delete ROLE_PERMISSIONS[roleName]
+  await fetch(`/api/roles/delete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role: roleName }),
+  })
 
   fetchRoles()
 }
@@ -332,14 +359,6 @@ const handleDelete = (roleName: string) => {
 />
 
           <Stack direction="row" spacing={2}>
-            <IconButton
-              sx={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.06)',
-              }}
-            >
-              <FilterListIcon sx={{ color: '#cbd5e1' }} />
-            </IconButton>
 
             <IconButton
               onClick={fetchRoles}
@@ -418,11 +437,11 @@ const handleDelete = (roleName: string) => {
                     </Typography>
 
                     <Chip
-  label={
-    ROLE_PERMISSIONS[role.name]?.active
-      ? 'Active'
-      : 'Inactive'
-  }
+                      label={
+                      ROLE_PERMISSIONS[role.name]?.active
+                       ? 'Active'
+                       : 'Inactive'
+                     }
                       size="small"
                       sx={{
                         mt: 1,
@@ -537,50 +556,124 @@ color: ROLE_PERMISSIONS[role.name]?.active
 >
   <DialogTitle>Edit Role Permissions</DialogTitle>
 
-  <DialogContent>
-    <Box sx={{ mt: 2 }}>
-      <FormControlLabel
-        control={
-          <Switch
-            checked={roleActive}
-            onChange={(e) =>
-              setRoleActive(e.target.checked)
-            }
-          />
-        }
-        label={roleActive ? 'Active' : 'Inactive'}
-      />
-    </Box>
+ <DialogContent>
+  <Box sx={{ mt: 1 }} />
 
-    <Typography
-      sx={{
-        mt: 3,
-        mb: 2,
-        fontWeight: 700,
-      }}
-    >
-      Permissions
+  {/* ROLE STATUS */}
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      mb: 3,
+      p: 2,
+      borderRadius: '14px',
+      background: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.06)',
+    }}
+  >
+    <Typography sx={{ fontWeight: 800, color: '#fff' }}>
+      Role Status
     </Typography>
 
-    <Stack spacing={1}>
-      {ALL_PERMISSIONS.map((permission) => (
-        <FormControlLabel
-          key={permission}
-          control={
-            <Checkbox
-              checked={selectedPermissions.includes(
-                permission,
-              )}
-              onChange={() =>
-                handlePermissionToggle(permission)
-              }
-            />
-          }
-          label={permission}
-        />
-      ))}
-    </Stack>
-  </DialogContent>
+    <Switch
+      checked={roleActive}
+      onChange={(e) => setRoleActive(e.target.checked)}
+      color="success"
+    />
+  </Box>
+
+  {/* PERMISSIONS TITLE */}
+  <Typography
+    sx={{
+      mt: 2,
+      mb: 2,
+      fontWeight: 900,
+      color: '#fff',
+      fontSize: '1.1rem',
+    }}
+  >
+    Permissions
+  </Typography>
+
+  {/* GROUPED PERMISSIONS */}
+  <Stack spacing={3}>
+    {PERMISSION_GROUPS.map((group) => (
+      <Box
+        key={group.label}
+        sx={{
+          p: 2,
+          borderRadius: '16px',
+          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(255,255,255,0.02)',
+        }}
+      >
+        {/* GROUP HEADER */}
+        <Typography
+          sx={{
+            color: group.color,
+            fontWeight: 900,
+            mb: 1.5,
+            fontSize: '0.95rem',
+          }}
+        >
+          {group.label}
+        </Typography>
+
+        {/* CHIPS */}
+        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          {group.permissions.map((permission: string) => {
+
+            const isSelected =
+             selectedPermissions.includes('*') ||
+             selectedPermissions.includes(permission)
+
+            return (
+              <Box
+                key={permission}
+                onClick={() => handlePermissionToggle(permission)}
+                sx={{
+                  cursor: 'pointer',
+                  px: 1.5,
+                  py: 0.8,
+                  borderRadius: '12px',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  userSelect: 'none',
+
+                  background: isSelected
+                    ? 'rgba(34,197,94,0.15)'
+                    : 'rgba(255,255,255,0.05)',
+
+                  color: isSelected ? '#22c55e' : '#94a3b8',
+
+                  border: isSelected
+                    ? '1px solid rgba(34,197,94,0.5)'
+                    : '1px solid rgba(255,255,255,0.08)',
+
+                  transition: '0.2s',
+
+                  '&:hover': {
+                    transform: 'scale(1.03)',
+                    background: isSelected
+                      ? 'rgba(34,197,94,0.25)'
+                      : 'rgba(255,255,255,0.08)',
+                  },
+                }}
+              >
+                {permission
+                  .replace('/admin/collections/', '')
+                  .replace('/admin/globals/', '')
+                  .replace('/admin/', '')
+                  .replaceAll('-', ' ')}
+              </Box>
+            )
+          })}
+        </Stack>
+      </Box>
+    ))}
+  </Stack>
+</DialogContent>
 
   <DialogActions>
     <Button onClick={() => setOpenEdit(false)}>
