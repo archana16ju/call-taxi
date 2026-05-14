@@ -37,6 +37,7 @@ type RoleType = {
   name: string
   permissions: string[]
   users: number
+  active?: boolean
 }
 
 type PermissionGroup = {
@@ -49,7 +50,7 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
   {
      label: 'Super Admin',
     color: '#fbbf24',
-    permissions: ['*'],
+    permissions: ['Full System Access'],
   },
 
   {
@@ -101,6 +102,14 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
 
 export default function RolesPage() {
 
+  const [roleConfig, setRoleConfig] = useState<any>({})
+  const fetchRoleConfig = async () => {
+  const res = await fetch('/api/roles/get')
+  const data = await res.json()
+
+  setRoleConfig(data || {})
+}
+
   const [search, setSearch] = useState('')
   const [roles, setRoles] = useState<RoleType[]>([])
   const [loading, setLoading] = useState(true)
@@ -114,8 +123,9 @@ const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
 const [roleActive, setRoleActive] = useState(true)
 
   useEffect(() => {
-    fetchRoles()
-  }, [])
+  fetchRoles()
+  fetchRoleConfig()
+}, [])
 
   const fetchRoles = async () => {
     try {
@@ -160,6 +170,7 @@ const [roleActive, setRoleActive] = useState(true)
             ),
 
       users: groupedRoles[roleName] || 0,
+      active: roleConfig.active ?? true,
     }
   },
 )
@@ -208,16 +219,8 @@ setRoles(roleData)
 
  const handleEdit = (role: any) => {
   setSelectedRole(role)
-
-  // 🔥 REAL permissions from backend role object
-  const rolePermissions = role.permissions || []
-
-  setSelectedPermissions(rolePermissions)
-
-  setRoleActive(
-    ROLE_PERMISSIONS[role.name]?.active ?? true
-  )
-
+  setSelectedPermissions(role.permissions || [])
+  setRoleActive(role.active ?? true)
   setOpenEdit(true)
 }
 
@@ -232,7 +235,7 @@ const handlePermissionToggle = (permission: string) => {
 const handleSaveRole = async () => {
   if (!selectedRole) return
 
-  await fetch('/api/roles/update', {
+  const res = await fetch('/api/roles/update', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -244,8 +247,14 @@ const handleSaveRole = async () => {
     }),
   })
 
-  await fetchRoles()
-  setOpenEdit(false)
+  const data = await res.json()
+
+  if (data.success) {
+    await fetchRoles()
+    setOpenEdit(false)
+  } else {
+    console.error('Failed to save role')
+  }
 }
 
 const handleDelete = async (roleName: string) => {
@@ -436,19 +445,22 @@ const handleDelete = async (roleName: string) => {
                       {role.name}
                     </Typography>
 
-                    <Chip
-                      label={
-                      ROLE_PERMISSIONS[role.name]?.active
-                       ? 'Active'
-                       : 'Inactive'
-                     }
-                      size="small"
-                      sx={{
-                        mt: 1,
-                        background: 'rgba(255,255,255,0.05)',
-                        color: '#cbd5e1',
-                      }}
-                    />
+                   {/* Status */}
+<Chip
+  label={role.active ? 'Active' : 'Inactive'}
+  sx={{
+    width: 90,
+    background: role.active
+      ? 'rgba(34,197,94,0.15)'
+      : 'rgba(239,68,68,0.15)',
+
+    color: role.active
+      ? '#22c55e'
+      : '#ef4444',
+
+    fontWeight: 800,
+  }}
+/>
                   </Box>
                 </Stack>
 
@@ -499,11 +511,11 @@ const handleDelete = async (roleName: string) => {
                   label="Active"
                   sx={{
                     width: 90,
-                    background: ROLE_PERMISSIONS[role.name]?.active
+                    background: role.active
   ? 'rgba(34,197,94,0.15)'
   : 'rgba(239,68,68,0.15)',
 
-color: ROLE_PERMISSIONS[role.name]?.active
+color: role.active
   ? '#22c55e'
   : '#ef4444',
                     fontWeight: 800,
@@ -623,10 +635,9 @@ color: ROLE_PERMISSIONS[role.name]?.active
         {/* CHIPS */}
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
           {group.permissions.map((permission: string) => {
-
-            const isSelected =
-             selectedPermissions.includes('*') ||
-             selectedPermissions.includes(permission)
+            
+            const isSelected = selectedPermissions.includes(permission)
+            
 
             return (
               <Box
