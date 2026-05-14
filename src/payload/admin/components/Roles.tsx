@@ -154,7 +154,6 @@ const [roleActive, setRoleActive] = useState(true)
 
 setRoles(roleData)
 
-      setRoles(roleData)
     } catch (err) {
       console.error(err)
     } finally {
@@ -257,8 +256,8 @@ const handleDelete = (roleName: string) => {
     .includes(search.toLowerCase())
 
   const matchesActive = showOnlyActive
-    ? role.users > 0
-    : true
+  ? ROLE_PERMISSIONS[role.name]?.active
+  : true
 
   return matchesSearch && matchesActive
 })
@@ -548,7 +547,7 @@ color: ROLE_PERMISSIONS[role.name]?.active
             color: '#94a3b8',
           }}
         >
-          Showing 1 to {roles.length} of {roles.length} roles
+         Showing 1 to {filteredRoles.length} of {roles.length} roles
         </Typography>
       </Paper>
       <Dialog
