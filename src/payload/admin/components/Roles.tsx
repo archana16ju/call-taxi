@@ -432,7 +432,7 @@ const handleDelete = (roleName: string) => {
 
                     <Chip
   label={
-    ROLE_PERMISSIONS[role.name]?.active
+    role.active
       ? 'Active'
       : 'Inactive'
   }
