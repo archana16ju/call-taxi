@@ -353,7 +353,7 @@ const handleDelete = (roleName: string) => {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr',
+            gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
             p: 2,
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             color: '#94a3b8',
@@ -364,6 +364,7 @@ const handleDelete = (roleName: string) => {
           <Typography>ROLE NAME</Typography>
           <Typography>PERMISSIONS</Typography>
           <Typography>USERS</Typography>
+          <Typography>TOTAL PERMISSIONS</Typography>
           <Typography>STATUS</Typography>
           <Typography>ACTIONS</Typography>
         </Box>
@@ -383,7 +384,7 @@ const handleDelete = (roleName: string) => {
               <Box
                 sx={{
                   display: 'grid',
-                  gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr',
+                  gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
                   alignItems: 'center',
                   gap: 2,
                 }}
@@ -470,6 +471,29 @@ const handleDelete = (roleName: string) => {
                     users
                   </Typography>
                 </Box>
+
+                {/* Total Permissions */}
+<Box>
+  <Typography
+    sx={{
+      color: '#fff',
+      fontWeight: 800,
+      fontSize: '1.4rem',
+    }}
+  >
+    {ROLE_PERMISSIONS[role.name]?.permissions[0] === '*'
+      ? 'ALL'
+      : ROLE_PERMISSIONS[role.name]?.permissions.length}
+  </Typography>
+
+  <Typography
+    sx={{
+      color: '#94a3b8',
+    }}
+  >
+    permissions
+  </Typography>
+</Box>
 
                 {/* Status */}
                 <Chip
