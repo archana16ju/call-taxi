@@ -45,7 +45,7 @@ import StarIcon from '@mui/icons-material/Star'
 const menuItems: any[] = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
   { type: 'header', label: 'MANAGEMENT' },
-  { label: 'Users & Roles', icon: <AdminPanelSettingsIcon />, path: '/admin/collections/users' },
+  { label: 'Users', icon: <AdminPanelSettingsIcon />, path: '/admin/collections/users' },
   { label: 'Drivers', icon: <PeopleIcon />, path: '/admin/collections/drivers' },
   { label: 'Customers', icon: <PeopleIcon />, path: '/admin/collections/customers' },
   { label: 'Sliders', icon: <CollectionsIcon />, path: '/admin/collections/slider-images' },
