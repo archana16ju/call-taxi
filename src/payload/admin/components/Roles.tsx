@@ -183,16 +183,16 @@ const handlePermissionToggle = (permission: string) => {
 const handleSaveRole = async () => {
   if (!selectedRole) return
 
-  await fetch(`/api/roles/${selectedRole.id}`, {
+  const res = await fetch(`/api/roles/${selectedRole.id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       active: roleActive,
       permissions: selectedPermissions.map((p) => ({ path: p })),
     }),
   })
+
+  if (!res.ok) return
 
   setRoles((prev) =>
     prev.map((r) =>
@@ -207,20 +207,13 @@ const handleSaveRole = async () => {
   )
 
   setOpenEdit(false)
+
+  fetchRoles() // reload from backend
 }
 
-const handleDelete = (roleName: string) => {
+const handleDelete = async (roleName: string) => {
   if (roleName === 'superadmin') return
 
-  const handleDelete = async (roleName: string) => {
-  if (roleName === 'superadmin') return
-
-  await fetch(`/api/roles/${roleName}`, {
-    method: 'DELETE',
-  })
-
-  fetchRoles()
-}
   fetchRoles()
 }
 
@@ -477,6 +470,7 @@ const handleDelete = (roleName: string) => {
     {role.permissions.includes('Full System Access')
   ? 'ALL'
   : role.permissions.length}
+
   </Typography>
 
   <Typography
