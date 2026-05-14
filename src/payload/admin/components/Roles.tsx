@@ -428,13 +428,20 @@ const handleDelete = (roleName: string) => {
       ? 'Active'
       : 'Inactive'
   }
-                      size="small"
-                      sx={{
-                        mt: 1,
-                        background: 'rgba(255,255,255,0.05)',
-                        color: '#cbd5e1',
-                      }}
-                    />
+  sx={{
+    width: 90,
+
+    background: ROLE_PERMISSIONS[role.name]?.active
+      ? 'rgba(34,197,94,0.15)'
+      : 'rgba(239,68,68,0.15)',
+
+    color: ROLE_PERMISSIONS[role.name]?.active
+      ? '#22c55e'
+      : '#ef4444',
+
+    fontWeight: 800,
+  }}
+/>
                   </Box>
                 </Stack>
 
@@ -447,15 +454,25 @@ const handleDelete = (roleName: string) => {
                 >
                   {role.permissions.map((permission, index) => (
                     <Chip
-                      key={index}
-                      label={permission}
-                      sx={{
-                        background: `${getRoleColor(role.name)}15`,
-                        color: getRoleColor(role.name),
-                        fontWeight: 700,
-                        borderRadius: '10px',
-                      }}
-                    />
+  label={
+    ROLE_PERMISSIONS[role.name]?.active
+      ? 'Active'
+      : 'Inactive'
+  }
+  sx={{
+    width: 90,
+
+    background: ROLE_PERMISSIONS[role.name]?.active
+      ? 'rgba(34,197,94,0.15)'
+      : 'rgba(239,68,68,0.15)',
+
+    color: ROLE_PERMISSIONS[role.name]?.active
+      ? '#22c55e'
+      : '#ef4444',
+
+    fontWeight: 800,
+  }}
+/>
                   ))}
                 </Stack>
 
@@ -504,20 +521,26 @@ const handleDelete = (roleName: string) => {
 </Box>
 
                 {/* Status */}
-                <Chip
-                  label="Active"
-                  sx={{
-                    width: 90,
-                    background: ROLE_PERMISSIONS[role.name]?.active
-  ? 'rgba(34,197,94,0.15)'
-  : 'rgba(239,68,68,0.15)',
+               <Chip
+  label={
+    ROLE_PERMISSIONS[role.name]?.active
+      ? 'Active'
+      : 'Inactive'
+  }
+  sx={{
+    width: 90,
 
-color: ROLE_PERMISSIONS[role.name]?.active
-  ? '#22c55e'
-  : '#ef4444',
-                    fontWeight: 800,
-                  }}
-                />
+    background: ROLE_PERMISSIONS[role.name]?.active
+      ? 'rgba(34,197,94,0.15)'
+      : 'rgba(239,68,68,0.15)',
+
+    color: ROLE_PERMISSIONS[role.name]?.active
+      ? '#22c55e'
+      : '#ef4444',
+
+    fontWeight: 800,
+  }}
+/>
 
                 {/* Actions */}
                 <Stack direction="row" spacing={1}>
