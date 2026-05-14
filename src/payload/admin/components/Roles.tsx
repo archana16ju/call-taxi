@@ -123,67 +123,68 @@ const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
 const [roleActive, setRoleActive] = useState(true)
 
   useEffect(() => {
-  fetchRoles()
-  fetchRoleConfig()
+  const init = async () => {
+    await fetchRoleConfig()
+    await fetchRoles()
+  }
+
+  init()
 }, [])
 
   const fetchRoles = async () => {
-    try {
-      setLoading(true)
+  try {
+    setLoading(true)
 
-      const res = await fetch('/api/users?limit=100')
+    const res = await fetch('/api/users?limit=100')
+    const data = await res.json()
 
-      const data = await res.json()
+    const users = data.docs || []
 
-      const users = data.docs || []
+    const groupedRoles: Record<string, number> = {}
 
-      const groupedRoles: Record<string, number> = {}
+    users.forEach((user: any) => {
+      const role = user.role || 'admin'
+      groupedRoles[role] = (groupedRoles[role] || 0) + 1
+    })
 
-      users.forEach((user: any) => {
-        const role = user.role || 'admin'
+    const roleData: RoleType[] = Object.keys(ROLE_PERMISSIONS).map(
+      (roleName, index) => {
 
-        if (!groupedRoles[role]) {
-          groupedRoles[role] = 0
+        // 🔥 IMPORTANT FIX HERE
+        const dbConfig = roleConfig[roleName]
+        const baseConfig = ROLE_PERMISSIONS[roleName]
+
+        const permissionsSource =
+          dbConfig?.permissions || baseConfig.permissions
+
+        return {
+          id: String(index + 1),
+          name: roleName,
+
+          permissions:
+            permissionsSource[0] === '*'
+              ? ['Full System Access']
+              : permissionsSource.map((path: string) =>
+                  path
+                    .replace('/admin/collections/', '')
+                    .replace('/admin/globals/', '')
+                    .replace('/admin/', '')
+                    .replaceAll('-', ' ')
+                ),
+
+          users: groupedRoles[roleName] || 0,
+          active: dbConfig?.active ?? baseConfig.active ?? true,
         }
+      }
+    )
 
-        groupedRoles[role]++
-      })
-
-   const roleData: RoleType[] = Object.keys(ROLE_PERMISSIONS).map(
-  (roleName, index) => {
-    const roleConfig = ROLE_PERMISSIONS[roleName]
-
-    return {
-      id: String(index + 1),
-
-      name: roleName,
-
-      permissions:
-        roleConfig.permissions[0] === '*'
-          ? ['Full System Access']
-          : roleConfig.permissions.map((path: string) =>
-              path
-                .replace('/admin/collections/', '')
-                .replace('/admin/globals/', '')
-                .replace('/admin/', '')
-                .replaceAll('-', ' '),
-            ),
-
-      users: groupedRoles[roleName] || 0,
-      active: roleConfig.active ?? true,
-    }
-  },
-)
-
-setRoles(roleData)
-
-      setRoles(roleData)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+    setRoles(roleData)
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setLoading(false)
   }
+}
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -250,7 +251,10 @@ const handleSaveRole = async () => {
   const data = await res.json()
 
   if (data.success) {
+
     await fetchRoles()
+    await fetchRoleConfig()
+
     setOpenEdit(false)
   } else {
     console.error('Failed to save role')
