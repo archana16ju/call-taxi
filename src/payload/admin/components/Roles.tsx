@@ -227,33 +227,36 @@ const data = response.data || response
     }
   }
 
- const handleEdit = (role: any) => {
+const handleEdit = (role: any) => {
   setSelectedRole(role)
 
-  setSelectedPermissions(
-    (role.permissions || []).map((p: string) =>
-      p.startsWith('/admin') ? p : `/admin/collections/${p}`
-    )
+  const basePermissions =
+    ROLE_PERMISSIONS[role.name]?.permissions || []
+
+  const normalizedSelected = role.permissions.map((p: string) =>
+    p.startsWith('/admin') ? p : `/admin/collections/${p}`
   )
+
+  setSelectedPermissions(normalizedSelected.length ? normalizedSelected : basePermissions)
 
   setRoleActive(role.active ?? true)
   setOpenEdit(true)
 }
 
 const handlePermissionToggle = (permission: string) => {
+  const fullPermission = permission.startsWith('/admin')
+    ? permission
+    : `/admin/collections/${permission}`
+
   setSelectedPermissions((prev) =>
-    prev.includes(permission)
-      ? prev.filter((p) => p !== permission)
-      : [...prev, permission],
+    prev.includes(fullPermission)
+      ? prev.filter((p) => p !== fullPermission)
+      : [...prev, fullPermission],
   )
 }
 
 const handleSaveRole = async () => {
   if (!selectedRole) return
-
-  const formattedPermissions = selectedPermissions.map(p =>
-    p.startsWith('/admin') ? p : `/admin/collections/${p}`
-  )
 
   const res = await fetch('/api/roles', {
     method: 'POST',
@@ -262,7 +265,7 @@ const handleSaveRole = async () => {
     },
     body: JSON.stringify({
       role: selectedRole.name,
-      permissions: formattedPermissions,
+      permissions: selectedPermissions,
       active: roleActive,
     }),
   })
@@ -271,13 +274,11 @@ const handleSaveRole = async () => {
 
   if (data.success) {
     await fetchRoleConfig()
-
-    setSelectedPermissions([])
-    setRoleActive(true)
+    await fetchRoles()
 
     setOpenEdit(false)
   } else {
-    console.error('Failed to save role')
+    console.error('Save failed:', data)
   }
 }
 
@@ -416,7 +417,11 @@ const handleDelete = async (roleName: string) => {
 
         {/* Roles */}
         <Stack spacing={2}>
-          {roles.map((role) => (
+          {roles
+  .filter((role) =>
+    role.name.toLowerCase().includes(search.toLowerCase())
+  )
+  .map((role) => (
             <Paper
               key={role.id}
               sx={{
@@ -652,9 +657,11 @@ color: role.active
 
     const normalizedPermission = normalizePermission(permission)
 
-    const isSelected = selectedPermissions.some(
-      (p) => normalizePermission(p) === normalizedPermission
-    )
+    const fullPermission = permission.startsWith('/admin')
+  ? permission
+  : `/admin/collections/${permission}`
+
+const isSelected = selectedPermissions.includes(fullPermission)
 
     return (
       <Box
