@@ -25,7 +25,6 @@ import {
 } from '@mui/material'
 
 import SearchIcon from '@mui/icons-material/Search'
-import FilterListIcon from '@mui/icons-material/FilterList'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -86,8 +85,6 @@ const ALL_PERMISSIONS = [
 ]
 
 export default function RolesPage() {
-
-    const [showOnlyActive, setShowOnlyActive] = useState(false)
 
     const [search, setSearch] = useState('')
     const [roles, setRoles] = useState<RoleType[]>([])
@@ -250,17 +247,11 @@ const handleDelete = (roleName: string) => {
     )
   }
 
-  const filteredRoles = roles.filter((role) => {
-  const matchesSearch = role.name
+  const filteredRoles = roles.filter((role) =>
+  role.name
     .toLowerCase()
-    .includes(search.toLowerCase())
-
-  const matchesActive = showOnlyActive
-  ? ROLE_PERMISSIONS[role.name]?.active
-  : true
-
-  return matchesSearch && matchesActive
-})
+    .includes(search.toLowerCase()),
+)
 
   return (
     <Box
@@ -345,22 +336,6 @@ const handleDelete = (roleName: string) => {
 />
 
           <Stack direction="row" spacing={2}>
-            <IconButton
-  onClick={() =>
-    setShowOnlyActive(!showOnlyActive)
-  }
-  sx={{
-    background: showOnlyActive
-      ? 'rgba(34,197,94,0.2)'
-      : 'rgba(255,255,255,0.04)',
-
-    border: showOnlyActive
-      ? '1px solid #22c55e'
-      : '1px solid rgba(255,255,255,0.06)',
-  }}
->
-              <FilterListIcon sx={{ color: '#cbd5e1' }} />
-            </IconButton>
 
             <IconButton
               onClick={fetchRoles}
