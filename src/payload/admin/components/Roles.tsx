@@ -25,6 +25,7 @@ import {
 } from '@mui/material'
 
 import SearchIcon from '@mui/icons-material/Search'
+import FilterListIcon from '@mui/icons-material/FilterList'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -37,7 +38,6 @@ type RoleType = {
   name: string
   permissions: string[]
   users: number
-  active: boolean
 }
 
 const ALL_PERMISSIONS = [
@@ -86,14 +86,12 @@ const ALL_PERMISSIONS = [
 ]
 
 export default function RolesPage() {
+  const [roles, setRoles] = useState<RoleType[]>([])
+  const [loading, setLoading] = useState(true)
 
-    const [search, setSearch] = useState('')
-    const [roles, setRoles] = useState<RoleType[]>([])
-    const [loading, setLoading] = useState(true)
+  const [openEdit, setOpenEdit] = useState(false)
 
-    const [openEdit, setOpenEdit] = useState(false)
-
-   const [selectedRole, setSelectedRole] = useState<any>(null)
+const [selectedRole, setSelectedRole] = useState<any>(null)
 
 const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
 
@@ -104,34 +102,61 @@ const [roleActive, setRoleActive] = useState(true)
   }, [])
 
   const fetchRoles = async () => {
-  try {
-    setLoading(true)
+    try {
+      setLoading(true)
 
-    const res = await fetch('/api/roles') // ✅ CHANGE THIS (NOT users)
-    const data = await res.json()
+      const res = await fetch('/api/users?limit=100')
 
-    const rolesFromAPI = data.docs || []
+      const data = await res.json()
 
-    const roleData: RoleType[] = rolesFromAPI.map((role: any, index: number) => ({
-      id: role.id || String(index + 1),
-      name: role.name,
+      const users = data.docs || []
 
-      active: role.active,
+      const groupedRoles: Record<string, number> = {}
 
-      permissions: role.permissions?.includes('*')
-        ? ['Full System Access']
-        : role.permissions.map((p: any) => p.path),
+      users.forEach((user: any) => {
+        const role = user.role || 'admin'
 
-      users: role.usersCount || 0,
-    }))
+        if (!groupedRoles[role]) {
+          groupedRoles[role] = 0
+        }
 
-    setRoles(roleData)
-  } catch (err) {
-    console.error(err)
-  } finally {
-    setLoading(false)
+        groupedRoles[role]++
+      })
+
+   const roleData: RoleType[] = Object.keys(ROLE_PERMISSIONS).map(
+  (roleName, index) => {
+    const roleConfig = ROLE_PERMISSIONS[roleName]
+
+    return {
+      id: String(index + 1),
+
+      name: roleName,
+
+      permissions:
+        roleConfig.permissions[0] === '*'
+          ? ['Full System Access']
+          : roleConfig.permissions.map((path: string) =>
+              path
+                .replace('/admin/collections/', '')
+                .replace('/admin/globals/', '')
+                .replace('/admin/', '')
+                .replaceAll('-', ' '),
+            ),
+
+      users: groupedRoles[roleName] || 0,
+    }
+  },
+)
+
+setRoles(roleData)
+
+      setRoles(roleData)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -165,10 +190,15 @@ const [roleActive, setRoleActive] = useState(true)
     }
   }
 
- const handleEdit = (role: RoleType) => {
+  const handleEdit = (role: any) => {
+  const roleConfig = ROLE_PERMISSIONS[role.name]
+
   setSelectedRole(role)
-  setSelectedPermissions(role.permissions)
-  setRoleActive(role.active)
+
+  setSelectedPermissions(roleConfig.permissions)
+
+  setRoleActive(roleConfig.active)
+
   setOpenEdit(true)
 }
 
@@ -180,39 +210,23 @@ const handlePermissionToggle = (permission: string) => {
   )
 }
 
-const handleSaveRole = async () => {
+const handleSaveRole = () => {
   if (!selectedRole) return
 
-  const res = await fetch(`/api/roles/${selectedRole.id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      active: roleActive,
-      permissions: selectedPermissions.map((p) => ({ path: p })),
-    }),
-  })
+  ROLE_PERMISSIONS[selectedRole.name] = {
+    permissions: selectedPermissions,
+    active: roleActive,
+  }
 
-  if (!res.ok) return
-
-  setRoles((prev) =>
-    prev.map((r) =>
-      r.id === selectedRole.id
-        ? {
-            ...r,
-            active: roleActive,
-            permissions: selectedPermissions,
-          }
-        : r,
-    ),
-  )
+  fetchRoles()
 
   setOpenEdit(false)
-
-  fetchRoles() // reload from backend
 }
 
-const handleDelete = async (roleName: string) => {
+const handleDelete = (roleName: string) => {
   if (roleName === 'superadmin') return
+
+  delete ROLE_PERMISSIONS[roleName]
 
   fetchRoles()
 }
@@ -232,12 +246,6 @@ const handleDelete = async (roleName: string) => {
       </Box>
     )
   }
-
-  const filteredRoles = roles.filter((role) =>
-  role.name
-    .toLowerCase()
-    .includes(search.toLowerCase()),
-)
 
   return (
     <Box
@@ -295,33 +303,39 @@ const handleDelete = async (roleName: string) => {
           alignItems="center"
           mb={4}
         >
-         <TextField
-  placeholder="Search roles..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  sx={{
-    width: 350,
+          <TextField
+            placeholder="Search roles..."
+            sx={{
+              width: 350,
 
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '14px',
-      color: '#fff',
-      background: 'rgba(255,255,255,0.03)',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '14px',
+                color: '#fff',
+                background: 'rgba(255,255,255,0.03)',
 
-      '& fieldset': {
-        borderColor: 'rgba(255,255,255,0.06)',
-      },
-    },
-  }}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <SearchIcon sx={{ color: '#94a3b8' }} />
-      </InputAdornment>
-    ),
-  }}
-/>
+                '& fieldset': {
+                  borderColor: 'rgba(255,255,255,0.06)',
+                },
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: '#94a3b8' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
 
           <Stack direction="row" spacing={2}>
+            <IconButton
+              sx={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.06)',
+              }}
+            >
+              <FilterListIcon sx={{ color: '#cbd5e1' }} />
+            </IconButton>
 
             <IconButton
               onClick={fetchRoles}
@@ -339,7 +353,7 @@ const handleDelete = async (roleName: string) => {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
+            gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr',
             p: 2,
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             color: '#94a3b8',
@@ -350,14 +364,13 @@ const handleDelete = async (roleName: string) => {
           <Typography>ROLE NAME</Typography>
           <Typography>PERMISSIONS</Typography>
           <Typography>USERS</Typography>
-          <Typography>TOTAL PERMISSIONS</Typography>
           <Typography>STATUS</Typography>
           <Typography>ACTIONS</Typography>
         </Box>
 
         {/* Roles */}
         <Stack spacing={2}>
-          {filteredRoles.map((role) => (
+          {roles.map((role) => (
             <Paper
               key={role.id}
               sx={{
@@ -370,7 +383,7 @@ const handleDelete = async (roleName: string) => {
               <Box
                 sx={{
                   display: 'grid',
-                  gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
+                  gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr',
                   alignItems: 'center',
                   gap: 2,
                 }}
@@ -402,7 +415,7 @@ const handleDelete = async (roleName: string) => {
 
                     <Chip
   label={
-    role.active
+    ROLE_PERMISSIONS[role.name]?.active
       ? 'Active'
       : 'Inactive'
   }
@@ -458,55 +471,21 @@ const handleDelete = async (roleName: string) => {
                   </Typography>
                 </Box>
 
-                {/* Total Permissions */}
-<Box>
-  <Typography
-    sx={{
-      color: '#fff',
-      fontWeight: 800,
-      fontSize: '1.4rem',
-    }}
-  >
-    {role.permissions.includes('Full System Access')
-  ? 'ALL'
-  : role.permissions.length}
-
-  </Typography>
-
-  <Typography
-    sx={{
-      color: '#94a3b8',
-    }}
-  >
-    permissions
-  </Typography>
-</Box>
-
                 {/* Status */}
-               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-  <Box
-    sx={{
-      width: 8,
-      height: 8,
-      borderRadius: '50%',
-      backgroundColor: role.active ? '#10b981' : '#ef4444',
-    }}
-  />
+                <Chip
+                  label="Active"
+                  sx={{
+                    width: 90,
+                    background: ROLE_PERMISSIONS[role.name]?.active
+  ? 'rgba(34,197,94,0.15)'
+  : 'rgba(239,68,68,0.15)',
 
-  <Typography
-    variant="caption"
-    sx={{
-      fontWeight: 700,
-      color: role.active ? '#166534' : '#991b1b',
-      backgroundColor: role.active ? '#dcfce7' : '#fee2e2',
-      px: 1,
-      py: 0.25,
-      borderRadius: '999px',
-    }}
-  >
-    {role.active ? 'ACTIVE' : 'INACTIVE'}
-  </Typography>
-</Box>
+color: ROLE_PERMISSIONS[role.name]?.active
+  ? '#22c55e'
+  : '#ef4444',
+                    fontWeight: 800,
+                  }}
+                />
 
                 {/* Actions */}
                 <Stack direction="row" spacing={1}>
@@ -543,7 +522,7 @@ const handleDelete = async (roleName: string) => {
             color: '#94a3b8',
           }}
         >
-         Showing 1 to {filteredRoles.length} of {roles.length} roles
+          Showing 1 to {roles.length} of {roles.length} roles
         </Typography>
       </Paper>
       <Dialog
