@@ -37,6 +37,7 @@ type RoleType = {
   name: string
   permissions: string[]
   users: number
+  active: boolean
 }
 
 const ALL_PERMISSIONS = [
@@ -130,8 +131,9 @@ const [roleActive, setRoleActive] = useState(true)
 
     return {
       id: String(index + 1),
-
       name: roleName,
+
+      active: roleConfig.active ?? true, // ✅ ADD THIS
 
       permissions:
         roleConfig.permissions[0] === '*'
@@ -213,18 +215,24 @@ const handlePermissionToggle = (permission: string) => {
 const handleSaveRole = async () => {
   if (!selectedRole) return
 
- await fetch(`/api/roles/${selectedRole.id}`, {
+await fetch(`/api/roles/${selectedRole.id}`, {
   method: 'PATCH',
   headers: {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
     active: roleActive,
-    permissions: selectedPermissions.map((p) => ({
-      path: p,
-    })),
+    permissions: selectedPermissions.map((p) => ({ path: p })),
   }),
 })
+
+setRoles((prev) =>
+  prev.map((r) =>
+    r.id === selectedRole.id
+      ? { ...r, active: roleActive }
+      : r,
+  ),
+)
 
   fetchRoles()
 
@@ -504,26 +512,30 @@ const handleDelete = (roleName: string) => {
 </Box>
 
                 {/* Status */}
-               <Chip
-  label={
-    ROLE_PERMISSIONS[role.name]?.active
-      ? 'Active'
-      : 'Inactive'
-  }
-  sx={{
-    width: 90,
+               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+  <Box
+    sx={{
+      width: 8,
+      height: 8,
+      borderRadius: '50%',
+      backgroundColor: role.active ? '#10b981' : '#ef4444',
+    }}
+  />
 
-    background: ROLE_PERMISSIONS[role.name]?.active
-      ? 'rgba(34,197,94,0.15)'
-      : 'rgba(239,68,68,0.15)',
-
-    color: ROLE_PERMISSIONS[role.name]?.active
-      ? '#22c55e'
-      : '#ef4444',
-
-    fontWeight: 800,
-  }}
-/>
+  <Typography
+    variant="caption"
+    sx={{
+      fontWeight: 700,
+      color: role.active ? '#166534' : '#991b1b',
+      backgroundColor: role.active ? '#dcfce7' : '#fee2e2',
+      px: 1,
+      py: 0.25,
+      borderRadius: '999px',
+    }}
+  >
+    {role.active ? 'ACTIVE' : 'INACTIVE'}
+  </Typography>
+</Box>
 
                 {/* Actions */}
                 <Stack direction="row" spacing={1}>
