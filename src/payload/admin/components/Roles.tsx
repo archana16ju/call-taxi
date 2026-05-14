@@ -392,16 +392,6 @@ const handleDelete = async (roleName: string) => {
 />
 
           <Stack direction="row" spacing={2}>
-
-            <IconButton
-              onClick={fetchRoles}
-              sx={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.06)',
-              }}
-            >
-              <RefreshIcon sx={{ color: '#cbd5e1' }} />
-            </IconButton>
           </Stack>
         </Stack>
 
