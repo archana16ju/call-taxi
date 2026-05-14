@@ -347,11 +347,19 @@ const handleDelete = (roleName: string) => {
 
           <Stack direction="row" spacing={2}>
             <IconButton
-              sx={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.06)',
-              }}
-            >
+  onClick={() =>
+    setShowOnlyActive(!showOnlyActive)
+  }
+  sx={{
+    background: showOnlyActive
+      ? 'rgba(34,197,94,0.2)'
+      : 'rgba(255,255,255,0.04)',
+
+    border: showOnlyActive
+      ? '1px solid #22c55e'
+      : '1px solid rgba(255,255,255,0.06)',
+  }}
+>
               <FilterListIcon sx={{ color: '#cbd5e1' }} />
             </IconButton>
 
