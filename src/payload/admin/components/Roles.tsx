@@ -268,6 +268,9 @@ const handleDelete = (roleName: string) => {
         background:
           'radial-gradient(circle at top, #0f2747 0%, #081120 50%, #050b16 100%)',
         p: 4,
+        ml: { xs: 0, md: '280px' }, // adjust to your sidebar width
+    width: { xs: '100%', md: 'calc(100% - 280px)' },
+    transition: 'all 0.3s ease',
       }}
     >
       {/* Header */}
@@ -362,7 +365,7 @@ const handleDelete = (roleName: string) => {
           sx={{
             display: 'grid',
             gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
-            p: 2,
+            p: { xs: 2, md: 5 },
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             color: '#94a3b8',
             fontWeight: 700,
@@ -393,6 +396,7 @@ const handleDelete = (roleName: string) => {
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
+                  p: { xs: 2, md: 5 },
                   alignItems: 'center',
                   gap: 2,
                 }}
