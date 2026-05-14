@@ -103,11 +103,14 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
 export default function RolesPage() {
 
   const [roleConfig, setRoleConfig] = useState<any>({})
-  const fetchRoleConfig = async () => {
-  const res = await fetch('/api/roles/get')
+ const fetchRoleConfig = async () => {
+  const res = await fetch('/api/roles')
   const data = await res.json()
 
-  setRoleConfig(data || {})
+  const fresh = data || {}
+
+  setRoleConfig(fresh)
+  fetchRoles(fresh)
 }
 
   const [search, setSearch] = useState('')
@@ -131,12 +134,13 @@ const [roleActive, setRoleActive] = useState(true)
   init()
 }, [])
 
-  const fetchRoles = async () => {
+  const fetchRoles = async (configOverride?: any) => {
   try {
     setLoading(true)
 
     const res = await fetch('/api/users?limit=100')
-    const data = await res.json()
+    const response = await res.json()
+const data = response.data || response
 
     const users = data.docs || []
 
@@ -147,15 +151,15 @@ const [roleActive, setRoleActive] = useState(true)
       groupedRoles[role] = (groupedRoles[role] || 0) + 1
     })
 
+    const config = configOverride ?? roleConfig ?? {}
+
     const roleData: RoleType[] = Object.keys(ROLE_PERMISSIONS).map(
       (roleName, index) => {
-
-        // 🔥 IMPORTANT FIX HERE
-        const dbConfig = roleConfig[roleName]
+        const dbConfig = config[roleName]
         const baseConfig = ROLE_PERMISSIONS[roleName]
 
         const permissionsSource =
-          dbConfig?.permissions || baseConfig.permissions
+  dbConfig?.permissions ?? baseConfig.permissions
 
         return {
           id: String(index + 1),
@@ -220,7 +224,13 @@ const [roleActive, setRoleActive] = useState(true)
 
  const handleEdit = (role: any) => {
   setSelectedRole(role)
-  setSelectedPermissions(role.permissions || [])
+
+  setSelectedPermissions(
+    (role.permissions || []).map((p: string) =>
+      p.startsWith('/admin') ? p : `/admin/collections/${p}`
+    )
+  )
+
   setRoleActive(role.active ?? true)
   setOpenEdit(true)
 }
@@ -236,14 +246,18 @@ const handlePermissionToggle = (permission: string) => {
 const handleSaveRole = async () => {
   if (!selectedRole) return
 
-  const res = await fetch('/api/roles/update', {
+  const formattedPermissions = selectedPermissions.map(p =>
+    p.startsWith('/admin') ? p : `/admin/collections/${p}`
+  )
+
+  const res = await fetch('/api/roles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       role: selectedRole.name,
-      permissions: selectedPermissions,
+      permissions: formattedPermissions,
       active: roleActive,
     }),
   })
@@ -251,9 +265,10 @@ const handleSaveRole = async () => {
   const data = await res.json()
 
   if (data.success) {
-
-    await fetchRoles()
     await fetchRoleConfig()
+
+    setSelectedPermissions([])
+    setRoleActive(true)
 
     setOpenEdit(false)
   } else {
