@@ -110,7 +110,15 @@ export const CustomNav: React.FC = () => {
 
   const userRole = user?.role || 'admin'
 
-  const allowedPaths = ROLE_PERMISSIONS[userRole] || []
+  const roleConfig = ROLE_PERMISSIONS[userRole]
+
+const allowedPaths = roleConfig?.permissions || []
+
+const isRoleActive = roleConfig?.active
+
+if (!isRoleActive) {
+  return null
+}
 
   const [isCollapsed, setIsCollapsed] = React.useState(false)
 

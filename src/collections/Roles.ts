@@ -5,6 +5,7 @@ export const Roles: CollectionConfig = {
 
   admin: {
     useAsTitle: 'name',
+
     components: {
       views: {
         list: {
@@ -16,27 +17,19 @@ export const Roles: CollectionConfig = {
 
   access: {
     read: ({ req }) => {
-      const user = req.user
-
-      return user?.role === 'superadmin'
+      return req.user?.role === 'superadmin'
     },
 
     create: ({ req }) => {
-      const user = req.user
-
-      return user?.role === 'superadmin'
+      return req.user?.role === 'superadmin'
     },
 
     update: ({ req }) => {
-      const user = req.user
-
-      return user?.role === 'superadmin'
+      return req.user?.role === 'superadmin'
     },
 
     delete: ({ req }) => {
-      const user = req.user
-
-      return user?.role === 'superadmin'
+      return req.user?.role === 'superadmin'
     },
   },
 
@@ -45,11 +38,19 @@ export const Roles: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      unique: true,
     },
 
     {
       name: 'permissions',
       type: 'json',
+      required: true,
+    },
+
+    {
+      name: 'active',
+      type: 'checkbox',
+      defaultValue: true,
     },
   ],
 }

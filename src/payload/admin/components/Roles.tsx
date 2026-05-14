@@ -1,6 +1,8 @@
 'use client'
 
+import { ROLE_PERMISSIONS } from '@/access/rolePermissions'
 import React, { useEffect, useState } from 'react'
+
 import {
   Box,
   Typography,
@@ -60,37 +62,32 @@ export default function RolesPage() {
         groupedRoles[role]++
       })
 
-      const roleData: RoleType[] = [
-        {
-          id: '1',
-          name: 'superadmin',
-          permissions: ['Full System Access'],
-          users: groupedRoles.superadmin || 0,
-        },
-        {
-          id: '2',
-          name: 'admin',
-          permissions: [
-            'Dashboard',
-            'Users',
-            'Drivers',
-            'Bookings',
-            'Vehicles',
-          ],
-          users: groupedRoles.admin || 0,
-        },
-        {
-          id: '3',
-          name: 'accounts',
-          permissions: [
-            'Invoices',
-            'Payments',
-            'Tariffs',
-            'Coupons',
-          ],
-          users: groupedRoles.accounts || 0,
-        },
-      ]
+     const roleData: RoleType[] = Object.keys(ROLE_PERMISSIONS).map(
+  (roleName, index) => {
+    const roleConfig = ROLE_PERMISSIONS[roleName]
+
+    return {
+      id: String(index + 1),
+
+      name: roleName,
+
+      permissions:
+        roleConfig.permissions[0] === '*'
+          ? ['Full System Access']
+          : roleConfig.permissions.map((path: string) =>
+              path
+                .replace('/admin/collections/', '')
+                .replace('/admin/globals/', '')
+                .replace('/admin/', '')
+                .replaceAll('-', ' ')
+            ),
+
+      users: groupedRoles[roleName] || 0,
+    }
+  },
+)
+
+setRoles(roleData)
 
       setRoles(roleData)
     } catch (err) {

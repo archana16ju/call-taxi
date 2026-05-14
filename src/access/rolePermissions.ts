@@ -1,7 +1,17 @@
-export const ROLE_PERMISSIONS: Record<string, string[]> = {
-  superadmin: ['*'],
+type RolePermissionType = {
+  active: boolean
+  permissions: string[]
+}
 
-  admin: [
+export const ROLE_PERMISSIONS: Record<string, RolePermissionType> = {
+  superadmin: {
+    active: true,
+    permissions: ['*'],
+  },
+
+  admin: {
+    active: true,
+    permissions: [
     '/admin',
     '/admin/collections/users',
     '/admin/collections/drivers',
@@ -28,8 +38,11 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     '/admin/globals/vehicle-report',
     '/admin/collections/reviews',
   ],
+},
 
-  accounts: [
+ accounts: {
+    active: true,
+    permissions: [
     '/admin',
     '/admin/collections/invoices',
     '/admin/globals/payment-settings',
@@ -38,4 +51,5 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     '/admin/collections/coupons',
     '/admin/collections/alerts',
   ],
+},
 }
