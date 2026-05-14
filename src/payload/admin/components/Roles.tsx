@@ -103,6 +103,11 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
 export default function RolesPage() {
 
   const [roleConfig, setRoleConfig] = useState<any>({})
+  const normalizePermission = (p: string) =>
+  p
+    .replace('/admin/collections/', '')
+    .replace('/admin/globals/', '')
+    .replace('/admin/', '')
  const fetchRoleConfig = async () => {
   const res = await fetch('/api/roles')
   const data = await res.json()
@@ -652,54 +657,62 @@ color: role.active
         </Typography>
 
         {/* CHIPS */}
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-          {group.permissions.map((permission: string) => {
-            
-            const isSelected = selectedPermissions.includes(permission)
-            
+       <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+  {group.permissions.map((permission: string) => {
 
-            return (
-              <Box
-                key={permission}
-                onClick={() => handlePermissionToggle(permission)}
-                sx={{
-                  cursor: 'pointer',
-                  px: 1.5,
-                  py: 0.8,
-                  borderRadius: '12px',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  userSelect: 'none',
+    const normalizedPermission = normalizePermission(permission)
 
-                  background: isSelected
-                    ? 'rgba(34,197,94,0.15)'
-                    : 'rgba(255,255,255,0.05)',
+    const isSelected = selectedPermissions.some(
+      (p) => normalizePermission(p) === normalizedPermission
+    )
 
-                  color: isSelected ? '#22c55e' : '#94a3b8',
+    return (
+      <Box
+        key={permission}
+        onClick={() => handlePermissionToggle(permission)}
+        sx={{
+          cursor: 'pointer',
+          px: 1.5,
+          py: 1,
+          borderRadius: '12px',
+          fontSize: '0.85rem',
+          fontWeight: 700,
+          userSelect: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
 
-                  border: isSelected
-                    ? '1px solid rgba(34,197,94,0.5)'
-                    : '1px solid rgba(255,255,255,0.08)',
+          background: isSelected
+            ? 'rgba(34,197,94,0.15)'
+            : 'rgba(255,255,255,0.03)',
 
-                  transition: '0.2s',
+          color: isSelected ? '#22c55e' : '#94a3b8',
 
-                  '&:hover': {
-                    transform: 'scale(1.03)',
-                    background: isSelected
-                      ? 'rgba(34,197,94,0.25)'
-                      : 'rgba(255,255,255,0.08)',
-                  },
-                }}
-              >
-                {permission
-                  .replace('/admin/collections/', '')
-                  .replace('/admin/globals/', '')
-                  .replace('/admin/', '')
-                  .replaceAll('-', ' ')}
-              </Box>
-            )
-          })}
-        </Stack>
+          border: isSelected
+            ? '1px solid rgba(34,197,94,0.5)'
+            : '1px solid rgba(255,255,255,0.06)',
+
+          transition: '0.2s',
+
+          '&:hover': {
+            background: isSelected
+              ? 'rgba(34,197,94,0.25)'
+              : 'rgba(255,255,255,0.06)',
+            transform: 'scale(1.02)',
+          },
+        }}
+      >
+        <Checkbox
+          checked={isSelected}
+          size="small"
+          sx={{ color: '#22c55e', p: 0 }}
+        />
+
+        {normalizePermission(permission)}
+      </Box>
+    )
+  })}
+</Stack>
       </Box>
     ))}
   </Stack>
