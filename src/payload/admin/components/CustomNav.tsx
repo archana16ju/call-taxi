@@ -125,20 +125,28 @@ export const CustomNav: React.FC = () => {
   const navWidth = isCollapsed ? 70 : 280
 
  const filteredMenuItems = menuItems.filter((item, index) => {
+  // Handle headers
   if (item.type === 'header') {
-    const nextItems = menuItems.slice(index + 1)
+    // Get items until next header
+    const sectionItems = []
 
-    const hasVisibleChild = nextItems.some((nextItem) => {
-      if (nextItem.type === 'header') return false
+    for (let i = index + 1; i < menuItems.length; i++) {
+      if (menuItems[i].type === 'header') break
 
+      sectionItems.push(menuItems[i])
+    }
+
+    // Check if at least one child menu is visible
+    const hasVisibleItem = sectionItems.some((sectionItem) => {
       if (allowedPaths.includes('*')) return true
 
-      return allowedPaths.includes(nextItem.path)
+      return allowedPaths.includes(sectionItem.path)
     })
 
-    return hasVisibleChild
+    return hasVisibleItem
   }
 
+  // Handle normal menu items
   if (allowedPaths.includes('*')) return true
 
   return allowedPaths.includes(item.path)
