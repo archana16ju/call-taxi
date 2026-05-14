@@ -14,6 +14,14 @@ import {
   InputAdornment,
   Avatar,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Switch,
 } from '@mui/material'
 
 import SearchIcon from '@mui/icons-material/Search'
@@ -32,9 +40,62 @@ type RoleType = {
   users: number
 }
 
+const ALL_PERMISSIONS = [
+  '/admin',
+
+  '/admin/collections/users',
+  '/admin/collections/drivers',
+  '/admin/collections/customers',
+  '/admin/collections/slider-images',
+  '/admin/collections/media',
+  '/admin/collections/vehicles',
+
+  '/admin/collections/bookings',
+  '/admin/driver-allocation',
+  '/admin/voice-dispatch',
+  '/admin/collections/ride-preferences',
+
+  '/live-tracking',
+  '/admin/collections/driver-offline-logs',
+
+  '/admin/globals/general-settings',
+  '/admin/collections/ai-chat-conversations',
+
+  '/admin/globals/cancellation-control',
+  '/admin/collections/trip-otps',
+  '/admin/collections/trip-sharing',
+
+  '/admin/collections/revenue-settlements',
+
+  '/admin/collections/invoices',
+  '/admin/globals/payment-settings',
+  '/admin/collections/payment-methods',
+  '/admin/collections/tariffs',
+  '/admin/collections/coupons',
+
+  '/admin/collections/alerts',
+  '/admin/collections/contacts',
+
+  '/admin/globals/customer-report',
+  '/admin/globals/booking-report',
+  '/admin/globals/vehicle-report',
+
+  '/admin/collections/reviews',
+
+  '/admin/collections/roles',
+]
+
 export default function RolesPage() {
   const [roles, setRoles] = useState<RoleType[]>([])
   const [loading, setLoading] = useState(true)
+
+  const [openEdit, setOpenEdit] = useState(false)
+
+const [selectedRole, setSelectedRole] = useState<any>(null)
+
+const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
+
+const [roleActive, setRoleActive] = useState(true)
 
   useEffect(() => {
     fetchRoles()
@@ -62,7 +123,7 @@ export default function RolesPage() {
         groupedRoles[role]++
       })
 
-     const roleData: RoleType[] = Object.keys(ROLE_PERMISSIONS).map(
+   const roleData: RoleType[] = Object.keys(ROLE_PERMISSIONS).map(
   (roleName, index) => {
     const roleConfig = ROLE_PERMISSIONS[roleName]
 
@@ -79,7 +140,7 @@ export default function RolesPage() {
                 .replace('/admin/collections/', '')
                 .replace('/admin/globals/', '')
                 .replace('/admin/', '')
-                .replaceAll('-', ' ')
+                .replaceAll('-', ' '),
             ),
 
       users: groupedRoles[roleName] || 0,
@@ -128,6 +189,47 @@ setRoles(roleData)
         return <SecurityIcon />
     }
   }
+
+  const handleEdit = (role: any) => {
+  const roleConfig = ROLE_PERMISSIONS[role.name]
+
+  setSelectedRole(role)
+
+  setSelectedPermissions(roleConfig.permissions)
+
+  setRoleActive(roleConfig.active)
+
+  setOpenEdit(true)
+}
+
+const handlePermissionToggle = (permission: string) => {
+  setSelectedPermissions((prev) =>
+    prev.includes(permission)
+      ? prev.filter((p) => p !== permission)
+      : [...prev, permission],
+  )
+}
+
+const handleSaveRole = () => {
+  if (!selectedRole) return
+
+  ROLE_PERMISSIONS[selectedRole.name] = {
+    permissions: selectedPermissions,
+    active: roleActive,
+  }
+
+  fetchRoles()
+
+  setOpenEdit(false)
+}
+
+const handleDelete = (roleName: string) => {
+  if (roleName === 'superadmin') return
+
+  delete ROLE_PERMISSIONS[roleName]
+
+  fetchRoles()
+}
 
   if (loading) {
     return (
@@ -312,7 +414,11 @@ setRoles(roleData)
                     </Typography>
 
                     <Chip
-                      label={role.name}
+  label={
+    ROLE_PERMISSIONS[role.name]?.active
+      ? 'Active'
+      : 'Inactive'
+  }
                       size="small"
                       sx={{
                         mt: 1,
@@ -370,8 +476,13 @@ setRoles(roleData)
                   label="Active"
                   sx={{
                     width: 90,
-                    background: 'rgba(34,197,94,0.15)',
-                    color: '#22c55e',
+                    background: ROLE_PERMISSIONS[role.name]?.active
+  ? 'rgba(34,197,94,0.15)'
+  : 'rgba(239,68,68,0.15)',
+
+color: ROLE_PERMISSIONS[role.name]?.active
+  ? '#22c55e'
+  : '#ef4444',
                     fontWeight: 800,
                   }}
                 />
@@ -379,17 +490,19 @@ setRoles(roleData)
                 {/* Actions */}
                 <Stack direction="row" spacing={1}>
                   <IconButton
-                    sx={{
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}
-                  >
+  onClick={() => handleEdit(role)}
+  sx={{
+    border: '1px solid rgba(255,255,255,0.08)',
+  }}
+>
                     <EditIcon sx={{ color: '#fff' }} />
                   </IconButton>
 
                   {role.name !== 'superadmin' && (
-                    <IconButton
-                      sx={{
-                        border: '1px solid rgba(239,68,68,0.3)',
+                   <IconButton
+  onClick={() => handleDelete(role.name)}
+  sx={{
+    border: '1px solid rgba(239,68,68,0.3)',
                         background: 'rgba(239,68,68,0.1)',
                       }}
                     >
@@ -412,6 +525,72 @@ setRoles(roleData)
           Showing 1 to {roles.length} of {roles.length} roles
         </Typography>
       </Paper>
+      <Dialog
+  open={openEdit}
+  onClose={() => setOpenEdit(false)}
+  maxWidth="md"
+  fullWidth
+>
+  <DialogTitle>Edit Role Permissions</DialogTitle>
+
+  <DialogContent>
+    <Box sx={{ mt: 2 }}>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={roleActive}
+            onChange={(e) =>
+              setRoleActive(e.target.checked)
+            }
+          />
+        }
+        label={roleActive ? 'Active' : 'Inactive'}
+      />
+    </Box>
+
+    <Typography
+      sx={{
+        mt: 3,
+        mb: 2,
+        fontWeight: 700,
+      }}
+    >
+      Permissions
+    </Typography>
+
+    <Stack spacing={1}>
+      {ALL_PERMISSIONS.map((permission) => (
+        <FormControlLabel
+          key={permission}
+          control={
+            <Checkbox
+              checked={selectedPermissions.includes(
+                permission,
+              )}
+              onChange={() =>
+                handlePermissionToggle(permission)
+              }
+            />
+          }
+          label={permission}
+        />
+      ))}
+    </Stack>
+  </DialogContent>
+
+  <DialogActions>
+    <Button onClick={() => setOpenEdit(false)}>
+      Cancel
+    </Button>
+
+    <Button
+      variant="contained"
+      onClick={handleSaveRole}
+    >
+      Save Changes
+    </Button>
+  </DialogActions>
+</Dialog>
     </Box>
   )
 }

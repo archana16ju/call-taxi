@@ -50,6 +50,8 @@ import AiChatConversations from './collections/AiChatConversations'
 import { VoiceBooking } from './collections/voicebooking'
 import { Roles } from './collections/Roles'
 
+import Providers from './payload/admin/providers'
+
 
 // Paths
 const filename = fileURLToPath(import.meta.url)
@@ -86,6 +88,7 @@ export default buildConfig({
   baseDir: path.resolve(process.cwd(), 'src'),
 },
     components: {
+      
       graphics: {
         Logo: '@/payload/admin/components/Logo#Logo',
         Icon: '@/payload/admin/components/Logo#Logo',
@@ -141,7 +144,8 @@ export default buildConfig({
     RidePreferences,
     AiChatConversations,
     VoiceBooking,
-    Roles
+    Roles,
+    
 
   ],
 

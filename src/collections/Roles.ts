@@ -43,8 +43,14 @@ export const Roles: CollectionConfig = {
 
     {
       name: 'permissions',
-      type: 'json',
-      required: true,
+      type: 'array',
+
+      fields: [
+        {
+          name: 'path',
+          type: 'text',
+        },
+      ],
     },
 
     {

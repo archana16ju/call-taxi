@@ -24,7 +24,7 @@ import { default as default_97854d0be1d390bce537d751f3d275c0 } from '@/payload/a
 import { default as default_a75568a31603449540fd71dde2bbcf5a } from '@/payload/admin/components/RidePreferences'
 import { default as default_40847aecf3c80c1fa482a7bc9374bb78 } from '@/payload/admin/components/AIChatSupport'
 import { default as default_a688ef23b5c354f7cdefb1a36ccce7b0 } from '@/payload/admin/components/voicebooking'
-import { default as default_0d4e83baebf649c03d20f10d6d648596 } from '@/payload/admin/components/settings'
+import { default as default_825b8880c3b3dc6601f2fb6644dacb9c } from '@/payload/admin/components/Roles'
 import { default as default_0cefc96f60e5ae31c5195610332dcc5b } from '@/payload/admin/components/BookingReport'
 import { default as default_48ea2586c03ea9c9986f91b4ef06ad7d } from '@/payload/admin/components/CustomerReport'
 import { default as default_14d87f040ca3822a0da364a31c45b1ed } from '@/payload/admin/components/PaymentSettingsComponent'
@@ -66,7 +66,7 @@ export const importMap = {
   "@/payload/admin/components/RidePreferences#default": default_a75568a31603449540fd71dde2bbcf5a,
   "@/payload/admin/components/AIChatSupport#default": default_40847aecf3c80c1fa482a7bc9374bb78,
   "@/payload/admin/components/voicebooking#default": default_a688ef23b5c354f7cdefb1a36ccce7b0,
-  "@/payload/admin/components/settings#default": default_0d4e83baebf649c03d20f10d6d648596,
+  "@/payload/admin/components/Roles#default": default_825b8880c3b3dc6601f2fb6644dacb9c,
   "@/payload/admin/components/BookingReport#default": default_0cefc96f60e5ae31c5195610332dcc5b,
   "@/payload/admin/components/CustomerReport#default": default_48ea2586c03ea9c9986f91b4ef06ad7d,
   "@/payload/admin/components/PaymentSettingsComponent#default": default_14d87f040ca3822a0da364a31c45b1ed,
