@@ -48,8 +48,7 @@ import RidePreferences from './collections/ridePreferences'
 import MapComponent from './payload/admin/components/MapComponent'
 import AiChatConversations from './collections/AiChatConversations'
 import { VoiceBooking } from './collections/voicebooking'
-
-import { Settings } from './collections/Settings'
+import { Roles } from './collections/Roles'
 
 
 // Paths
@@ -142,7 +141,8 @@ export default buildConfig({
     RidePreferences,
     AiChatConversations,
     VoiceBooking,
-    Settings
+    Roles
+
   ],
 
   globals: [

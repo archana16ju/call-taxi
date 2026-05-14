@@ -3,6 +3,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useAuth } from '@payloadcms/ui'
+import { ROLE_PERMISSIONS } from '@/access/rolePermissions'
 import {
   Box,
   List,
@@ -40,7 +42,7 @@ import ReceiptIcon from '@mui/icons-material/Receipt'
 import ShareIcon from '@mui/icons-material/Share'
 import StarIcon from '@mui/icons-material/Star'
 
-const menuItems = [
+const menuItems: any[] = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
   { type: 'header', label: 'MANAGEMENT' },
   { label: 'Users & Roles', icon: <AdminPanelSettingsIcon />, path: '/admin/collections/users' },
@@ -97,10 +99,19 @@ const menuItems = [
   { label: 'Vehicle Reports', icon: <AssessmentIcon />, path: '/admin/globals/vehicle-report' },
   { type: 'header', label: 'FEEDBACKS' },
   { label: 'Ratings & Reviews', icon: <StarRateIcon />, path: '/admin/collections/reviews' },
+  { type: 'header', label: 'SETTINGS' },
+  {label: 'Roles',icon: <SecurityIcon />,path: '/admin/collections/roles',},
 ]
 
 export const CustomNav: React.FC = () => {
   const pathname = usePathname()
+
+  const { user } = useAuth()
+
+  const userRole = user?.role || 'admin'
+
+  const allowedPaths = ROLE_PERMISSIONS[userRole] || []
+
   const [isCollapsed, setIsCollapsed] = React.useState(false)
 
   const toggleCollapse = () => {
@@ -112,6 +123,26 @@ export const CustomNav: React.FC = () => {
   }, [isCollapsed])
 
   const navWidth = isCollapsed ? 70 : 280
+
+ const filteredMenuItems = menuItems.filter((item, index) => {
+  if (item.type === 'header') {
+    const nextItems = menuItems.slice(index + 1)
+
+    const hasVisibleChild = nextItems.some((nextItem) => {
+      if (nextItem.type === 'header') return false
+
+      if (allowedPaths.includes('*')) return true
+
+      return allowedPaths.includes(nextItem.path)
+    })
+
+    return hasVisibleChild
+  }
+
+  if (allowedPaths.includes('*')) return true
+
+  return allowedPaths.includes(item.path)
+})
 
   return (
     <Box
@@ -186,7 +217,7 @@ export const CustomNav: React.FC = () => {
       </Box>
 
       <List sx={{ px: isCollapsed ? 1 : 2, pb: 4, pt: 0 }}>
-        {menuItems.map((item, index) => {
+       {filteredMenuItems.map((item, index) => {
           if (item.type === 'header') {
             if (isCollapsed)
               return (
