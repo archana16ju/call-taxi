@@ -42,6 +42,12 @@ export const Roles: CollectionConfig = {
     },
 
     {
+      name: 'active',
+      type: 'checkbox',
+      defaultValue: true,
+    },
+
+    {
       name: 'permissions',
       type: 'array',
 
@@ -51,12 +57,6 @@ export const Roles: CollectionConfig = {
           type: 'text',
         },
       ],
-    },
-
-    {
-      name: 'active',
-      type: 'checkbox',
-      defaultValue: true,
     },
   ],
 }

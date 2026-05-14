@@ -210,13 +210,21 @@ const handlePermissionToggle = (permission: string) => {
   )
 }
 
-const handleSaveRole = () => {
+const handleSaveRole = async () => {
   if (!selectedRole) return
 
-  ROLE_PERMISSIONS[selectedRole.name] = {
-    permissions: selectedPermissions,
+ await fetch(`/api/roles/${selectedRole.id}`, {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
     active: roleActive,
-  }
+    permissions: selectedPermissions.map((p) => ({
+      path: p,
+    })),
+  }),
+})
 
   fetchRoles()
 
